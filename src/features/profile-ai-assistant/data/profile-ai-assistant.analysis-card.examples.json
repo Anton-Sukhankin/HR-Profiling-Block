@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0",
+  "purpose": "Human-readable examples for AI analysis cards. The interface currently uses JavaScript model and mock files as the runtime source.",
+  "entity": "AnalysisCard",
+  "groups": [
+    {
+      "id": "critical",
+      "type": "critical",
+      "title": "Критические ошибки",
+      "description": "Блокируют переход дальше",
+      "priority": 10,
+      "blocksNextStep": true
+    },
+    {
+      "id": "warning",
+      "type": "warning",
+      "title": "Предупреждения",
+      "description": "Влияют на качество заполнения",
+      "priority": 20,
+      "blocksNextStep": false
+    },
+    {
+      "id": "recommendation",
+      "type": "recommendation",
+      "title": "Рекомендации",
+      "description": "Помогают обогатить профиль",
+      "priority": 30,
+      "blocksNextStep": false
+    }
+  ],
+  "examples": [
+    {
+      "id": "analysis_goal_missing_example",
+      "type": "warning",
+      "title": "Цель не добавлена",
+      "description": "После выбора должности и места в структуре добавьте цель, а затем раскройте её через задачу и функцию.",
+      "location": "Первый этап → Общие положения и функционал",
+      "targetKey": "analysis_goals_missing",
+      "stage": "functional",
+      "targetKind": "goal",
+      "suggestedText": "Минимальный ручной контекст для продолжения: добавленная цель, одна задача внутри цели и хотя бы одна выбранная функция.",
+      "status": "active"
+    },
+    {
+      "id": "analysis_goal_name_suggestion_example",
+      "type": "warning",
+      "title": "Цель не выбрана",
+      "description": "Цель задаёт верхнеуровневый смысл профиля и нужна для дальнейшего анализа.",
+      "location": "Цель 1",
+      "targetKey": "analysis_goal_0_missing_name",
+      "stage": "functional",
+      "targetKind": "goal",
+      "suggestedValue": "Обеспечение анализа и развития бизнес-процессов",
+      "originalValue": "",
+      "status": "active"
+    },
+    {
+      "id": "analysis_decomposition_action_example",
+      "type": "warning",
+      "title": "Недостаточная глубина декомпозиции",
+      "description": "По методологии лучше раскрывать задачу через 5 и более функций.",
+      "location": "Цель → Задача",
+      "targetKey": "analysis_goal_0_task_0_few_functions",
+      "stage": "functional",
+      "targetKind": "task",
+      "action": {
+        "type": "switch_generation",
+        "label": "Догенерировать функции до 5+",
+        "prompt": "Догенерировать функции для задачи до методологической глубины"
+      },
+      "status": "active"
+    },
+    {
+      "id": "analysis_soft_skills_relevance_example",
+      "type": "recommendation",
+      "title": "Проверьте связь Soft Skills с функциями",
+      "description": "Soft Skills должны объяснять способ выполнения работы, а не быть универсальным набором качеств.",
+      "location": "Ключевые компетенции → Компетенции",
+      "targetKey": "analysis_soft_skills_relevance",
+      "stage": "competencies",
+      "targetKind": "softSkills",
+      "suggestedText": "Оставьте только те soft skills, которые реально помогают выполнять выбранные функции первого этапа.",
+      "status": "active"
+    },
+    {
+      "id": "analysis_hard_skills_match_example",
+      "type": "recommendation",
+      "title": "Проверьте соответствие Hard Skills функциям",
+      "description": "Профессиональные навыки должны подтверждаться задачами и функциями профиля.",
+      "location": "Ключевые компетенции → Профессиональные знания и навыки",
+      "targetKey": "analysis_hard_skills_match",
+      "stage": "competencies",
+      "targetKind": "hardSkills",
+      "action": {
+        "type": "focus_target",
+        "label": "Перейти к Hard Skills"
+      },
+      "status": "active"
+    },
+    {
+      "id": "analysis_language_cefr_example",
+      "type": "recommendation",
+      "title": "Проверьте уровень языка по CEFR",
+      "description": "Уровень языка лучше выбирать по рабочим сценариям: чтение документации, переписка, встречи или переговоры.",
+      "location": "Ключевые компетенции → Иностранные языки",
+      "targetKey": "analysis_languages_cefr",
+      "stage": "competencies",
+      "targetKind": "language",
+      "suggestedText": "Если язык нужен только для чтения документации, обычно достаточно B1. Для встреч и согласований чаще нужен B2.",
+      "status": "active"
+    }
+  ]
+}

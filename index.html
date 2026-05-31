@@ -1,0 +1,1578 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samolet HR TECH - Side Navigation</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="src/features/profile-ai-assistant/styles/profile-ai-assistant.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-text">самолет</span>
+                    <span class="logo-subtext">HR TECH</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon-container">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="custom-icon">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                            </span>
+                            <span class="nav-label">S.Team</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon-container">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="custom-icon">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                                    <circle cx="12" cy="14" r="2" fill="currentColor" />
+                                </svg>
+                            </span>
+                            <span class="nav-label">Профили должности</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon-container">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="custom-icon">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                                    <path d="M9 14h6" />
+                                    <path d="M9 18h6" />
+                                    <path d="M9 10h6" />
+                                </svg>
+                            </span>
+                            <span class="nav-label">Заявки на изменения</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon-container">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="custom-icon">
+                                    <circle cx="12" cy="8" r="7" />
+                                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                                </svg>
+                            </span>
+                            <span class="nav-label">Оценка профилей</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon-container">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="custom-icon">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                </svg>
+                            </span>
+                            <span class="nav-label">Справочники</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon-container">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="custom-icon">
+                                    <line x1="18" y1="20" x2="18" y2="10" />
+                                    <line x1="12" y1="20" x2="12" y2="4" />
+                                    <line x1="6" y1="20" x2="6" y2="14" />
+                                </svg>
+                            </span>
+                            <span class="nav-label">Отчёты</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="toggle-btn" id="toggle-btn">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="main-header">
+                <div class="header-actions">
+                    <button class="header-btn">
+                        <div class="custom-header-icon chat">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2" y="4" width="20" height="15" rx="4" fill="#DCE2EC"/>
+                                <path d="M7 19L10 22V19H7Z" fill="#DCE2EC"/>
+                                <circle cx="8" cy="11.5" r="1" fill="#576378"/>
+                                <circle cx="12" cy="11.5" r="1" fill="#576378"/>
+                                <circle cx="16" cy="11.5" r="1" fill="#576378"/>
+                                <circle cx="20" cy="5" r="3.5" fill="#F3545D" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                    </button>
+                    <div class="divider"></div>
+                    <button class="header-btn">
+                        <div class="custom-header-icon bell">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C9.5 2 7.5 4 7.5 6.5V13C7.5 14.5 6 16 6 16H18C18 16 16.5 14.5 16.5 13V6.5C16.5 4 14.5 2 12 2Z" fill="#DCE2EC"/>
+                                <path d="M10 17H14C14 18.1 13.1 19 12 19C10.9 19 10 18.1 10 17Z" fill="#576378"/>
+                                <circle cx="17.5" cy="6.5" r="3.5" fill="#F3545D" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                    </button>
+                    <div class="divider"></div>
+                    <button class="header-btn">
+                        <div class="custom-header-icon grid">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="4" width="7" height="7" rx="1.5" fill="#6B778D"/>
+                                <rect x="13" y="4" width="7" height="7" rx="1.5" fill="#D0D7E1"/>
+                                <rect x="4" y="13" width="7" height="7" rx="1.5" fill="#D0D7E1"/>
+                                <rect x="13" y="13" width="7" height="7" rx="1.5" fill="#D0D7E1"/>
+                            </svg>
+                        </div>
+                    </button>
+                    <div class="divider"></div>
+                    <div class="user-profile">
+                        <div class="custom-avatar">
+                            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="20" cy="20" r="20" fill="#EBF4FF"/>
+                                <circle cx="20" cy="15" r="6" fill="#A2C9FF"/>
+                                <path d="M20 22C13.4 22 8 27.4 8 34V35C8 37.8 10.2 40 13 40H27C29.8 40 32 37.8 32 35V34C32 27.4 26.6 22 20 22Z" fill="#007AFF"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="content">
+                <div class="unit-title-bar">
+                    <div class="unit-info">
+                        <div class="unit-icon-box small">
+                            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="40" height="40" rx="8" fill="#EBF4FF"/>
+                                <path d="M10 28V16C10 14.8954 10.8954 14 12 14H18V28H10Z" fill="#007AFF"/>
+                                <path d="M18 28V12C18 10.8954 18.8954 10 20 10H28C29.1046 10 30 10.8954 30 12V28H18Z" fill="#007AFF" fill-opacity="0.6"/>
+                                <rect x="22" y="14" width="2" height="4" rx="1" fill="white"/>
+                                <rect x="26" y="14" width="2" height="4" rx="1" fill="white"/>
+                                <rect x="13" y="18" width="2" height="4" rx="1" fill="white"/>
+                            </svg>
+                        </div>
+                        <h2 class="unit-title">БИЗНЕС-ЮНИТ «САМОЛЕТ ОБРАЗОВАНИЕ»</h2>
+                        <i data-lucide="chevron-down" class="chevron small"></i>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <!-- Card 1: Profiles and Functions -->
+                    <div class="stat-card main-stat">
+                        <div class="chart-container large">
+                            <svg viewBox="0 0 36 36" class="circular-chart-double">
+                                <!-- Outer Circle (Purple) -->
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle outer" stroke-dasharray="60, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <!-- Inner Circle (Blue) -->
+                                <path class="circle inner" stroke-dasharray="40, 100" d="M18 5.5 a 12.5 12.5 0 0 1 0 25 a 12.5 12.5 0 0 1 0 -25" />
+                                <text x="18" y="16" class="percentage-small">60%</text>
+                                <text x="18" y="24" class="value-small">20/32</text>
+                            </svg>
+                        </div>
+                        <div class="stat-details">
+                            <h3 class="stat-title main">Профили и функции</h3>
+                            <div class="stat-info-horizontal">
+                                <div class="info-item-box">
+                                    <div class="small-box blue">
+                                        <i data-lucide="user-check"></i>
+                                    </div>
+                                    <span class="info-text">Профилей: 20/32</span>
+                                </div>
+                                <div class="info-item-box">
+                                    <div class="small-box purple">
+                                        <i data-lucide="zap"></i>
+                                    </div>
+                                    <span class="info-text">Функций с ИИ: 70%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Missing Profiles -->
+                    <div class="stat-card">
+                        <div class="stat-icon-box pink">
+                            <i data-lucide="shield-alert"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-title secondary">Отсутствие профилей</h3>
+                            <div class="stat-value-group">
+                                <span class="stat-number">34</span>
+                                <span class="stat-unit">штук</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Staff Positions -->
+                    <div class="stat-card">
+                        <div class="stat-icon-box blue">
+                            <i data-lucide="users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-title secondary">Штатных позиций</h3>
+                            <div class="stat-value-group">
+                                <span class="stat-number">32</span>
+                                <span class="stat-unit">штук</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main-content-card">
+                    <!-- Toolbar Section -->
+                    <div class="toolbar">
+                        <div class="toolbar-left">
+                            <div class="view-toggles">
+                                <button class="toggle-item active">
+                                    <i data-lucide="layout-grid"></i>
+                                    По профилям
+                                </button>
+                                <button class="toggle-item">
+                                    <i data-lucide="git-branch"></i>
+                                    По подразделениям
+                                </button>
+                            </div>
+                            <div class="toolbar-select">
+                                <select>
+                                    <option>Отображать в таблице</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="select-arrow"></i>
+                            </div>
+                            <div class="toolbar-search">
+                                <input type="text" placeholder="Укажите источник">
+                                <i data-lucide="search" class="search-icon"></i>
+                            </div>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="toolbar-icon-btn">
+                                <i data-lucide="sliders-horizontal"></i>
+                            </button>
+                            <button class="toolbar-btn">
+                                <i data-lucide="filter"></i>
+                                Фильтр
+                            </button>
+                            <button class="toolbar-btn">
+                                <i data-lucide="download"></i>
+                                Скачать
+                                <i data-lucide="chevron-down" class="chevron-sm"></i>
+                            </button>
+                            <button class="btn-primary">Создать профиль</button>
+                        </div>
+                    </div>
+
+                    <!-- Data Table Section -->
+                    <div class="data-table-container">
+                        <div class="table-header">
+                            <div class="table-cell checkbox-cell">
+                                <input type="checkbox" id="select-all">
+                            </div>
+                            <div class="table-cell col-code">
+                                Код профиля
+                            </div>
+                            <div class="table-cell col-profile">
+                                Профиль должности
+                            </div>
+                            <div class="table-cell col-structure">
+                                Место в структуре
+                            </div>
+                            <div class="table-cell col-band">
+                                Бэнд
+                            </div>
+                            <div class="table-cell col-binding">
+                                Привязка к позиции
+                            </div>
+                            <div class="table-cell col-classifier">
+                                Классификатор
+                            </div>
+                            <div class="table-cell col-standard">
+                                Типовая должность
+                            </div>
+                            <div class="table-cell col-date">
+                                Дата изменения
+                                <i data-lucide="filter" class="filter-icon"></i>
+                            </div>
+                            <div class="table-cell col-status">
+                                Статус
+                            </div>
+                        </div>
+                        <div class="table-body">
+                            <!-- Row 1 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177800</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Руководитель IT-направления строительных систем</a></div>
+                                <div class="table-cell col-structure">Отдел разрешительной документации</div>
+                                <div class="table-cell col-band">1</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">D.R.6.26.0860.7.B.M.B.X.X.X.X.X.1</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">25.12.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                            <!-- Row 2 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177801</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Ведущий аналитик бизнес-процессов</a></div>
+                                <div class="table-cell col-structure">Управление по трансформации</div>
+                                <div class="table-cell col-band">2</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">B.P.4.12.0430.2.A.L.K.Z.X.X.X.X.X.2</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">12.11.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge draft">Черновик</span></div>
+                            </div>
+                            <!-- Row 3 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177805</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Главный эксперт по кибербезопасности</a></div>
+                                <div class="table-cell col-structure">Департамент защиты данных</div>
+                                <div class="table-cell col-band">1</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">C.S.8.15.0920.5.C.N.P.W.X.X.X.X.X.1</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Нет</span></div></div>
+                                <div class="table-cell col-date">10.05.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <!-- Row 4 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177810</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Менеджер по развитию продукта</a></div>
+                                <div class="table-cell col-structure">Центр инноваций</div>
+                                <div class="table-cell col-band">3</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">P.D.3.10.0210.1.B.M.A.Z.X.X.X.X.X.3</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">01.09.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                            <!-- Row 5 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177812</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Архитектор системных решений</a></div>
+                                <div class="table-cell col-structure">Департамент разработки</div>
+                                <div class="table-cell col-band">1</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">S.A.7.20.0815.4.D.R.B.Y.X.X.X.X.X.1</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">15.02.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <!-- Row 6 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177815</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Специалист по подбору персонала</a></div>
+                                <div class="table-cell col-structure">HR-департамент</div>
+                                <div class="table-cell col-band">4</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">H.R.2.05.0110.6.A.L.S.W.X.X.X.X.X.4</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Нет</span></div></div>
+                                <div class="table-cell col-date">20.03.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge draft">Черновик</span></div>
+                            </div>
+                            <!-- Row 7 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177820</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Руководитель проекта (Строительство)</a></div>
+                                <div class="table-cell col-structure">Проектный офис</div>
+                                <div class="table-cell col-band">2</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">P.M.5.18.0650.3.C.D.R.X.X.X.X.X.X.2</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">11.01.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                            <!-- Row 8 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177825</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Старший юрисконсульт</a></div>
+                                <div class="table-cell col-structure">Юридический отдел</div>
+                                <div class="table-cell col-band">3</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">L.E.4.08.0320.1.A.B.C.D.X.X.X.X.X.3</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">05.06.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <!-- Row 9 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177830</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Директор по маркетингу</a></div>
+                                <div class="table-cell col-structure">Департамент маркетинга</div>
+                                <div class="table-cell col-band">1</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">M.K.9.25.1200.7.E.F.G.H.X.X.X.X.X.1</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Нет</span></div></div>
+                                <div class="table-cell col-date">22.12.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <!-- Row 10 -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177835</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Инженер по эксплуатации</a></div>
+                                <div class="table-cell col-structure">Техническая служба</div>
+                                <div class="table-cell col-band">5</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">T.S.3.12.0450.4.A.B.C.D.X.X.X.X.X.5</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">18.08.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge draft">Черновик</span></div>
+                            </div>
+                            <!-- Row 11-25 (Repeated patterns for density) -->
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177840</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Ведущий финансовый контролер</a></div>
+                                <div class="table-cell col-structure">Финансовый департамент</div>
+                                <div class="table-cell col-band">2</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">F.I.6.15.0620.2.B.C.D.E.X.X.X.X.X.2</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">30.01.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177845</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Frontend-разработчик (React)</a></div>
+                                <div class="table-cell col-structure">Департамент разработки</div>
+                                <div class="table-cell col-band">3</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">I.T.4.10.0380.1.A.B.C.D.X.X.X.X.X.3</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">14.04.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177850</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Системный администратор</a></div>
+                                <div class="table-cell col-structure">IT-отдел</div>
+                                <div class="table-cell col-band">4</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">I.T.2.08.0215.3.A.B.C.D.X.X.X.X.X.4</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">05.12.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge draft">Черновик</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177855</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Бизнес-аналитик</a></div>
+                                <div class="table-cell col-structure">Управление стратегии</div>
+                                <div class="table-cell col-band">3</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">B.A.5.12.0430.1.A.B.C.D.X.X.X.X.X.3</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">19.02.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177860</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Технический писатель</a></div>
+                                <div class="table-cell col-structure">Отдел документации</div>
+                                <div class="table-cell col-band">4</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">T.W.3.08.0210.6.A.B.C.D.X.X.X.X.X.4</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">28.11.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge draft">Черновик</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177865</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Менеджер по корпоративной культуре</a></div>
+                                <div class="table-cell col-structure">HR-департамент</div>
+                                <div class="table-cell col-band">3</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">C.C.5.10.0350.2.A.B.C.D.X.X.X.X.X.3</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">10.01.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177870</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Главный бухгалтер</a></div>
+                                <div class="table-cell col-structure">Бухгалтерия</div>
+                                <div class="table-cell col-band">1</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">A.C.8.20.0950.5.A.B.C.D.X.X.X.X.X.1</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">15.03.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177875</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Специалист по охране труда</a></div>
+                                <div class="table-cell col-structure">Служба безопасности</div>
+                                <div class="table-cell col-band">4</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">S.A.3.08.0215.1.A.B.C.D.X.X.X.X.X.4</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">08.05.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177880</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">QA Automation Engineer</a></div>
+                                <div class="table-cell col-structure">Департамент разработки</div>
+                                <div class="table-cell col-band">3</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">Q.A.5.12.0450.2.A.B.C.D.X.X.X.X.X.3</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">12.02.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge draft">Черновик</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177885</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Менеджер по продажам</a></div>
+                                <div class="table-cell col-structure">Отдел продаж</div>
+                                <div class="table-cell col-band">4</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">S.L.3.10.0280.1.A.B.C.D.X.X.X.X.X.4</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">20.12.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177890</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Аналитик данных (Python)</a></div>
+                                <div class="table-cell col-structure">Центр аналитики</div>
+                                <div class="table-cell col-band">2</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">D.A.6.15.0650.4.A.B.C.D.X.X.X.X.X.2</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">14.03.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177895</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">UX/UI Дизайнер</a></div>
+                                <div class="table-cell col-structure">Продуктовая команда</div>
+                                <div class="table-cell col-band">3</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">U.X.5.10.0380.2.A.B.C.D.X.X.X.X.X.3</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">01.06.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177900</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Руководитель службы поддержки</a></div>
+                                <div class="table-cell col-structure">Клиентский сервис</div>
+                                <div class="table-cell col-band">2</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">C.S.6.15.0620.3.A.B.C.D.X.X.X.X.X.2</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">25.11.2025</div>
+                                <div class="table-cell col-status"><span class="status-badge draft">Черновик</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177905</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">Офис-менеджер</a></div>
+                                <div class="table-cell col-structure">Административный отдел</div>
+                                <div class="table-cell col-band">5</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">A.D.2.06.0150.1.A.B.C.D.X.X.X.X.X.5</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Нет</span></div></div>
+                                <div class="table-cell col-date">10.02.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge approved">Утверждено</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell checkbox-cell"><input type="checkbox"></div>
+                                <div class="table-cell col-code">177910</div>
+                                <div class="table-cell col-profile"><a href="#" class="profile-link">DevOps Инженер</a></div>
+                                <div class="table-cell col-structure">Инфраструктурный отдел</div>
+                                <div class="table-cell col-band">2</div>
+                                <div class="table-cell col-binding"><div class="check-circle-box"><i data-lucide="check-circle-2" class="check-icon"></i></div></div>
+                                <div class="table-cell col-classifier">D.O.7.18.0850.4.A.B.C.D.X.X.X.X.X.2</div>
+                                <div class="table-cell col-standard"><div class="standard-cell"><span>Да</span></div></div>
+                                <div class="table-cell col-date">15.05.2026</div>
+                                <div class="table-cell col-status"><span class="status-badge on-review">На оценке</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination Section -->
+                    <div class="pagination">
+                        <div class="pagination-controls">
+                            <button class="page-arrow">
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <button class="page-num active">1</button>
+                            <button class="page-num">2</button>
+                            <span class="page-dots">...</span>
+                            <button class="page-num">10</button>
+                            <button class="page-num">11</button>
+                            <button class="page-num">12</button>
+                            <button class="page-num">13</button>
+                            <button class="page-num">14</button>
+                            <span class="page-dots">...</span>
+                            <button class="page-num">96</button>
+                            <button class="page-arrow">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Защитный оверлей -->
+    <div id="drawer-backdrop" class="drawer-overlay"></div>
+
+    <!-- Боковой дровер создания профиля -->
+    <div id="create-profile-drawer" class="side-drawer">
+        <!-- Header -->
+        <header class="drawer-header">
+            <div class="drawer-header-left">
+                <button class="drawer-back-btn" id="back-drawer-btn" title="Назад">
+                    <i data-lucide="arrow-left"></i>
+                </button>
+                <h2 class="drawer-title">Создание профиля</h2>
+            </div>
+            <div class="drawer-header-actions">
+                <button class="ai-assistant-trigger-btn" id="btn-profile-ai-assistant" type="button" aria-expanded="false">
+                    <span class="ai-assistant-trigger-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M12 3.25l1.55 4.2a3.7 3.7 0 0 0 2.2 2.2L19.95 11l-4.2 1.55a3.7 3.7 0 0 0-2.2 2.2L12 18.95l-1.55-4.2a3.7 3.7 0 0 0-2.2-2.2L4.05 11l4.2-1.35a3.7 3.7 0 0 0 2.2-2.2L12 3.25Z"></path>
+                            <path d="M5.5 15.25l.55 1.5a1.5 1.5 0 0 0 .9.9l1.5.55-1.5.55a1.5 1.5 0 0 0-.9.9l-.55 1.5-.55-1.5a1.5 1.5 0 0 0-.9-.9l-1.5-.55 1.5-.55a1.5 1.5 0 0 0 .9-.9l.55-1.5Z"></path>
+                            <path d="M18.25 3.25l.45 1.2a1.25 1.25 0 0 0 .75.75l1.2.45-1.2.45a1.25 1.25 0 0 0-.75.75l-.45 1.2-.45-1.2a1.25 1.25 0 0 0-.75-.75l-1.2-.45 1.2-.45a1.25 1.25 0 0 0 .75-.75l.45-1.2Z"></path>
+                        </svg>
+                    </span>
+                    <span>ИИ-Помощник</span>
+                </button>
+                <button class="drawer-close-btn" id="close-drawer-btn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <div class="drawer-body">
+            <div class="stages-container">
+                <!-- Карточка «Функционал» -->
+                <div class="stage-card active" id="stage-functional">
+                    <div class="stage-icon-wrapper functional">
+                        <i data-lucide="briefcase"></i>
+                    </div>
+                    <div class="stage-info">
+                        <span class="stage-label">Общие положения и функционал</span>
+                        <p class="stage-desc">Опишите основные задачи и функции должности</p>
+                    </div>
+                </div>
+
+                <!-- Карточка «Компетенции» -->
+                <div class="stage-card disabled" id="stage-competencies">
+                    <div class="stage-icon-wrapper competencies">
+                        <i data-lucide="award"></i>
+                    </div>
+                    <div class="stage-info">
+                        <span class="stage-label">Ключевые компетенции</span>
+                        <p class="stage-desc">Выберите необходимые навыки и знания</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Область для контента -->
+            <div class="stage-content-area" id="functional-content">
+                <div class="parameters-block">
+                    
+                    <div class="parameters-grid">
+                        <!-- Должность -->
+                        <div class="form-group">
+                            <label for="param-position">Должность<span class="required-asterisk">*</span></label>
+                            <div class="select-wrapper">
+                                <select id="param-position" class="custom-select">
+                                    <option value="" disabled selected>Выберите должность</option>
+                                    <option value="project-manager">Руководитель проекта</option>
+                                    <option value="lead-dev">Ведущий программист</option>
+                                    <option value="system-analyst">Системный аналитик</option>
+                                    <option value="uiux-designer">UX/UI-дизайнер</option>
+                                    <option value="qa-engineer">Тестировщик</option>
+                                    <option value="devops-engineer">DevOps-инженер</option>
+                                    <option value="sw-architect">Архитектор ПО</option>
+                                    <option value="business-analyst">Бизнес-аналитик</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Классификатор -->
+                        <div class="form-group">
+                            <label for="param-classifier">Классификатор</label>
+                            <input type="text" id="param-classifier" placeholder="Введите значение">
+                        </div>
+
+                        <!-- Место в структуре -->
+                        <div class="form-group">
+                            <label for="param-structure">Место в структуре<span class="required-asterisk">*</span></label>
+                            <div class="select-wrapper">
+                                <!-- Kept hidden in the DOM for full backward compatibility and validation -->
+                                <select id="param-structure" class="custom-select" style="display: none;">
+                                    <option value="" disabled selected>Выберите подразделение</option>
+                                </select>
+                                
+                                <!-- Premium Custom Tree Select Component -->
+                                <div class="tree-select-container">
+                                    <div class="tree-select-trigger" id="param-structure-trigger">
+                                        <span class="tree-select-value is-placeholder" id="param-structure-value">Выберите подразделение</span>
+                                        <i data-lucide="chevron-down" class="tree-select-chevron"></i>
+                                    </div>
+                                    <div class="tree-select-dropdown" id="param-structure-dropdown">
+                                        <!-- Dynamically populated corporate structure tree via javascript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Код ОКЗ -->
+                        <div class="form-group">
+                            <label for="param-okz">Код ОКЗ</label>
+                            <input type="text" id="param-okz" placeholder="Введите код">
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <!-- Блок «Задачи и функции» -->
+                <div class="tasks-functions-header">
+                    <div class="tasks-header-left">
+                        <div class="tasks-icon-box">
+                            <i data-lucide="list-todo"></i>
+                        </div>
+                        <div class="tasks-title-group">
+                            <h3 class="tasks-title">Задачи и функции</h3>
+                            <p class="tasks-description">Цели участия в задачах. Суммарный вес участия в задачах всех целей должен составлять 100 процентов</p>
+                        </div>
+                    </div>
+                    <button class="btn-add-goal" id="add-goal-btn" disabled>
+                        Добавить цель
+                    </button>
+                </div>
+                
+                <!-- Контейнер для карточек целей -->
+                <div id="goals-container" class="goals-container"></div>
+            </div>
+
+            <div class="stage-content-area" id="competencies-content" style="display: none;">
+                <!-- Section Label: SOFT SKILLS -->
+                <div class="competency-section-label">SOFT SKILLS</div>
+
+                <!-- Accordion: Soft Skills (Renamed to Kompetentsii) -->
+                <div class="accordion-card" id="soft-skills-accordion">
+                    <header class="accordion-header" id="soft-skills-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="brain" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                                <div class="mandatory-badge"><span>*</span></div>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Компетенции</h3>
+                                <span class="skills-counter" id="soft-skills-counter">[0 / 8]</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-soft-skills-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-soft-skill-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="skills-dropdown smart-dropdown" id="soft-skills-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="soft-skills-search" placeholder="Поиск мягких навыков...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="soft-skills-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                            <div class="dropdown-footer" id="soft-skills-create" style="display: none;">
+                                <button class="btn-create-skill">
+                                    <i data-lucide="plus-circle"></i>
+                                    <span>Создать новую компетенцию</span>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Soft Skills — это навыки, связанные с личностными качествами, которые помогают эффективно взаимодействовать в коллективе, решать конфликты и управлять рабочими процессами.</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="soft-skills-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="layers"></i>
+                            </div>
+                            <p>Компетенции не добавлены. Нажмите кнопку «Добавить» в заголовке блока.</p>
+                        </div>
+
+                        <!-- Skills Grid -->
+                        <div class="skills-grid" id="soft-skills-grid" style="display: none;">
+                            <!-- Skill cards injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Label: HARD SKILLS -->
+                <div class="competency-section-label">HARD SKILLS</div>
+
+                <!-- Accordion: Professional Skills -->
+                <div class="accordion-card" id="hard-skills-accordion">
+                    <header class="accordion-header" id="hard-skills-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="library" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                                <div class="mandatory-badge"><span>*</span></div>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Профессиональные знания и навыки</h3>
+                                <span class="skills-counter" id="hard-skills-counter">0 выбрано</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-hard-skills-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-hard-skill-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Smart Dropdown Menu -->
+                        <div class="skills-dropdown smart-dropdown" id="hard-skills-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="hard-skills-search" placeholder="Поиск по реестру знаний...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="hard-skills-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                            <div class="dropdown-footer" id="hard-skills-create" style="display: none;">
+                                <button class="btn-create-skill">
+                                    <i data-lucide="plus-circle"></i>
+                                    <span>Создать новый навык</span>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Профессиональные знания и навыки — это технические инструменты, методики и экспертные знания, необходимые для выполнения конкретных функциональных задач (например: SQL, Java, Чтение чертежей).</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="hard-skills-empty">
+                            <div class="empty-icon-box large">
+                                <i data-lucide="book-open"></i>
+                            </div>
+                            <p>Профессиональный стек не указан. Начните добавлять знания через кнопку в заголовке.</p>
+                        </div>
+
+                        <!-- Tag Cloud -->
+                        <div class="tag-cloud" id="hard-skills-cloud" style="display: none;">
+                            <!-- Tags injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion: Foreign Languages -->
+                <div class="accordion-card" id="lang-skills-accordion">
+                    <header class="accordion-header" id="lang-skills-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="languages" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                                <div class="mandatory-badge"><span>*</span></div>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Иностранные языки</h3>
+                                <span class="skills-counter" id="lang-skills-counter">0 добавлено</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-lang-skills-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-lang-skill-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Language Dropdown -->
+                        <div class="skills-dropdown" id="lang-skills-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="lang-skills-search" placeholder="Поиск языка...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="lang-skills-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Укажите иностранные языки и требуемый уровень владения ими для качественного выполнения должностных обязанностей (работа с документацией, международные коммуникации).</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="lang-skills-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="globe"></i>
+                            </div>
+                            <p>Языковые требования не указаны. Начните выбор через кнопку в заголовке.</p>
+                        </div>
+
+                        <!-- Language Grid -->
+                        <div class="skills-grid" id="lang-skills-grid" style="display: none;">
+                            <!-- Cards injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion: Software Knowledge -->
+                <div class="accordion-card" id="soft-tech-accordion">
+                    <header class="accordion-header" id="soft-tech-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="monitor" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Знание ПО</h3>
+                                <span class="skills-counter" id="soft-tech-counter">0 выбрано</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-soft-tech-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-soft-tech-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Software Dropdown -->
+                        <div class="skills-dropdown smart-dropdown" id="soft-tech-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="soft-tech-search" placeholder="Поиск программы...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="soft-tech-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                            <div class="dropdown-footer" id="soft-tech-create" style="display: none;">
+                                <button class="btn-create-skill">
+                                    <i data-lucide="plus-circle"></i>
+                                    <span>Добавить как новое ПО</span>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Укажите программное обеспечение, информационные системы и цифровые инструменты, владение которыми обязательно для данной должности (например: системы учета, графические редакторы, среды разработки).</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="soft-tech-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="monitor"></i>
+                            </div>
+                            <p>Список программного обеспечения не сформирован. Используйте кнопку «Добавить» для выбора инструментов.</p>
+                        </div>
+
+                        <!-- Tag Cloud -->
+                        <div class="tag-cloud" id="soft-tech-cloud" style="display: none;">
+                            <!-- Tags injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion: Certificates and Permits -->
+                <div class="accordion-card" id="cert-skills-accordion">
+                    <header class="accordion-header" id="cert-skills-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="award" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Сертификаты и допуски</h3>
+                                <span class="skills-counter" id="cert-skills-counter">0 выбрано</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-cert-skills-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-cert-skill-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Certificates Dropdown -->
+                        <div class="skills-dropdown smart-dropdown" id="cert-skills-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="cert-skills-search" placeholder="Поиск документа...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="cert-skills-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                            <div class="dropdown-footer" id="cert-skills-create" style="display: none;">
+                                <button class="btn-create-skill">
+                                    <i data-lucide="plus-circle"></i>
+                                    <span>Добавить как новый документ</span>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Укажите наличие обязательных сертификатов, аттестатов, государственных лицензий или специальных допусков к работе, подтверждающих квалификацию сотрудника (например: квалификационный аттестат аудитора, удостоверение по охране труда).</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="cert-skills-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="medal"></i>
+                            </div>
+                            <p>Перечень сертификатов не сформирован. Используйте кнопку «Добавить» для внесения данных.</p>
+                        </div>
+
+                        <!-- Tag Cloud -->
+                        <div class="tag-cloud" id="cert-skills-cloud" style="display: none;">
+                            <!-- Tags injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion: Additional Work Permits -->
+                <div class="accordion-card" id="extra-permits-accordion">
+                    <header class="accordion-header" id="extra-permits-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="shield-check" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Дополнительный допуск к работам</h3>
+                                <span class="skills-counter" id="extra-permits-counter">0 выбрано</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-extra-permits-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-extra-permit-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Permits Dropdown -->
+                        <div class="skills-dropdown smart-dropdown" id="extra-permits-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="extra-permits-search" placeholder="Поиск допуска...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="extra-permits-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                            <div class="dropdown-footer" id="extra-permits-create" style="display: none;">
+                                <button class="btn-create-skill">
+                                    <i data-lucide="plus-circle"></i>
+                                    <span>Добавить как новый допуск</span>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Укажите наличие специальных разрешений и допусков, необходимых для выполнения работ с повышенной опасностью или требующих государственного регулирования (например: допуск к верхолазным работам, работа с ГСМ, группа допуска по электробезопасности).</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="extra-permits-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="shield"></i>
+                            </div>
+                            <p>Допуски к специальным работам не указаны. Нажмите кнопку «Добавить», если они требуются для должности.</p>
+                        </div>
+
+                        <!-- Tag Cloud -->
+                        <div class="tag-cloud" id="extra-permits-cloud" style="display: none;">
+                            <!-- Tags injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Label: QUALIFICATION REQUIREMENTS -->
+                <div class="competency-section-label">КВАЛИФИКАЦИОННЫЕ ТРЕБОВАНИЯ</div>
+
+                <!-- Accordion: Education -->
+                <div class="accordion-card" id="edu-skills-accordion">
+                    <header class="accordion-header" id="edu-skills-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="graduation-cap" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Образование</h3>
+                                <span class="skills-counter" id="edu-skills-counter">0 выбрано</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-edu-skills-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-edu-skill-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Education Dropdown -->
+                        <div class="skills-dropdown smart-dropdown" id="edu-skills-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="edu-skills-search" placeholder="Поиск уровня или профиля...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="edu-skills-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                            <div class="dropdown-footer" id="edu-skills-create" style="display: none;">
+                                <button class="btn-create-skill">
+                                    <i data-lucide="plus-circle"></i>
+                                    <span>Добавить как новое направление</span>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Укажите минимально допустимый уровень образования (высшее, среднее специальное) и предпочтительные профильные направления. Также вы можете добавить требования к дополнительному образованию (профильные курсы, тренинги).</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="edu-skills-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="graduation-cap"></i>
+                            </div>
+                            <p>Требования к образованию не указаны. Нажмите кнопку «Добавить», чтобы выбрать уровень и профиль обучения.</p>
+                        </div>
+
+                        <!-- Tag Cloud -->
+                        <div class="tag-cloud" id="edu-skills-cloud" style="display: none;">
+                            <!-- Tags injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion: Experience -->
+                <div class="accordion-card" id="exp-skills-accordion">
+                    <header class="accordion-header" id="exp-skills-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="briefcase" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                                <div class="mandatory-badge"><span>*</span></div>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Опыт работы</h3>
+                                <span class="skills-counter" id="exp-skills-counter">Не указан</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-exp-skills-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-exp-skill-btn">
+                                <i data-lucide="plus"></i>
+                                Указать стаж работы
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Укажите требования к продолжительности и специфике профессионального опыта. Помните, что руководящий стаж является зависимым полем и не может превышать общий стаж работы.</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="exp-skills-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="briefcase"></i>
+                            </div>
+                            <p>Требования к опыту не указаны. Нажмите кнопку «Добавить», чтобы задать параметры стажа.</p>
+                        </div>
+
+                        <!-- Experience Grid -->
+                        <div class="skills-grid" id="exp-skills-grid" style="display: none;">
+                            <!-- Cards injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion: Functional Area -->
+                <div class="accordion-card" id="func-area-accordion">
+                    <header class="accordion-header" id="func-area-header">
+                        <div class="header-left">
+                            <div class="accordion-icon-box">
+                                <i data-lucide="compass" class="main-icon"></i>
+                                <i data-lucide="chevron-down" class="chevron-morph"></i>
+                            </div>
+                            <div class="header-title-group">
+                                <h3 class="accordion-title">Направление деятельности</h3>
+                                <span class="skills-counter" id="func-area-counter">0 выбрано</span>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button class="btn-reset-accordion" id="reset-func-area-btn" title="Сбросить раздел" style="display: none;">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button class="btn-add-skill" id="add-func-area-btn">
+                                <i data-lucide="plus"></i>
+                                Добавить
+                            </button>
+                        </div>
+                        
+                        <!-- Functional Area Dropdown -->
+                        <div class="skills-dropdown smart-dropdown" id="func-area-dropdown">
+                            <div class="dropdown-header">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="func-area-search" placeholder="Поиск направления...">
+                                </div>
+                                <button class="dropdown-close"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="dropdown-list" id="func-area-list">
+                                <!-- Items injected by JS -->
+                            </div>
+                            <div class="dropdown-footer" id="func-area-create" style="display: none;">
+                                <button class="btn-create-skill">
+                                    <i data-lucide="plus-circle"></i>
+                                    <span>Создать направление</span>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="accordion-body">
+                        <div class="info-banner">
+                            <i data-lucide="info"></i>
+                            <p>Укажите функциональную область, к которой относится данная должность. Это поможет системе автоматически предложить релевантные профессиональные компетенции и знания.</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="skills-empty-state" id="func-area-empty">
+                            <div class="empty-icon-box">
+                                <i data-lucide="compass"></i>
+                            </div>
+                            <p>Направление деятельности не указано. Нажмите кнопку «Добавить», чтобы определить профессиональную область.</p>
+                        </div>
+
+                        <!-- Tag Cloud -->
+                        <div class="tag-cloud" id="func-area-cloud" style="display: none;">
+                            <!-- Tags injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="drawer-footer">
+            <div class="footer-left">
+                <button class="btn-back" id="prev-stage-btn">Назад</button>
+                <button class="btn-back" id="reset-competencies-btn" style="display: none;">Сбросить всё</button>
+            </div>
+            <button class="btn-next" id="next-stage-btn" disabled>Далее</button>
+        </footer>
+        <div id="profile-ai-assistant-root"></div>
+    </div>
+
+    <!-- Боковой дровер просмотра профиля (Карточка профиля) -->
+    <div id="view-profile-drawer" class="side-drawer">
+        <!-- Header -->
+        <header class="drawer-header view-drawer-header-layout">
+            <div class="drawer-header-top">
+                <div class="drawer-header-left">
+                    <div class="profile-icon-wrapper" id="back-view-drawer-btn" title="Вернуться">
+                        <i data-lucide="user" class="icon-default"></i>
+                        <i data-lucide="arrow-left" class="icon-hover"></i>
+                    </div>
+                    <div class="drawer-title-container">
+                        <h2 class="drawer-title" id="view-drawer-title">Профиль должности</h2>
+                        <!-- Breadcrumbs под наименованием -->
+                        <div class="drawer-breadcrumbs">
+                            <button class="breadcrumbs-copy-btn" id="copy-path-btn" title="Копировать путь">
+                                <i data-lucide="copy"></i>
+                            </button>
+                            <div class="breadcrumbs-list" id="view-drawer-breadcrumbs-list">
+                                <!-- Заполняется динамически в JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="drawer-close-btn" id="close-view-drawer-btn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <!-- 1. Панель инструментов (Toolbar) -->
+            <div class="view-drawer-toolbar">
+                <div class="view-drawer-toolbar-left">
+                    <button class="toolbar-btn-secondary" id="btn-edit-profile">
+                        <i data-lucide="edit-3"></i>
+                        <span>Редактировать</span>
+                    </button>
+
+                    <button class="toolbar-btn-secondary" id="btn-edit-classifier">
+                        <i data-lucide="file-signature"></i>
+                        <span>Изменить классификатор</span>
+                    </button>
+                    <button class="toolbar-btn-secondary" id="btn-edit-okz">
+                        <i data-lucide="binary"></i>
+                        <span>Изменить код ОКЗ</span>
+                    </button>
+                    <button class="toolbar-btn-secondary" id="btn-send-review">
+                        <i data-lucide="send"></i>
+                        <span>Отправить на оценку</span>
+                    </button>
+                    <button class="toolbar-btn-secondary" id="btn-archive-profile">
+                        <i data-lucide="archive"></i>
+                        <span>Перенести в архив</span>
+                    </button>
+                    <button class="toolbar-btn-icon" id="btn-copy-profile" title="Копировать">
+                        <i data-lucide="copy"></i>
+                    </button>
+                    <button class="toolbar-btn-icon" id="btn-export-profile" title="Экспорт">
+                        <i data-lucide="download"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <div class="drawer-body" id="view-drawer-body">
+
+
+            <!-- 2. Список атрибутов (Attributes List Container) -->
+            <div class="view-drawer-content-wrapper">
+                <div class="view-drawer-content" id="view-profile-attributes-container">
+                    <!-- Генерируется динамически в JS -->
+                </div>
+            </div>
+
+            <!-- 3. Блок вкладок и контента целей/функций/задач -->
+            <div class="view-drawer-tabs">
+                <button class="view-tab-btn active" data-tab="functional">Общие положения и функционал</button>
+                <button class="view-tab-btn" data-tab="competencies">Ключевые компетенции</button>
+                <button class="view-tab-btn" data-tab="reward">Вознаграждение</button>
+                <button class="view-tab-btn" data-tab="requests">Заявки</button>
+                <a href="#" class="view-tab-link-right">Что такое Задачи / Функции?</a>
+                <button class="btn-secondary-sm" id="btn-view-add-goal" style="display: none; margin-left: 12px;">
+                    Добавить цель
+                </button>
+            </div>
+            <div class="view-drawer-tab-content" id="view-profile-goals-container">
+                <!-- Генерируется динамически в JS -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="drawer-footer" id="view-drawer-footer" style="min-height: 72px; display: flex; justify-content: flex-end; align-items: center; padding: 16px 32px; border-top: 1px solid #E2E8F0; gap: 12px; display: none;">
+            <button class="toolbar-btn-secondary" id="btn-cancel-view-edit">Отмена</button>
+            <button class="btn-primary" id="btn-save-view-edit" disabled>Сохранить</button>
+        </footer>
+    </div>
+
+    <!-- Модальное окно подтверждения переноса в архив -->
+    <div id="archive-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Перенос профиля в архив</h3>
+                <button class="modal-close" id="btn-close-archive-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите перенести текущий профиль должности в архив?</p>
+                <p style="margin-top: 8px; font-size: 13px; color: #888888;">Архивные профили должностей будут скрыты из общего списка и станут доступны только в режиме чтения.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel-modal" id="btn-cancel-archive" style="background: none; border: 1px solid var(--border-color, #E2E8F0); color: var(--text-secondary, #64748B); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">Отмена</button>
+                <button class="btn-danger" id="btn-confirm-archive">В архив</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно изменения классификатора -->
+    <div id="edit-classifier-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Изменение классификатора</h3>
+                <button class="modal-close" id="btn-close-classifier-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="input-classifier-val" style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary, #64748B); margin-bottom: 8px;">Классификатор должности</label>
+                    <input type="text" id="input-classifier-val" placeholder="Введите классификатор">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel-modal" id="btn-cancel-classifier" style="background: none; border: 1px solid var(--border-color, #E2E8F0); color: var(--text-secondary, #64748B); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">Отмена</button>
+                <button class="btn-primary" id="btn-save-classifier" style="background-color: var(--primary-color, #3B82F6); color: #FFFFFF; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background-color 0.2s;">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения отправки на оценку -->
+    <div id="send-review-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Отправка профиля на оценку</h3>
+                <button class="modal-close" id="btn-close-send-review-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите отправить текущий профиль должности на оценку?</p>
+                <p style="margin-top: 8px; font-size: 13px; color: #888888;">Статус профиля изменится на «На оценке». Все эксперты будут уведомлены о необходимости проведения оценки данного профиля.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel-modal" id="btn-cancel-send-review" style="background: none; border: 1px solid var(--border-color, #E2E8F0); color: var(--text-secondary, #64748B); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">Отмена</button>
+                <button class="btn-primary" id="btn-confirm-send-review" style="background-color: var(--primary-color, #3B82F6); color: #FFFFFF; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background-color 0.2s;">Отправить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно изменения кода ОКЗ -->
+    <div id="edit-okz-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Изменение кода ОКЗ</h3>
+                <button class="modal-close" id="btn-close-okz-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 16px; font-size: 13px; color: var(--text-secondary, #64748B);">
+                    Текущее значение: <span id="current-okz-value-display" style="font-weight: 600; color: var(--text-primary, #0F172A);"></span>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="input-okz-val" style="display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary, #64748B); margin-bottom: 8px;">Код ОКЗ</label>
+                    <input type="text" id="input-okz-val" placeholder="Введите код ОКЗ">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel-modal" id="btn-cancel-okz" style="background: none; border: 1px solid var(--border-color, #E2E8F0); color: var(--text-secondary, #64748B); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">Отмена</button>
+                <button class="btn-primary" id="btn-apply-okz" style="background-color: var(--primary-color, #3B82F6); color: #FFFFFF; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background-color 0.2s;">Применить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/data/profiles.seed.js"></script>
+    <script src="src/data/requests.seed.js"></script>
+    <script src="src/domain/profile-model.js"></script>
+    <script src="src/store/profile-store.js"></script>
+    <script src="src/features/profiles-table/profiles-table.render.js"></script>
+    <script src="src/features/profile-create/profile-create.mapper.js"></script>
+    <script src="src/features/profile-card/profile-card.actions.js"></script>
+    <script src="src/features/profile-ai-assistant/model/profile-ai-assistant.analysis-card.model.js"></script>
+    <script src="src/features/profile-ai-assistant/data/profile-ai-assistant.analysis-card.mock.js"></script>
+    <script src="src/features/profile-ai-assistant/data/profile-ai-assistant.mock.js"></script>
+    <script src="src/features/profile-ai-assistant/state/profile-ai-assistant.state.js"></script>
+    <script src="src/features/profile-ai-assistant/render/profile-ai-assistant.render.js"></script>
+    <script src="src/features/profile-ai-assistant/events/profile-ai-assistant.events.js"></script>
+    <script src="src/app.js"></script>
+</body>
+</html>
+
+
+
