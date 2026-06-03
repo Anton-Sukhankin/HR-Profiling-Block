@@ -10,7 +10,7 @@ This planning standard is adapted for this project from OpenAI's public guidance
 
 Use an ExecPlan when the task is large enough that losing context would be risky. Examples in this project:
 
-- redesigning the AI assistant behavior across `Генерация`, `Анализ`, and `Чат`;
+- redesigning the AI assistant behavior across the current modes `Анализ` and `Чат`;
 - changing the profile entity model or data synchronization rules;
 - restructuring folders or feature modules;
 - changing how stage 1 and stage 2 interact;
@@ -122,7 +122,7 @@ Also include browser scenarios when UI behavior matters, for example:
 - Open `index.html` in the Codex in-app browser.
 - Open profile creation.
 - Open AI assistant.
-- Run generation.
+- Run the relevant assistant scenario.
 - Switch to analysis.
 - Click a card action.
 - Confirm the workspace value changes and the card offers undo.

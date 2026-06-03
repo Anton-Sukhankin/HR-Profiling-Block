@@ -63,6 +63,9 @@
 
     if (profileStore) {
         profileStore.normalizeAll();
+        if (window.renderProfilesTable) {
+            window.renderProfilesTable(profileStore.getProfiles());
+        }
     }
 
     // Inputs for validation
@@ -5168,13 +5171,10 @@
         return false;
     };
 
-    const saveViewEditMode = () => {
-        if (!currentViewProfile) return;
-        
+    const collectViewEditModeDraft = () => {
+        if (!currentViewProfile || !isViewEditMode) return;
+
         const activeTab = document.querySelector('.view-tab-btn.active');
-        const tabText = activeTab ? activeTab.innerText.trim() : '';
-        
-        // Extract general attributes in edit mode
         const profileTrigger = document.getElementById('attr-edit-profile-trigger');
         const codeInput = document.getElementById('attr-edit-code-input');
         const categoryTrigger = document.getElementById('attr-edit-category-trigger');
@@ -5208,13 +5208,18 @@
         }
 
         if (isViewTab(activeTab, 'functional')) {
-            const extractedGoals = extractGoalsFromDOM('view-profile-goals-container');
-            currentViewProfile.goals = extractedGoals;
+            currentViewProfile.goals = extractGoalsFromDOM('view-profile-goals-container');
         }
 
         if (isViewTab(activeTab, 'competencies')) {
             currentViewProfile.competencies = extractCompetenciesState();
+            currentViewProfile.competenciesAreUserDefined = true;
         }
+    };
+
+    const saveViewEditMode = () => {
+        if (!currentViewProfile) return;
+        collectViewEditModeDraft();
 
         syncCurrentViewProfile();
         
@@ -7790,6 +7795,7 @@
                     department: departmentVal || (profileModel ? profileModel.SYSTEM_DEFAULTS.department : ''),
                     okzCode: okzVal,
                     goals: extractedGoals,
+                    competenciesAreUserDefined: true,
                     competencies: extractCompetenciesState()
                 };
 
@@ -7960,6 +7966,7 @@
         if (tabBtn) {
             const tabsContainer = tabBtn.closest('.view-drawer-tabs');
             if (tabsContainer) {
+                collectViewEditModeDraft();
                 tabsContainer.querySelectorAll('.view-tab-btn').forEach(btn => btn.classList.remove('active'));
                 tabBtn.classList.add('active');
                 

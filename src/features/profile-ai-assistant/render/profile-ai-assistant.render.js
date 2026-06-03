@@ -538,8 +538,8 @@
                 </footer>
             `;
         }
-        const placeholder = "??????? ??????";
-        const ariaLabel = "????????? ?????????";
+        const placeholder = "Задайте вопрос";
+        const ariaLabel = "Отправить сообщение";
 
         return `
             <footer class="profile-ai-footer profile-ai-footer--chat">

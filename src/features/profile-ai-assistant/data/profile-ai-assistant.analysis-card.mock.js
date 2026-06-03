@@ -10,7 +10,7 @@
         examples: [
             {
                 id: "analysis_goal_missing_example",
-                type: types.WARNING || "warning",
+                type: types.CRITICAL || "critical",
                 title: "Цель не добавлена",
                 description: "После выбора должности и места в структуре добавьте цель, а затем раскройте её через задачу и функцию.",
                 location: "Первый этап → Общие положения и функционал",
@@ -22,7 +22,7 @@
             },
             {
                 id: "analysis_goal_name_suggestion_example",
-                type: types.WARNING || "warning",
+                type: types.CRITICAL || "critical",
                 title: "Цель не выбрана",
                 description: "Цель задаёт верхнеуровневый смысл профиля и нужна для дальнейшего анализа.",
                 location: "Цель 1",

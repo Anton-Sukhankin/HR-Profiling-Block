@@ -34,13 +34,29 @@ function getStatusBadge(status) {
         className = 'draft'; // Серый цвет для архивного статуса
     }
     
-    return `<span class="status-badge ${className}">${text}</span>`;
+    return `<span class="status-badge ${className}">${escapeHtml(text)}</span>`;
+}
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 // Вспомогательная функция для создания HTML строки таблицы для одного профиля
 function createRowHtml(profile) {
     const formattedDate = formatDate(profile.updatedAt);
     const statusBadge = getStatusBadge(profile.status);
+    const id = escapeHtml(profile.id || '');
+    const code = escapeHtml(profile.code || '');
+    const name = escapeHtml(profile.name || '');
+    const department = escapeHtml(profile.department || '');
+    const band = escapeHtml(profile.band || '');
+    const classifier = escapeHtml(profile.classifier || '');
+    const date = escapeHtml(formattedDate);
     
     // Отрисовка галочки "Привязка к позиции" (hasBinding)
     const bindingHtml = profile.hasBinding 
@@ -55,20 +71,20 @@ function createRowHtml(profile) {
     `;
 
     return `
-        <div class="table-row" data-id="${profile.id || ''}">
+        <div class="table-row" data-id="${id}">
             <div class="table-cell checkbox-cell">
                 <input type="checkbox" class="row-checkbox">
             </div>
-            <div class="table-cell col-code">${profile.code || ''}</div>
+            <div class="table-cell col-code">${code}</div>
             <div class="table-cell col-profile">
-                <a href="#" class="profile-link" title="${profile.name || ''}">${profile.name || ''}</a>
+                <a href="#" class="profile-link" title="${name}">${name}</a>
             </div>
-            <div class="table-cell col-structure">${profile.department || ''}</div>
-            <div class="table-cell col-band">${profile.band || ''}</div>
+            <div class="table-cell col-structure">${department}</div>
+            <div class="table-cell col-band">${band}</div>
             <div class="table-cell col-binding">${bindingHtml}</div>
-            <div class="table-cell col-classifier">${profile.classifier || ''}</div>
+            <div class="table-cell col-classifier">${classifier}</div>
             <div class="table-cell col-standard">${typicalHtml}</div>
-            <div class="table-cell col-date">${formattedDate}</div>
+            <div class="table-cell col-date">${date}</div>
             <div class="table-cell col-status">${statusBadge}</div>
         </div>
     `;
@@ -84,7 +100,7 @@ function initCheckboxes() {
     selectAllCheckbox.indeterminate = false;
 
     // Слушатель изменения состояния главного чекбокса
-    selectAllCheckbox.addEventListener('change', () => {
+    selectAllCheckbox.onchange = () => {
         const rowCheckboxes = document.querySelectorAll('.table-body .row-checkbox');
         rowCheckboxes.forEach(cb => {
             cb.checked = selectAllCheckbox.checked;
@@ -93,12 +109,12 @@ function initCheckboxes() {
                 row.classList.toggle('selected', selectAllCheckbox.checked);
             }
         });
-    });
+    };
 
     // Делегирование событий для чекбоксов строк
     const tableBody = document.querySelector('.table-body');
     if (tableBody) {
-        tableBody.addEventListener('change', (e) => {
+        tableBody.onchange = (e) => {
             if (e.target && e.target.classList.contains('row-checkbox')) {
                 const row = e.target.closest('.table-row');
                 if (row) {
@@ -106,7 +122,7 @@ function initCheckboxes() {
                 }
                 updateSelectAllState();
             }
-        });
+        };
     }
 }
 

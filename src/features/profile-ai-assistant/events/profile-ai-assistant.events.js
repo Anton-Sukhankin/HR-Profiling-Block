@@ -442,18 +442,25 @@
         }
 
         if (!goals.length) {
+            const addGoalButton = document.getElementById("add-goal-btn");
+            const canCreateGoalDraft = Boolean(addGoalButton && !addGoalButton.disabled);
             items.push({
                 id: "analysis_goals_missing",
                 type: "critical",
                 title: "Цель не добавлена",
                 description: "После выбора должности и места в структуре добавьте цель, а затем раскройте её через задачу и функцию.",
                 location: "Первый этап → Общие положения и функционал",
-                targetKey: setAnalysisTarget(document.getElementById("add-goal-btn") || document.getElementById("functional-content"), "analysis_goals_missing"),
+                targetKey: setAnalysisTarget(addGoalButton || document.getElementById("functional-content"), "analysis_goals_missing"),
                 suggestedText: "Минимальный ручной контекст для продолжения: добавленная цель, одна задача внутри цели и хотя бы одна выбранная функция.",
-                action: {
-                    type: "custom",
-                    label: "Добавить цель, задачу и функции"
-                }
+                action: canCreateGoalDraft
+                    ? {
+                        type: "custom",
+                        label: "Добавить цель, задачу и функции"
+                    }
+                    : {
+                        type: "focus_target",
+                        label: "Перейти к добавлению цели"
+                    }
             });
         }
 
@@ -1189,7 +1196,9 @@
         trigger.textContent = value;
         trigger.dataset.value = value;
         trigger.classList.remove("is-placeholder");
-        trigger.closest(".custom-select-wrapper, .col-task-name-wrapper, .goal-name-wrapper")?.classList.remove("error-field");
+        const wrapper = trigger.closest(".custom-select-wrapper, .col-task-name-wrapper, .goal-name-wrapper");
+        wrapper?.classList.remove("is-placeholder");
+        wrapper?.classList.remove("error-field");
     };
 
     const getAnalysisTargetElement = (item) => {
@@ -1254,6 +1263,65 @@
 
     const applyTaskActionToWorkspace = (item) => {
         const target = getAnalysisTargetElement(item);
+
+        if (item.id === "analysis_goals_missing") {
+            const addGoalButton = document.getElementById("add-goal-btn");
+            const goalsContainer = document.getElementById("goals-container");
+            if (!addGoalButton || addGoalButton.disabled || !goalsContainer) {
+                return { applied: false };
+            }
+
+            addGoalButton.click();
+            const goalCard = Array.from(goalsContainer.querySelectorAll(".goal-card")).pop();
+            if (!goalCard) return { applied: false };
+
+            const goalName = "Обеспечение анализа и развития бизнес-процессов";
+            const taskName = "Сбор и анализ требований заинтересованных сторон";
+            setTriggerValue(goalCard.querySelector(".goal-name-text"), goalName);
+            setTriggerValue(goalCard.querySelector(".col-goal-role .custom-select-trigger"), "Отвечает");
+
+            const contextApi = (window.HRProfileApp || {}).profileCreateStageContext;
+            if (contextApi && typeof contextApi.refreshFunctionalStage === "function") {
+                contextApi.refreshFunctionalStage();
+            }
+
+            let taskRow = goalCard.querySelector(".task-body tr");
+            if (!taskRow) {
+                goalCard.querySelector(".btn-add-task")?.click();
+                taskRow = goalCard.querySelector(".task-body tr");
+            }
+            if (!taskRow) return { applied: false };
+
+            setTriggerValue(taskRow.querySelector(".task-name-text"), taskName);
+            setTriggerValue(taskRow.querySelector(".col-task-role .custom-select-trigger"), "Исполняет");
+
+            const participationInput = taskRow.querySelector(".task-participation-input");
+            if (participationInput && !participationInput.value.trim()) {
+                participationInput.value = "50%";
+                participationInput.dispatchEvent(new Event("input", { bubbles: true }));
+                participationInput.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+
+            if (contextApi && typeof contextApi.refreshFunctionalStage === "function") {
+                contextApi.refreshFunctionalStage();
+            }
+
+            const functionResult = appendFunctionsToTask(taskRow, taskName);
+            const undoKey = `analysis_created_goal_${Date.now()}`;
+            goalCard.dataset.aiGenerated = "profile-ai";
+            goalCard.dataset.aiUndoKey = undoKey;
+
+            return {
+                applied: true,
+                appliedValue: `${goalName} → ${taskName}`,
+                undoAction: {
+                    type: "remove_created_goal",
+                    undoKey,
+                    functionNames: functionResult.addedNames || []
+                }
+            };
+        }
+
         if (!target) return { applied: false };
 
         const goalCard = target.closest(".goal-card") || (target.matches(".goal-card") ? target : null);
@@ -1604,6 +1672,14 @@
             const task = document.querySelector(`tr[data-ai-undo-key="${escapeCssIdent(undoAction.undoKey || "")}"]`);
             if (task) {
                 task.remove();
+                changed = true;
+            }
+        }
+
+        if (undoAction.type === "remove_created_goal") {
+            const goal = document.querySelector(`.goal-card[data-ai-undo-key="${escapeCssIdent(undoAction.undoKey || "")}"]`);
+            if (goal) {
+                goal.remove();
                 changed = true;
             }
         }

@@ -13,7 +13,7 @@
     },
     {
       "id": "warning",
-      "type": "warning",
+      "type": "critical",
       "title": "Предупреждения",
       "description": "Влияют на качество заполнения",
       "priority": 20,
@@ -31,7 +31,7 @@
   "examples": [
     {
       "id": "analysis_goal_missing_example",
-      "type": "warning",
+      "type": "critical",
       "title": "Цель не добавлена",
       "description": "После выбора должности и места в структуре добавьте цель, а затем раскройте её через задачу и функцию.",
       "location": "Первый этап → Общие положения и функционал",
