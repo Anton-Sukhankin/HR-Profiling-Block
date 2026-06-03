@@ -2063,6 +2063,22 @@ td.col-funcs {
     color: #E11D48 !important;
 }
 
+.btn-delete-task:disabled,
+.btn-delete-task.is-disabled {
+    cursor: not-allowed !important;
+    background-color: #F8FAFC !important;
+    color: #CBD5E1 !important;
+    opacity: 0.6 !important;
+    transform: none !important;
+}
+
+.btn-delete-task:disabled i,
+.btn-delete-task:disabled svg,
+.btn-delete-task.is-disabled i,
+.btn-delete-task.is-disabled svg {
+    color: #CBD5E1 !important;
+}
+
 /* --- New Custom Select & Function Rows inside Task Table --- */
 .functions-cell-container {
     display: flex;
@@ -2306,6 +2322,34 @@ td.col-funcs {
 .btn-add-function-row:hover i,
 .btn-add-function-row:hover svg {
     color: #0056b3 !important;
+}
+
+.btn-add-function-row:disabled,
+.btn-add-function-row.is-disabled,
+.btn-paste-function-row:disabled,
+.btn-paste-function-row.is-disabled,
+.btn-secondary-sm:disabled,
+.btn-secondary-sm.is-disabled {
+    cursor: not-allowed !important;
+    background-color: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+    color: #CBD5E1 !important;
+    opacity: 0.7 !important;
+}
+
+.btn-add-function-row:disabled i,
+.btn-add-function-row:disabled svg,
+.btn-add-function-row.is-disabled i,
+.btn-add-function-row.is-disabled svg,
+.btn-paste-function-row:disabled i,
+.btn-paste-function-row:disabled svg,
+.btn-paste-function-row.is-disabled i,
+.btn-paste-function-row.is-disabled svg,
+.btn-secondary-sm:disabled i,
+.btn-secondary-sm:disabled svg,
+.btn-secondary-sm.is-disabled i,
+.btn-secondary-sm.is-disabled svg {
+    color: #CBD5E1 !important;
 }
 
 /* Validation styling */

@@ -141,6 +141,8 @@
         if (addGoalBtn) {
             addGoalBtn.disabled = !paramsValid;
         }
+
+        updateAllGoalCardsTaskAvailability();
         
         const goals = document.querySelectorAll('.goal-card');
         let goalsValid = goals.length > 0;
@@ -2780,6 +2782,7 @@
 
     // --- Task Role Dropdown Logic ---
     const openTaskRoleDropdown = (selectWrapper) => {
+        if (!selectWrapper || selectWrapper.classList.contains('is-disabled')) return;
         closeAllGoalTaskDropdowns();
         selectWrapper.classList.add('is-active');
 
@@ -2842,6 +2845,7 @@
 
     // --- Task Participation Dropdown Logic ---
     const openTaskParticipationDropdown = (inputEl) => {
+        if (!inputEl || inputEl.disabled) return;
         closeAllGoalTaskDropdowns();
 
         const container = inputEl.closest('.task-participation-container');
@@ -3297,8 +3301,10 @@
                     trigger.textContent = val;
                     trigger.dataset.value = val;
                     trigger.classList.remove('is-placeholder');
+                    wrapper.classList.remove('is-placeholder');
                     wrapper.classList.remove('error-field');
                     closeGoalNameDropdown();
+                    updateGoalCardTaskAvailability(wrapper.closest('.goal-card'));
                     validateFunctionalStage();
                 });
             });
@@ -3324,8 +3330,10 @@
                     trigger.textContent = newGoal;
                     trigger.dataset.value = newGoal;
                     trigger.classList.remove('is-placeholder');
+                    wrapper.classList.remove('is-placeholder');
                     wrapper.classList.remove('error-field');
                     closeGoalNameDropdown();
+                    updateGoalCardTaskAvailability(wrapper.closest('.goal-card'));
                     validateFunctionalStage();
                 });
             }
@@ -3360,6 +3368,7 @@
 
     // --- Task Name Dropdown Logic ---
     const openTaskNameDropdown = (wrapper) => {
+        if (!wrapper || wrapper.classList.contains('is-disabled')) return;
         closeAllGoalTaskDropdowns();
         wrapper.classList.add('is-active');
 
@@ -3441,8 +3450,10 @@
                     trigger.textContent = val;
                     trigger.dataset.value = val;
                     trigger.classList.remove('is-placeholder');
+                    wrapper.classList.remove('is-placeholder');
                     wrapper.classList.remove('error-field');
                     closeTaskNameDropdown();
+                    updateTaskRowAvailability(wrapper.closest('tr'));
                     validateFunctionalStage();
                 });
             });
@@ -3468,8 +3479,10 @@
                     trigger.textContent = newTask;
                     trigger.dataset.value = newTask;
                     trigger.classList.remove('is-placeholder');
+                    wrapper.classList.remove('is-placeholder');
                     wrapper.classList.remove('error-field');
                     closeTaskNameDropdown();
+                    updateTaskRowAvailability(wrapper.closest('tr'));
                     validateFunctionalStage();
                 });
             }
@@ -3566,9 +3579,12 @@
             initialGoalData.tasks.forEach(taskData => {
                 addTaskRow(card, taskData);
             });
+        } else {
+            addTaskRow(card);
         }
         
         createLucideIcons();
+        updateGoalCardTaskAvailability(card);
         validateFunctionalStage();
     };
 
@@ -3777,6 +3793,115 @@
         return Array.from(functionByName.values()).sort((a, b) => a.name.localeCompare(b.name));
     };
 
+    const setButtonDisabledState = (button, isDisabled) => {
+        if (!button) return;
+        button.disabled = isDisabled;
+        button.classList.toggle('is-disabled', isDisabled);
+        button.setAttribute('aria-disabled', String(isDisabled));
+    };
+
+    const setWrapperDisabledState = (wrapper, isDisabled) => {
+        if (!wrapper) return;
+        wrapper.classList.toggle('is-disabled', isDisabled);
+        wrapper.setAttribute('aria-disabled', String(isDisabled));
+        wrapper.setAttribute('tabindex', isDisabled ? '-1' : '0');
+        const clearBtn = wrapper.querySelector('.btn-clear-select');
+        if (clearBtn) {
+            clearBtn.disabled = isDisabled;
+            clearBtn.classList.toggle('is-disabled', isDisabled);
+        }
+    };
+
+    const updateTaskRowAvailability = (row) => {
+        if (!row) return;
+
+        const goalCard = row.closest('.goal-card');
+        const goalNameTrigger = goalCard ? goalCard.querySelector('.goal-name-text') : null;
+        const goalSelected = isFilledTrigger(goalNameTrigger);
+
+        const taskNameWrapper = row.querySelector('.col-task-name-wrapper');
+        const taskNameTrigger = row.querySelector('.task-name-text');
+        const taskSelected = isFilledTrigger(taskNameTrigger);
+        const taskEditable = goalSelected;
+        const taskDetailsEditable = goalSelected && taskSelected;
+
+        row.classList.toggle('is-task-locked', !taskEditable);
+        row.classList.toggle('is-function-locked', !taskDetailsEditable);
+
+        setWrapperDisabledState(taskNameWrapper, !taskEditable);
+        if (taskNameTrigger && !taskNameTrigger.dataset.value) {
+            taskNameTrigger.textContent = taskEditable ? 'Введите задачу' : 'Сначала выберите цель';
+            taskNameTrigger.classList.add('is-placeholder');
+        }
+
+        const participationContainer = row.querySelector('.task-participation-container');
+        const participationInput = row.querySelector('.task-participation-input');
+        if (participationContainer) {
+            participationContainer.classList.toggle('is-disabled', !taskDetailsEditable);
+            participationContainer.setAttribute('aria-disabled', String(!taskDetailsEditable));
+        }
+        if (participationInput) {
+            participationInput.disabled = !taskDetailsEditable;
+        }
+
+        const roleWrapper = row.querySelector('.col-task-role');
+        setWrapperDisabledState(roleWrapper, !taskDetailsEditable);
+
+        const functionRows = Array.from(row.querySelectorAll('.function-row-item'));
+        const canDeleteOrDragFunction = taskDetailsEditable && functionRows.length > 1;
+
+        functionRows.forEach((functionRow) => {
+            functionRow.classList.toggle('is-disabled', !taskDetailsEditable);
+            functionRow.querySelectorAll('.custom-select-wrapper').forEach((selectWrapper) => {
+                setWrapperDisabledState(selectWrapper, !taskDetailsEditable);
+            });
+
+            const functionNameTrigger = functionRow.querySelector('.col-select-name .custom-select-trigger');
+            if (functionNameTrigger && !functionNameTrigger.dataset.value) {
+                functionNameTrigger.textContent = taskDetailsEditable ? 'Выберите функцию' : 'Сначала выберите задачу';
+                functionNameTrigger.classList.add('is-placeholder');
+            }
+
+            const influenceContainer = functionRow.querySelector('.ai-influence-container');
+            const influenceInput = functionRow.querySelector('.ai-influence-input');
+            if (influenceContainer) {
+                influenceContainer.classList.toggle('is-disabled', !taskDetailsEditable);
+                influenceContainer.setAttribute('aria-disabled', String(!taskDetailsEditable));
+            }
+            if (influenceInput) {
+                const aiTrigger = functionRow.querySelector('.col-select-ai .custom-select-trigger');
+                const aiValues = aiTrigger && aiTrigger.dataset.value
+                    ? aiTrigger.dataset.value.split(', ').filter(Boolean)
+                    : [];
+                const hasAiActive = aiValues.length > 0 && !aiValues.includes('Не используется');
+                influenceInput.disabled = !taskDetailsEditable || !hasAiActive;
+            }
+
+            setButtonDisabledState(functionRow.querySelector('.btn-copy-function-row'), !taskDetailsEditable);
+            setButtonDisabledState(functionRow.querySelector('.btn-delete-function-row'), !canDeleteOrDragFunction);
+            const dragHandle = functionRow.querySelector('.function-drag-handle');
+            if (dragHandle) {
+                dragHandle.classList.toggle('is-disabled', !canDeleteOrDragFunction);
+            }
+        });
+
+        setButtonDisabledState(row.querySelector('.btn-add-function-row'), !taskDetailsEditable);
+        setButtonDisabledState(row.querySelector('.btn-paste-function-row'), !taskDetailsEditable);
+        setButtonDisabledState(row.querySelector('.btn-delete-task'), !taskEditable);
+    };
+
+    const updateGoalCardTaskAvailability = (goalCard) => {
+        if (!goalCard) return;
+        const goalNameTrigger = goalCard.querySelector('.goal-name-text');
+        const goalSelected = isFilledTrigger(goalNameTrigger);
+        setButtonDisabledState(goalCard.querySelector('.btn-add-task'), !goalSelected);
+        goalCard.querySelectorAll('.task-body tr').forEach(updateTaskRowAvailability);
+    };
+
+    const updateAllGoalCardsTaskAvailability = () => {
+        document.querySelectorAll('.goal-card').forEach(updateGoalCardTaskAvailability);
+    };
+
     const initSmartSelect = (row, initialDataList = null) => {
         const container = row.querySelector('.functions-cell-container');
         const listContainer = container.querySelector('.functions-list-container');
@@ -3810,6 +3935,7 @@
         };
 
         const openCustomSelectDropdown = (selectWrapper) => {
+            if (!selectWrapper || selectWrapper.classList.contains('is-disabled')) return;
             closeAllGoalTaskDropdowns();
             selectWrapper.classList.add('is-active');
 
@@ -4306,6 +4432,7 @@
 
             const deleteBtn = rowItem.querySelector('.btn-delete-function-row');
             deleteBtn.addEventListener('click', (e) => {
+                if (deleteBtn.disabled) return;
                 e.stopPropagation();
                 rowItem.remove();
                 closeCustomSelectDropdown();
@@ -4314,6 +4441,7 @@
             });
 
             updateDragAndDropState(listContainer);
+            updateTaskRowAvailability(row);
         };
 
         // Add first empty function row automatically or pre-fill with initial data
@@ -4327,6 +4455,7 @@
 
         addBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            if (addBtn.disabled) return;
             if (activeAddFuncDropdown) {
                 closeAddFuncDropdown();
                 return;
@@ -4436,6 +4565,7 @@
             }
             pasteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                if (pasteBtn.disabled) return;
                 if (window.copiedFunction) {
                     // Check if the only existing function row is completely empty, and if so, remove it
                     const items = listContainer.querySelectorAll('.function-row-item');
@@ -4605,6 +4735,7 @@
         }
 
         createLucideIcons();
+        updateTaskRowAvailability(row);
         validateFunctionalStage();
     };
 
@@ -4823,6 +4954,7 @@
 
             // Add task
             if (e.target.closest('.btn-add-task')) {
+                if (e.target.closest('.btn-add-task').disabled) return;
                 addTaskRow(card);
             }
 
@@ -4841,6 +4973,7 @@
 
             // Delete task
             if (e.target.closest('.btn-delete-task')) {
+                if (e.target.closest('.btn-delete-task').disabled) return;
                 const row = e.target.closest('tr');
                 const tbody = row.closest('.task-body');
                 const tableContainer = card.querySelector('.task-table-container');
@@ -4879,6 +5012,7 @@
             }
 
             if (e.target.closest('.btn-add-task')) {
+                if (e.target.closest('.btn-add-task').disabled) return;
                 addTaskRow(card);
             }
 
@@ -4894,6 +5028,7 @@
             }
 
             if (e.target.closest('.btn-delete-task')) {
+                if (e.target.closest('.btn-delete-task').disabled) return;
                 const row = e.target.closest('tr');
                 const tbody = row.closest('.task-body');
                 const tableContainer = card.querySelector('.task-table-container');
