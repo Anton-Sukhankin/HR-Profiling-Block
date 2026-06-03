@@ -64,9 +64,8 @@
       "stage": "functional",
       "targetKind": "task",
       "action": {
-        "type": "switch_generation",
-        "label": "Догенерировать функции до 5+",
-        "prompt": "Догенерировать функции для задачи до методологической глубины"
+        "type": "custom",
+        "label": "Добавить функции до 5+"
       },
       "status": "active"
     },

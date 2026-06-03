@@ -182,9 +182,8 @@ AnalysisGroup = {
 
 ```js
 AnalysisCardAction = {
-  type: "focus_target" | "switch_generation" | "apply_suggestion" | "apply_competency_value" | "custom",
+  type: "focus_target" | "apply_suggestion" | "apply_competency_value" | "custom",
   label: string,
-  prompt?: string,
   section?: string,
   mode?: "add" | "remove" | "replace" | "set_level",
   value?: string,
@@ -201,16 +200,12 @@ AnalysisCardAction = {
 Допустимые значения:
 
 - `focus_target` — перейти к связанному элементу рабочей области;
-- `switch_generation` — перейти во вкладку `Генерация` и подготовить запрос;
 - `apply_suggestion` — применить предложенное значение;
 - `apply_competency_value` — добавить, удалить, заменить или установить значение на этапе `Ключевые компетенции`;
 - `custom` — будущий расширяемый сценарий.
 
 `label`
 Текст действия в карточке.
-
-`prompt`
-Опциональный текст, который может быть подставлен во вкладку `Генерация`.
 
 Визуальные правила для действия:
 
@@ -239,7 +234,7 @@ AnalysisCardAction = {
 Значение, которое было применено.
 
 `undoAction`
-Структурированное действие возврата предыдущего состояния. Используется для отката массовых действий, генерации задач/функций и изменений компетенций.
+Структурированное действие возврата предыдущего состояния. Используется для отката массовых действий и изменений компетенций.
 
 `undoLabel`
 Текст блока возврата, например `Вернуть предыдущее значение`.

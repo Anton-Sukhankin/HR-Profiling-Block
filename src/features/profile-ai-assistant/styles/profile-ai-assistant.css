@@ -127,7 +127,8 @@ body.profile-ai-resizing {
     margin: 12px 14px 10px;
     padding: 4px;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
     gap: 4px;
     border: 1px solid #DDE7F2;
     border-radius: 14px;
@@ -188,7 +189,6 @@ body.profile-ai-resizing {
     flex-direction: column;
 }
 
-.profile-ai-panel-body--generation,
 .profile-ai-panel-body--analysis {
     display: flex;
     flex-direction: column;
@@ -199,13 +199,6 @@ body.profile-ai-resizing {
     min-height: 220px;
 }
 
-.profile-ai-generation-messages {
-    flex: 0 0 auto;
-    min-height: 0;
-    overflow: visible;
-    margin-bottom: 12px;
-    padding-bottom: 0;
-}
 
 .profile-ai-mode-intro {
     margin-bottom: 12px;
@@ -255,8 +248,7 @@ body.profile-ai-resizing {
 
 .profile-ai-mode-intro p,
 .profile-ai-analysis-preview p,
-.profile-ai-capability-card p,
-.profile-ai-generation-notice p {
+.profile-ai-capability-card p {
     margin: 6px 0 0;
     color: #5C6A7D;
     font-size: 12.5px;
@@ -277,9 +269,7 @@ body.profile-ai-resizing {
 }
 
 .profile-ai-context-card,
-.profile-ai-prompt-block,
 .profile-ai-capability-card,
-.profile-ai-generation-notice,
 .profile-ai-analysis-preview,
 .profile-ai-analysis-demo-card {
     border: 1px solid #E2EAF3;
@@ -288,7 +278,6 @@ body.profile-ai-resizing {
 }
 
 .profile-ai-context-card,
-.profile-ai-prompt-block,
 .profile-ai-capability-card {
     margin-bottom: 12px;
     padding: 14px;
@@ -348,34 +337,6 @@ body.profile-ai-resizing {
     font-weight: 900;
 }
 
-.profile-ai-prompt-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.profile-ai-prompt-chip {
-    border: 1px solid rgba(16, 185, 129, 0.24);
-    border-radius: 999px;
-    padding: 8px 11px;
-    background: #F3FFF9;
-    color: #0F7B57;
-    font-family: var(--font-family);
-    font-size: 12px;
-    font-weight: 800;
-    line-height: 1.25;
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
-}
-
-.profile-ai-prompt-chip:hover {
-    background: #E3FAEF;
-    border-color: rgba(16, 185, 129, 0.5);
-}
-
-.profile-ai-prompt-chip:active {
-    transform: scale(0.98);
-}
 
 .profile-ai-capability-card ul {
     margin: 0;
@@ -385,53 +346,6 @@ body.profile-ai-resizing {
     line-height: 1.5;
 }
 
-.profile-ai-generation-notice {
-    margin-bottom: 12px;
-    padding: 12px;
-    display: flex;
-    gap: 10px;
-    background: #F7FFFB;
-    border-color: rgba(16, 185, 129, 0.24);
-}
-
-.profile-ai-generation-notice-icon,
-.profile-ai-analysis-state-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 34px;
-}
-
-.profile-ai-generation-notice-icon {
-    background: #DCFCEB;
-    color: #0F7B57;
-}
-
-.profile-ai-generation-notice b {
-    color: #0F7B57;
-    font-size: 12.5px;
-    font-weight: 900;
-}
-
-.profile-ai-generation-loader {
-    margin-bottom: 12px;
-    padding: 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 1px solid rgba(16, 185, 129, 0.24);
-    border-radius: 16px;
-    background: linear-gradient(135deg, #ECFFF7, #FFFFFF);
-}
-
-.profile-ai-generation-loader b {
-    color: #0F7B57;
-    font-size: 13px;
-    font-weight: 900;
-}
 
 .profile-ai-ai-loader-state {
     flex: 0 0 auto;
@@ -917,8 +831,7 @@ body.profile-ai-resizing {
     line-height: 1.38;
 }
 
-.profile-ai-analysis-undo,
-.profile-ai-analysis-to-generation {
+.profile-ai-analysis-undo {
     margin-top: 10px;
     width: 100%;
     border: 1px solid rgba(99, 102, 241, 0.22);
@@ -933,8 +846,7 @@ body.profile-ai-resizing {
     text-align: left;
 }
 
-.profile-ai-analysis-undo:hover,
-.profile-ai-analysis-to-generation:hover {
+.profile-ai-analysis-undo:hover {
     background: #E0E7FF;
 }
 
@@ -1094,10 +1006,6 @@ body.profile-ai-resizing {
     font-weight: 900;
 }
 
-.profile-ai-analysis-empty .profile-ai-analysis-to-generation {
-    max-width: 220px;
-    text-align: center;
-}
 
 .profile-ai-title-block {
     min-width: 0;
@@ -1495,16 +1403,6 @@ body.profile-ai-resizing {
     font-weight: 900;
 }
 
-.profile-ai-submit-btn.is-generation {
-    width: 32px;
-    min-width: 32px;
-    padding: 0;
-    background: var(--primary-color);
-}
-
-.profile-ai-submit-btn.is-generation:hover {
-    background: var(--primary-hover);
-}
 
 .profile-ai-submit-btn.is-chat {
     width: 32px;

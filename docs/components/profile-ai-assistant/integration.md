@@ -17,10 +17,8 @@ flowchart LR
 
   E --> PC["Profile Create Drawer\nsrc/features/profile-create + index.html"]
   E --> CTX["profileCreateStageContext\ngetFirstStageStatus / canNavigateToStage / navigateToStage\ngetCompetenciesState / refreshFunctionalStage\napplyCompetencyRecommendationAction"]
-  E --> GEN["profileCreateStageGenerator\napplyFirstStageDraft / applyCompetenciesDraft"]
   E --> APP["App Context\nsrc/app.js"]
   CTX --> APP
-  GEN --> APP
   APP --> ST1["Stage 1\nОбщие положения и функционал"]
   APP --> ST2["Stage 2\nКлючевые компетенции"]
   APP --> PM["Profile Model\nsrc/domain/profile-model.js"]
@@ -70,9 +68,9 @@ AI-помощник получает статус первого этапа че
 - применение значения;
 - откат действия.
 
-## Связь с генератором профиля
+## Связь с действиями рабочей области
 
-Генерация первого этапа и генерация компетенций выполняются через API контекста приложения, а не через изолированную логику панели.
+Действия анализа выполняются через API контекста приложения, а не через изолированную логику панели.
 
 Ключевые runtime-контракты сейчас находятся в `window.HRProfileApp`:
 
@@ -81,9 +79,7 @@ AI-помощник получает статус первого этапа че
 - `profileCreateStageContext.navigateToStage`;
 - `profileCreateStageContext.getCompetenciesState`;
 - `profileCreateStageContext.refreshFunctionalStage`;
-- `profileCreateStageContext.applyCompetencyRecommendationAction`;
-- `profileCreateStageGenerator.applyFirstStageDraft`;
-- `profileCreateStageGenerator.applyCompetenciesDraft`.
+- `profileCreateStageContext.applyCompetencyRecommendationAction`.
 
 AI-помощник инициирует действие, но фактическое изменение данных должно проходить через согласованные функции рабочей области.
 
@@ -98,7 +94,7 @@ AI-помощник должен учитывать модель профиля,
 Профиль → Ключевые компетенции и требования
 ```
 
-AI-помощник использует эту модель для генерации и анализа, но не должен создавать параллельную несовместимую структуру данных.
+AI-помощник использует эту модель для анализа и действий карточек, но не должен создавать параллельную несовместимую структуру данных.
 
 ## Связь с документацией
 

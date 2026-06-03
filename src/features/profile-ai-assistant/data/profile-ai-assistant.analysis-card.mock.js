@@ -43,9 +43,8 @@
                 stage: stages.FUNCTIONAL || "functional",
                 targetKind: targets.TASK || "task",
                 action: {
-                    type: actions.SWITCH_GENERATION || "switch_generation",
-                    label: "Догенерировать функции до 5+",
-                    prompt: "Догенерировать функции для задачи до методологической глубины"
+                    type: actions.CUSTOM || "custom",
+                    label: "Добавить функции до 5+"
                 },
                 status: "active"
             },

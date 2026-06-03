@@ -6,9 +6,8 @@ Project instructions for Codex and other coding agents working in this repositor
 
 This repository contains a native HTML/CSS/JavaScript prototype for the HR Block profiling module. The main user-facing flow is profile creation: stage 1 "Общие положения и функционал", stage 2 "Ключевые компетенции", the profiles table, and the profile card.
 
-The AI assistant is a key feature of the prototype. It lives in `src/features/profile-ai-assistant/` and supports three modes:
+The AI assistant is a key feature of the prototype. It lives in `src/features/profile-ai-assistant/` and supports two modes:
 
-- `Генерация`: creates or pre-fills profile entities and attributes.
 - `Анализ`: audits the current profile, groups issues by severity, synchronizes indicators with the workspace, and can apply or undo actions.
 - `Чат`: answers methodology questions without changing form values.
 
@@ -56,7 +55,7 @@ Every significant component may have `overview.md`, but additional files should 
 - `business-rules.md` when it enforces domain rules, limits, required fields, statuses, or validation.
 - `ui-interactions.md` when it has complex states, visual reactions, drawers, accordions, empty states, loaders, or cross-area navigation.
 - `data-model.md` when it owns structured entities, statuses, nested data, mocks, or source-of-truth rules.
-- `ai-logic.md` only when AI generates, analyzes, recommends, explains, or changes data.
+- `ai-logic.md` only when AI analyzes, recommends, explains, or changes data.
 - `states.md` when behavior is best described as a state machine.
 - `integration.md` when the component exchanges data or behavior with other components.
 
@@ -66,9 +65,8 @@ Avoid empty placeholder documents. Create or split documentation only when it re
 
 Treat the AI assistant as a persistent side panel inside profile creation. It should not reset unexpectedly while the user stays inside the same profile-creation session.
 
-Keep the three assistant modes behaviorally distinct:
+Keep the two assistant modes behaviorally distinct:
 
-- Generation may change profile data.
 - Analysis may navigate, apply recommended actions, and allow undo.
 - Chat is consultative and must not mutate profile data.
 

@@ -1,6 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
+    const createLucideIcons = () => {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+    };
+
     // Initialize Lucide icons
-    lucide.createIcons();
+    createLucideIcons();
 
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('toggle-btn');
@@ -311,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aiState && typeof aiState.resetSession === 'function') {
             aiState.resetSession({
                 isOpen: false,
-                activeTab: 'generation'
+                activeTab: 'analysis'
             });
         }
 
@@ -414,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCreateStageCardsInteractivity();
         }
 
-        lucide.createIcons(); // Refresh icons inside drawer
+        createLucideIcons(); // Refresh icons inside drawer
     };
 
     const closeDrawer = () => {
@@ -1393,7 +1399,7 @@ document.addEventListener('DOMContentLoaded', () => {
             drawerBackdrop.classList.add('is-visible');
         }
         document.body.style.overflow = 'hidden';
-        lucide.createIcons(); // Refresh icons inside drawer
+        createLucideIcons(); // Refresh icons inside drawer
     };
 
     const closeViewProfileDrawer = () => {
@@ -1426,7 +1432,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (viewFooter) viewFooter.style.display = 'none';
             if (btnAddGoal) btnAddGoal.style.display = 'none';
-            lucide.createIcons();
+            createLucideIcons();
         }
     };
 
@@ -1970,10 +1976,10 @@ document.addEventListener('DOMContentLoaded', () => {
             navigator.clipboard.writeText(fullPath).then(() => {
                 const originalHTML = copyPathBtn.innerHTML;
                 copyPathBtn.innerHTML = '<i data-lucide="check" style="color: #2E7D32;"></i>';
-                lucide.createIcons();
+                createLucideIcons();
                 setTimeout(() => {
                     copyPathBtn.innerHTML = originalHTML;
-                    lucide.createIcons();
+                    createLucideIcons();
                 }, 1500);
             });
         });
@@ -2300,7 +2306,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.innerHTML = `<i data-lucide="alert-circle"></i> <span>${message}</span>`;
         }
         
-        lucide.createIcons();
+        createLucideIcons();
         toast.classList.add('show');
         
         setTimeout(() => {
@@ -2362,7 +2368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.HRProfileApp && window.HRProfileApp.profileAIAssistantRender) {
             window.HRProfileApp.profileAIAssistantRender.updateContext();
         }
-        lucide.createIcons();
+        createLucideIcons();
     };
 
       window.HRProfileApp = window.HRProfileApp || {};
@@ -2518,7 +2524,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Re-validate competencies stage
         validateCompetenciesStage(); 
         
-        lucide.createIcons();
+        createLucideIcons();
     });
 
     // Back Button Functionality
@@ -2756,7 +2762,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeGoalDropdown.style.width = `${dropdownWidth}px`;
         activeGoalDropdown.style.visibility = 'visible';
 
-        lucide.createIcons();
+        createLucideIcons();
 
         activeGoalDropdown.querySelectorAll('.dropdown-item').forEach(itemEl => {
             itemEl.addEventListener('click', (e) => {
@@ -2817,7 +2823,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeTaskRoleDropdown.style.width = `${dropdownWidth}px`;
         activeTaskRoleDropdown.style.visibility = 'visible';
 
-        lucide.createIcons();
+        createLucideIcons();
 
         activeTaskRoleDropdown.querySelectorAll('.dropdown-item').forEach(itemEl => {
             itemEl.addEventListener('click', (e) => {
@@ -2880,7 +2886,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeTaskParticipationDropdown.style.width = `${dropdownWidth}px`;
         activeTaskParticipationDropdown.style.visibility = 'visible';
 
-        lucide.createIcons();
+        createLucideIcons();
 
         activeTaskParticipationDropdown.querySelectorAll('.dropdown-item').forEach(itemEl => {
             itemEl.addEventListener('click', (e) => {
@@ -2978,7 +2984,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeGoalMenuDropdown.style.width = `${dropdownWidth}px`;
         activeGoalMenuDropdown.style.visibility = 'visible';
         
-        lucide.createIcons();
+        createLucideIcons();
         
         activeGoalMenuDropdown.querySelectorAll('.dropdown-item').forEach(itemEl => {
             itemEl.addEventListener('click', (e) => {
@@ -3025,7 +3031,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalContainer.innerHTML = modalHTML;
         const overlay = modalContainer.querySelector('.modal-overlay');
         document.body.appendChild(overlay);
-        lucide.createIcons();
+        createLucideIcons();
         
         const closeMod = () => overlay.remove();
         
@@ -3094,6 +3100,58 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Мониторинг и поддержка систем", isCustom: false }
     ].sort((a, b) => a.name.localeCompare(b.name));
 
+    const GOAL_TASKS_MAP = {
+        "Автоматизация бизнес-процессов": [
+            "Анализ требований заказчика",
+            "Оптимизация бизнес-процессов",
+            "Интеграция сторонних систем",
+            "Разработка технической документации",
+            "Настройка инфраструктуры и окружения"
+        ],
+        "Внедрение новых технологий": [
+            "Анализ требований заказчика",
+            "Интеграция сторонних систем",
+            "Настройка инфраструктуры и окружения",
+            "Обеспечение информационной безопасности",
+            "Мониторинг и поддержка систем"
+        ],
+        "Обеспечение качества разработки": [
+            "Проведение код-ревью",
+            "Тестирование и верификация решений",
+            "Устранение инцидентов и дефектов",
+            "Разработка технической документации",
+            "Подготовка отчётности"
+        ],
+        "Обучение и развитие команды": [
+            "Обучение и менторинг сотрудников",
+            "Проведение код-ревью",
+            "Разработка технической документации",
+            "Планирование и оценка задач спринта",
+            "Подготовка отчётности"
+        ],
+        "Повышение удовлетворенности": [
+            "Согласование с заинтересованными сторонами",
+            "Анализ требований заказчика",
+            "Устранение инцидентов и дефектов",
+            "Оптимизация бизнес-процессов",
+            "Подготовка отчётности"
+        ],
+        "Поддержка ИТ-инфраструктуры": [
+            "Настройка инфраструктуры и окружения",
+            "Мониторинг и поддержка систем",
+            "Устранение инцидентов и дефектов",
+            "Обеспечение информационной безопасности",
+            "Интеграция сторонних систем"
+        ],
+        "Своевременный выпуск релизов": [
+            "Планирование и оценка задач спринта",
+            "Согласование с заинтересованными сторонами",
+            "Тестирование и верификация решений",
+            "Устранение инцидентов и дефектов",
+            "Подготовка отчётности"
+        ]
+    };
+
     let activeGoalNameDropdown = null;
     let activeTaskNameDropdown = null;
 
@@ -3111,6 +3169,32 @@ document.addEventListener('DOMContentLoaded', () => {
             activeTaskNameDropdown = null;
             document.querySelectorAll('.col-task-name-wrapper').forEach(w => w.classList.remove('is-active'));
         }
+    };
+
+    const getSelectedGoalNameForTaskWrapper = (wrapper) => {
+        const goalCard = wrapper ? wrapper.closest('.goal-card') : null;
+        const goalNameTrigger = goalCard ? goalCard.querySelector('.goal-name-text') : null;
+        const goalName = getTriggerValue(goalNameTrigger);
+        return goalName && goalName !== 'Введите наименование цели' ? goalName : '';
+    };
+
+    const getTaskCatalogForGoal = (goalName) => {
+        const mappedTaskNames = GOAL_TASKS_MAP[String(goalName || '').trim()];
+        if (!mappedTaskNames || !mappedTaskNames.length) {
+            return TASKS_CATALOG;
+        }
+
+        const taskByName = new Map();
+        mappedTaskNames.forEach((taskName) => {
+            const catalogItem = TASKS_CATALOG.find((item) => item.name === taskName);
+            taskByName.set(taskName, catalogItem || { name: taskName, isCustom: false });
+        });
+
+        TASKS_CATALOG
+            .filter((item) => item.isCustom && item.goalName === goalName)
+            .forEach((item) => taskByName.set(item.name, item));
+
+        return Array.from(taskByName.values()).sort((a, b) => a.name.localeCompare(b.name));
     };
 
     const openGoalNameDropdown = (wrapper) => {
@@ -3187,7 +3271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dropdownHTML += `</div>`;
             activeGoalNameDropdown.innerHTML = dropdownHTML;
-            lucide.createIcons();
+            createLucideIcons();
 
             const searchInput = activeGoalNameDropdown.querySelector('.dropdown-search-input');
             if (searchInput) {
@@ -3254,7 +3338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(activeGoalNameDropdown);
         
         // Ensure icons are created after the element is in the DOM
-        lucide.createIcons();
+        createLucideIcons();
 
         const dropdownHeight = activeGoalNameDropdown.offsetHeight;
         // User explicitly specified: max width 350px
@@ -3280,6 +3364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.classList.add('is-active');
 
         const trigger = wrapper.querySelector('.task-name-text');
+        const selectedGoalName = getSelectedGoalNameForTaskWrapper(wrapper);
 
         activeTaskNameDropdown = document.createElement('div');
         activeTaskNameDropdown.className = 'smart-dropdown custom-select-smart-dropdown';
@@ -3296,44 +3381,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="dropdown-list">
             `;
 
-            const items = TASKS_CATALOG.filter(i => i.name.toLowerCase().includes(lowerFilter));
+            const items = getTaskCatalogForGoal(selectedGoalName)
+                .filter(i => i.name.toLowerCase().includes(lowerFilter));
 
             if (items.length > 0) {
-                const customItems = items.filter(i => i.isCustom);
-                const standardItems = items.filter(i => !i.isCustom);
-
-                if (customItems.length > 0) {
-                    dropdownHTML += `<div class="custom-items-block" style="border-bottom: 1px solid var(--border-color); margin-bottom: 4px; padding-bottom: 4px;">`;
-                    customItems.forEach(item => {
-                        const isSelected = trigger.dataset.value === item.name;
-                        dropdownHTML += `
-                            <div class="dropdown-item ${isSelected ? 'selected' : ''}" data-value="${item.name}">
-                                <span class="item-text">${item.name}</span>
-                                <div style="display: flex; align-items: center; gap: 4px;">
+                items.forEach(item => {
+                    const isSelected = trigger.dataset.value === item.name;
+                    dropdownHTML += `
+                        <div class="dropdown-item ${isSelected ? 'selected' : ''}" data-value="${item.name}">
+                            <span class="item-text">${item.name}</span>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                ${item.isCustom ? `
                                     <button type="button" class="btn-item-delete btn-task-delete" title="Удалить" data-delete-target="${item.name}">
                                         <i data-lucide="trash-2"></i>
                                     </button>
-                                    <div class="item-selection-state">
-                                        ${isSelected ? '<i data-lucide="check" class="check-icon"></i>' : ''}
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
-                    dropdownHTML += `</div>`;
-                }
-
-                if (standardItems.length > 0) {
-                    standardItems.forEach(item => {
-                        const isSelected = trigger.dataset.value === item.name;
-                        dropdownHTML += `
-                            <div class="dropdown-item ${isSelected ? 'selected' : ''}" data-value="${item.name}">
-                                <span class="item-text">${item.name}</span>
+                                ` : ""}
                                 <div class="item-selection-state">
                                     ${isSelected ? '<i data-lucide="check" class="check-icon"></i>' : ''}
                                 </div>
-                            </div>`;
-                    });
-                }
+                            </div>
+                        </div>`;
+                });
             } else if (filter.trim() !== "") {
                 dropdownHTML += `
                     <div class="dropdown-empty-state">
@@ -3349,7 +3417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dropdownHTML += `</div>`;
             activeTaskNameDropdown.innerHTML = dropdownHTML;
-            lucide.createIcons();
+            createLucideIcons();
 
             const searchInput = activeTaskNameDropdown.querySelector('.dropdown-search-input');
             if (searchInput) {
@@ -3394,7 +3462,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.stopPropagation();
                     const newTask = filter.trim();
                     if (newTask && !TASKS_CATALOG.some(i => i.name === newTask)) {
-                        TASKS_CATALOG.push({ name: newTask, isCustom: true });
+                        TASKS_CATALOG.push({ name: newTask, isCustom: true, goalName: selectedGoalName });
                         TASKS_CATALOG.sort((a, b) => a.name.localeCompare(b.name));
                     }
                     trigger.textContent = newTask;
@@ -3412,7 +3480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = wrapper.getBoundingClientRect();
         activeTaskNameDropdown.style.visibility = 'hidden';
         document.body.appendChild(activeTaskNameDropdown);
-        lucide.createIcons();
+        createLucideIcons();
 
         const dropdownHeight = activeTaskNameDropdown.offsetHeight;
         const dropdownWidth = Math.min(Math.max(rect.width, 240), 350);
@@ -3500,7 +3568,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        lucide.createIcons();
+        createLucideIcons();
         validateFunctionalStage();
     };
 
@@ -3524,6 +3592,114 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Участие в планировании спринтов", isCustom: false },
         { name: "Исследование новых технологий", isCustom: false }
     ].sort((a, b) => a.name.localeCompare(b.name));
+
+    const TASK_FUNCTIONS_MAP = {
+        "Анализ требований заказчика": [
+            "Анализ бизнес-требований и написание спецификаций",
+            "Подготовка технической документации",
+            "Проектирование архитектурных решений",
+            "Консультирование смежных команд",
+            "Вовлекать руководство Компании в активности..."
+        ],
+        "Разработка технической документации": [
+            "Подготовка технической документации",
+            "Анализ бизнес-требований и написание спецификаций",
+            "Проектирование архитектурных решений",
+            "Консультирование смежных команд",
+            "Участие в планировании спринтов"
+        ],
+        "Проведение код-ревью": [
+            "Проведение код-ревью (Code Review)",
+            "Консультирование смежных команд",
+            "Тестирование отказоустойчивости",
+            "Разработка технической документации",
+            "Участие в планировании спринтов"
+        ],
+        "Планирование и оценка задач спринта": [
+            "Участие в планировании спринтов",
+            "Анализ бизнес-требований и написание спецификаций",
+            "Подготовка технической документации",
+            "Консультирование смежных команд",
+            "Исследование новых технологий"
+        ],
+        "Устранение инцидентов и дефектов": [
+            "Мониторинг производительности систем",
+            "Тестирование отказоустойчивости",
+            "Настройка CI/CD пайплайнов",
+            "Оптимизация баз данных",
+            "Консультирование смежных команд"
+        ],
+        "Согласование с заинтересованными сторонами": [
+            "Вовлекать руководство Компании в активности...",
+            "Консультирование смежных команд",
+            "Подготовка технической документации",
+            "Участие в планировании спринтов",
+            "Анализ бизнес-требований и написание спецификаций"
+        ],
+        "Подготовка отчётности": [
+            "Подготовка технической документации",
+            "Анализ бизнес-требований и написание спецификаций",
+            "Мониторинг производительности систем",
+            "Вовлекать руководство Компании в активности...",
+            "Консультирование смежных команд"
+        ],
+        "Тестирование и верификация решений": [
+            "Тестирование отказоустойчивости",
+            "Мониторинг производительности систем",
+            "Проведение код-ревью (Code Review)",
+            "Подготовка технической документации",
+            "Консультирование смежных команд"
+        ],
+        "Настройка инфраструктуры и окружения": [
+            "Настройка CI/CD пайплайнов",
+            "Проектирование архитектурных решений",
+            "Управление релизами и деплоем",
+            "Мониторинг производительности систем",
+            "Тестирование отказоустойчивости"
+        ],
+        "Обеспечение информационной безопасности": [
+            "Тестирование отказоустойчивости",
+            "Проектирование архитектурных решений",
+            "Мониторинг производительности систем",
+            "Подготовка технической документации",
+            "Консультирование смежных команд"
+        ],
+        "Обучение и менторинг сотрудников": [
+            "Консультирование смежных команд",
+            "Проведение код-ревью (Code Review)",
+            "Участие в планировании спринтов",
+            "Подготовка технической документации",
+            "Исследование новых технологий"
+        ],
+        "Оптимизация бизнес-процессов": [
+            "Оптимизация баз данных",
+            "Анализ бизнес-требований и написание спецификаций",
+            "Проектирование архитектурных решений",
+            "Мониторинг производительности систем",
+            "Разработка интеграционных сценариев"
+        ],
+        "Управление рисками проекта": [
+            "Анализ бизнес-требований и написание спецификаций",
+            "Тестирование отказоустойчивости",
+            "Подготовка технической документации",
+            "Консультирование смежных команд",
+            "Вовлекать руководство Компании в активности..."
+        ],
+        "Интеграция сторонних систем": [
+            "Интеграция сторонних сервисов",
+            "Разработка интеграционных сценариев",
+            "Проектирование архитектурных решений",
+            "Тестирование отказоустойчивости",
+            "Подготовка технической документации"
+        ],
+        "Мониторинг и поддержка систем": [
+            "Мониторинг производительности систем",
+            "Настройка CI/CD пайплайнов",
+            "Управление релизами и деплоем",
+            "Тестирование отказоустойчивости",
+            "Консультирование смежных команд"
+        ]
+    };
 
     let globalDraggedItem = null;
     let globalSourceContainer = null;
@@ -3573,6 +3749,34 @@ document.addEventListener('DOMContentLoaded', () => {
             clearBtn.style.display = 'none';
         }
     };
+
+    const getSelectedTaskNameForFunctionContext = (element) => {
+        const taskRow = element ? element.closest('tr') : null;
+        const taskNameTrigger = taskRow ? taskRow.querySelector('.task-name-text') : null;
+        const taskName = getTriggerValue(taskNameTrigger);
+        return taskName && taskName !== 'Введите задачу' ? taskName : '';
+    };
+
+    const getFunctionCatalogForTask = (taskName) => {
+        const normalizedTaskName = String(taskName || '').trim();
+        const mappedFunctionNames = TASK_FUNCTIONS_MAP[normalizedTaskName];
+        if (!mappedFunctionNames || !mappedFunctionNames.length) {
+            return FUNCTIONS_CATALOG;
+        }
+
+        const functionByName = new Map();
+        mappedFunctionNames.forEach((functionName) => {
+            const catalogItem = FUNCTIONS_CATALOG.find((item) => item.name === functionName);
+            functionByName.set(functionName, catalogItem || { name: functionName, isCustom: false });
+        });
+
+        FUNCTIONS_CATALOG
+            .filter((item) => item.isCustom && item.taskName === normalizedTaskName)
+            .forEach((item) => functionByName.set(item.name, item));
+
+        return Array.from(functionByName.values()).sort((a, b) => a.name.localeCompare(b.name));
+    };
+
     const initSmartSelect = (row, initialDataList = null) => {
         const container = row.querySelector('.functions-cell-container');
         const listContainer = container.querySelector('.functions-list-container');
@@ -3613,13 +3817,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const isName = selectWrapper.classList.contains('col-select-name');
             const isAi = selectWrapper.classList.contains('col-select-ai');
             const isRole = selectWrapper.classList.contains('col-select-role');
+            const selectedTaskName = isName ? getSelectedTaskNameForFunctionContext(selectWrapper) : '';
 
             let options = [];
             let placeholder = trigger.dataset.placeholder;
             let type = "";
 
             if (isName) {
-                options = FUNCTIONS_CATALOG.map(i => i.name);
+                options = getFunctionCatalogForTask(selectedTaskName).map(i => i.name);
                 type = "name";
             } else if (isAi) {
                 options = ["Не используется", "Текстовый", "Графический", "Голосовой", "Аналитический", "Генерация кода", "Видео и мультимедиа"];
@@ -3714,7 +3919,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 activeCustomSelectDropdown.style.width = `${dropdownWidth}px`;
                 activeCustomSelectDropdown.style.visibility = 'visible';
 
-                lucide.createIcons();
+                createLucideIcons();
 
                 const searchInput = activeCustomSelectDropdown.querySelector('.dropdown-search-input');
                 if (searchInput) {
@@ -3794,10 +3999,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const addNewBtn = activeCustomSelectDropdown.querySelector('.add-new-function-btn');
                 if (addNewBtn) {
                     addNewBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const newFunc = activeFilter.trim();
-                        if (newFunc && !FUNCTIONS_CATALOG.some(i => i.name === newFunc)) {
-                            FUNCTIONS_CATALOG.push({ name: newFunc, isCustom: true });
+                    e.stopPropagation();
+                    const newFunc = activeFilter.trim();
+                    if (newFunc && !FUNCTIONS_CATALOG.some(i => i.name === newFunc)) {
+                            FUNCTIONS_CATALOG.push({ name: newFunc, isCustom: true, taskName: selectedTaskName });
                             FUNCTIONS_CATALOG.sort((a, b) => a.name.localeCompare(b.name));
                         }
                         trigger.textContent = newFunc;
@@ -3877,7 +4082,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activeAiInfluenceDropdown.style.width = `${dropdownWidth}px`;
             activeAiInfluenceDropdown.style.visibility = 'visible';
 
-            lucide.createIcons();
+            createLucideIcons();
 
             activeAiInfluenceDropdown.querySelectorAll('.dropdown-item').forEach(itemEl => {
                 itemEl.addEventListener('click', (e) => {
@@ -3931,7 +4136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             listContainer.appendChild(rowItem);
-            lucide.createIcons();
+            createLucideIcons();
             validateFunctionalStage();
 
             // Drag handle listeners
@@ -4131,6 +4336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             activeAddFuncDropdown = document.createElement('div');
             activeAddFuncDropdown.className = 'smart-dropdown custom-select-smart-dropdown';
+            const selectedTaskName = getSelectedTaskNameForFunctionContext(addBtn);
 
             const renderAddDropdownContent = (filter = "") => {
                 const lowerFilter = filter.toLowerCase();
@@ -4147,7 +4353,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="dropdown-list">
                 `;
 
-                const items = FUNCTIONS_CATALOG.filter(i => !i.isCustom && i.name.toLowerCase().includes(lowerFilter));
+                const items = getFunctionCatalogForTask(selectedTaskName)
+                    .filter(i => i.name.toLowerCase().includes(lowerFilter));
 
                 if (items.length > 0) {
                     items.forEach(item => {
@@ -4163,7 +4370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dropdownHTML += `</div>`;
                 activeAddFuncDropdown.innerHTML = dropdownHTML;
 
-                lucide.createIcons();
+                createLucideIcons();
 
                 const searchInput = activeAddFuncDropdown.querySelector('.dropdown-search-input');
                 if (searchInput) {
@@ -4397,7 +4604,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateClearButtonVisibility(roleWrapper);
         }
 
-        lucide.createIcons();
+        createLucideIcons();
         validateFunctionalStage();
     };
 
@@ -4772,7 +4979,7 @@ document.addEventListener('DOMContentLoaded', () => {
             helpLink.style.display = (tabText === 'Общие положения и функционал') ? '' : 'none';
         }
 
-        lucide.createIcons();
+        createLucideIcons();
     };
 
     const exitViewEditMode = () => {
@@ -4806,7 +5013,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewFooter) viewFooter.style.display = 'none';
         if (btnAddGoal) btnAddGoal.style.display = 'none';
 
-        lucide.createIcons();
+        createLucideIcons();
     };
 
     const isViewTab = (tabElement, tabName) => {
@@ -5032,7 +5239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
 
         dropdownList.innerHTML = html;
-        lucide.createIcons();
+        createLucideIcons();
 
         // Show Create button if no exact match and query not empty
         const exactMatch = SOFT_SKILLS_CATALOG.some(item => item.name.toLowerCase() === query.trim().toLowerCase());
@@ -5163,7 +5370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="skill-card-desc" style="margin: 0;">${skill.desc}</p>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         // Listeners for skill cards
         skillsGrid.querySelectorAll('.skill-card').forEach(card => {
@@ -5319,7 +5526,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
 
         hardSkillsList.innerHTML = html;
-        lucide.createIcons();
+        createLucideIcons();
 
         // Show Create button if no exact match and query not empty
         const exactMatch = HARD_SKILLS_CATALOG.some(item => item.toLowerCase() === query.trim().toLowerCase());
@@ -5431,7 +5638,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         hardSkillsCloud.querySelectorAll('.btn-remove-tag').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -5532,7 +5739,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         langList.querySelectorAll('.dropdown-item-skill').forEach(item => {
             item.addEventListener('click', (e) => {
@@ -5612,7 +5819,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         langGrid.querySelectorAll('.skill-card').forEach(card => {
             const name = card.dataset.name;
@@ -5726,7 +5933,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         // Show Create button if no exact match and query not empty
         const exactMatch = TECH_CATALOG.some(item => item.toLowerCase() === query.trim().toLowerCase());
@@ -5817,7 +6024,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         techCloud.querySelectorAll('.btn-remove-tag').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -5919,7 +6126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         // Show Create button if no exact match and query not empty
         const exactMatch = CERT_CATALOG.some(item => item.toLowerCase() === query.trim().toLowerCase());
@@ -6010,7 +6217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         certCloud.querySelectorAll('.btn-remove-tag').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -6113,7 +6320,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         // Show Create button if no exact match and query not empty
         const exactMatch = PERMITS_CATALOG.some(item => item.toLowerCase() === query.trim().toLowerCase());
@@ -6204,7 +6411,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         extraPermitsCloud.querySelectorAll('.btn-remove-tag').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -6299,7 +6506,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         eduList.querySelectorAll('.dropdown-item-skill').forEach(item => {
             item.addEventListener('click', (e) => {
@@ -6377,7 +6584,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         container.querySelectorAll('.dropdown-item-skill').forEach(row => {
             row.addEventListener('click', (e) => {
@@ -6417,7 +6624,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </div>
             `).join('');
-            lucide.createIcons();
+            createLucideIcons();
         }
 
         // Attach listeners for remove buttons
@@ -6488,7 +6695,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         // Attach listeners for each edu-card
         eduCloud.querySelectorAll('.edu-card').forEach(card => {
@@ -6713,7 +6920,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         expGrid.querySelectorAll('.skill-card').forEach(card => {
             const id = card.dataset.id;
@@ -6870,7 +7077,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         // Show Create button if no match and query not empty
         const exactMatch = FUNC_AREAS_CATALOG.some(item => item.toLowerCase() === query.trim().toLowerCase());
@@ -6961,7 +7168,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             </div>
         `).join('');
-        lucide.createIcons();
+        createLucideIcons();
 
         funcCloud.querySelectorAll('.btn-remove-tag').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -7495,7 +7702,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalContainer.innerHTML = modalHTML;
         const overlay = modalContainer.querySelector('.modal-overlay');
         document.body.appendChild(overlay);
-        lucide.createIcons();
+        createLucideIcons();
         
         const closeMod = () => overlay.remove();
         
@@ -7538,7 +7745,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>Заявки на изменение этого профиля отсутствуют</span>
                 </div>
             `;
-            lucide.createIcons();
+            createLucideIcons();
             return;
         }
         
@@ -7609,7 +7816,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         goalsContainer.innerHTML = html;
-        lucide.createIcons();
+        createLucideIcons();
     };
 
     // --- View Profile Tabs Logic ---
@@ -7721,7 +7928,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                             </div>
                         `;
-                        lucide.createIcons();
+                        createLucideIcons();
                     } else if (tabText === 'Заявки') {
                         if (compContent && funcContent && compContent.parentElement !== funcContent.parentElement) {
                             compContent.classList.remove('is-view-mode');

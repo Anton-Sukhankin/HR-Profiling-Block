@@ -14,13 +14,13 @@
 
 | Кодовая область | За что отвечает | Какие документы проверить |
 |---|---|---|
-| `src/features/profile-ai-assistant/state/` | Состояние панели, активная вкладка, история сообщений, статусы генерации и анализа, свернутые группы | `data-model.md`, `ui-interactions.md` |
+| `src/features/profile-ai-assistant/state/` | Состояние панели, активная вкладка, история сообщений, статус анализа, свернутые группы | `data-model.md`, `ui-interactions.md` |
 | `src/features/profile-ai-assistant/render/` | Разметка панели, segmented control, сообщения, карточки анализа, группы, loader, footer | `ui-interactions.md`, `user-flows.md` |
-| `src/features/profile-ai-assistant/events/` | Обработчики кликов, генерация, анализ, действия карточек, undo, навигация, синхронизация с рабочей областью | `user-flows.md`, `ui-interactions.md`, `business-rules.md`, `ai-logic.md`, `integration.md` |
+| `src/features/profile-ai-assistant/events/` | Обработчики кликов, анализ, действия карточек, undo, навигация, синхронизация с рабочей областью и чат | `user-flows.md`, `ui-interactions.md`, `business-rules.md`, `ai-logic.md`, `integration.md` |
 | `src/features/profile-ai-assistant/model/` | Типы карточек анализа, группы, действия, статусы, правила структуры | `data-model.md`, `docs/components/profile-ai-assistant/analysis-card-model.md`, `business-rules.md` |
 | `src/features/profile-ai-assistant/data/` | Мок-данные, примеры карточек, демонстрационные сценарии | `data-model.md`, `ai-logic.md`, `docs/components/profile-ai-assistant/analysis-card-model.md` |
 | `src/features/profile-ai-assistant/styles/` | Визуальные состояния, карточки, группы, drawer, loader, поля ввода | `ui-interactions.md` только если меняется описанное поведение или визуальная система |
-| `src/app.js` | Интеграция AI-помощника с рабочей областью создания профиля, генератором и контекстом этапов | `integration.md`, `business-rules.md`, `user-flows.md` |
+| `src/app.js` | Интеграция AI-помощника с рабочей областью создания профиля и контекстом этапов | `integration.md`, `business-rules.md`, `user-flows.md` |
 | `src/features/profile-create/` | Данные и сценарии создания профиля, первый и второй этапы | `integration.md`, `business-rules.md`, при необходимости будущая документация `profile-create` |
 | `src/domain/profile-model.js` | Общая модель профиля и вложенных сущностей | `data-model.md`, `docs/profile-entity-model.md`, `business-rules.md` |
 
@@ -33,8 +33,8 @@
 | `business-rules.md` | Минимальный контекст, критические ошибки, предупреждения, рекомендации, лимиты, безопасность изменений | `events/`, `model/`, `src/app.js`, `src/domain/profile-model.js` |
 | `ui-interactions.md` | Drawer, segmented control, карточки, группы, loader, footer, индикации рабочей области | `render/`, `events/`, `styles/` |
 | `data-model.md` | Состояние панели, `AnalysisCard`, `AnalysisCardAction`, группы, данные и примеры | `state/`, `model/`, `data/`, `docs/components/profile-ai-assistant/analysis-card-model.md` |
-| `ai-logic.md` | Различие генерации, анализа и чата, контекстные подсказки, имитация AI | `events/`, `data/`, `render/` |
-| `integration.md` | Связи с рабочей областью, этапами, генератором, моделью профиля и документацией | `events/`, `src/app.js`, `profile-create`, `src/domain/profile-model.js` |
+| `ai-logic.md` | Различие анализа и чата, контекстные подсказки, имитация AI | `events/`, `data/`, `render/` |
+| `integration.md` | Связи с рабочей областью, этапами, моделью профиля и документацией | `events/`, `src/app.js`, `profile-create`, `src/domain/profile-model.js` |
 | `docs/components/profile-ai-assistant/analysis-card-model.md` | Детальный контракт карточки анализа | `model/`, `data/`, `render/`, `events/` |
 | `docs/components/profile-ai-assistant/product-spec.md` | Общая продуктовая и UX-спецификация AI-помощника | Все слои компонента, особенно `user-flows.md`, `ai-logic.md`, `ui-interactions.md` |
 
@@ -48,7 +48,7 @@
 - меняет структуру карточки анализа;
 - меняет состав или смысл действий карточек;
 - меняет undo/возврат предыдущего значения;
-- меняет различие между `Генерация`, `Анализ` и `Чат`;
+- меняет различие между `Анализ` и `Чат`;
 - меняет правила, когда AI может изменить данные;
 - меняет интеграцию AI-помощника с рабочей областью;
 - переносит файлы или меняет ответственность папок.
@@ -87,11 +87,11 @@
 
 | Документ | Диаграмма | Когда обновлять |
 |---|---|---|
-| `user-flows.md` | Основной пользовательский путь AI-помощника | При изменении сценариев генерации, анализа, массовых действий, undo или чата. |
+| `user-flows.md` | Основной пользовательский путь AI-помощника | При изменении сценариев анализа, массовых действий, undo или чата. |
 | `business-rules.md` | Дерево минимального контекста | При изменении правил critical/warning/recommendation, разблокировки второго этапа или анализа компетенций. |
 | `ui-interactions.md` | State diagram вкладки `Анализ` | При изменении loader, empty state, групп, карточек, done-состояния, undo или повторного анализа. |
 | `data-model.md` | Class diagram сущностей AI-помощника | При изменении `AssistantState`, `AnalysisCard`, `AnalysisCardAction`, групп или связи с контекстом профиля. |
-| `ai-logic.md` | Диаграмма режимов AI | При изменении границ между `Генерация`, `Анализ` и `Чат`. |
+| `ai-logic.md` | Диаграмма режимов AI | При изменении границ между `Анализ` и `Чат`. |
 | `integration.md` | Диаграмма интеграций | При изменении связи AI-помощника с `src/app.js`, рабочей областью, моделью профиля, store или документацией. |
 
 ## Практический чек-лист перед завершением задачи
@@ -101,7 +101,7 @@
 1. Изменился ли пользовательский путь?
 2. Изменилось ли бизнес-правило или критерий анализа?
 3. Изменилась ли модель карточки, действия, группы или состояния?
-4. Изменилась ли AI-логика генерации, анализа или чата?
+4. Изменилась ли AI-логика анализа или чата?
 5. Изменилась ли интеграция с рабочей областью создания профиля?
 6. Изменилась ли структура файлов компонента?
 7. Есть ли Mermaid-диаграмма, которая описывает измененный участок?

@@ -15,7 +15,6 @@
 
     const ACTION_TYPES = Object.freeze({
         FOCUS_TARGET: "focus_target",
-        SWITCH_GENERATION: "switch_generation",
         APPLY_SUGGESTION: "apply_suggestion",
         APPLY_COMPETENCY_VALUE: "apply_competency_value",
         CUSTOM: "custom"

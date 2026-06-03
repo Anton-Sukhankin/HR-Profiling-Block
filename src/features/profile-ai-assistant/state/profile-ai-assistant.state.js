@@ -4,6 +4,7 @@
     const mock = app.profileAIAssistantMock || { messages: [] };
 
     const clone = (value) => JSON.parse(JSON.stringify(value));
+    const normalizeTab = (tab) => (tab === "chat" ? "chat" : "analysis");
     const normalizeMessages = (messages = []) => (
         Array.isArray(messages)
             ? messages.filter((message) => message && message.id !== "profile_ai_welcome")
@@ -13,19 +14,10 @@
     const defaultState = {
         isOpen: false,
         width: 490,
-        activeTab: "generation",
+        activeTab: "analysis",
         draft: "",
-        drafts: {
-            generation: "",
-            chat: ""
-        },
-        generationStatus: "idle",
-        generationNotice: null,
-        generationMessages: [],
-        generationDraftSource: "",
-        lastGenerationSource: "",
-        demoCriticalAfterQuickGeneration: false,
-        analysisStatus: "idle",
+        drafts: {            chat: ""
+        },        analysisStatus: "idle",
         analysisItems: [],
         analysisCollapsedGroups: {},
         analysisLastRunAt: null,
@@ -55,6 +47,8 @@
                 nextState.drafts.chat = parsedState.draft;
             }
 
+            nextState.activeTab = normalizeTab(nextState.activeTab);
+
             nextState.messages = normalizeMessages(nextState.messages);
 
             return nextState;
@@ -80,6 +74,7 @@
             ...state,
             ...patch
         };
+        state.activeTab = normalizeTab(state.activeTab);
         persist();
         return state;
     };
@@ -106,6 +101,7 @@
                 ...((patch && patch.analysisCollapsedGroups) || {})
             }
         };
+        state.activeTab = normalizeTab(state.activeTab);
         persist();
         return state;
     };

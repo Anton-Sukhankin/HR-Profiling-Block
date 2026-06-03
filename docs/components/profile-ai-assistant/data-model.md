@@ -17,13 +17,6 @@ classDiagram
     draft
     drafts
     messages
-    generationMessages
-    generationStatus
-    generationMode
-    generationNotice
-    generationDraftSource
-    lastGenerationSource
-    demoCriticalAfterQuickGeneration
     analysisStatus
     analysisEmpty
     analysisItems
@@ -52,7 +45,6 @@ classDiagram
   class AnalysisCardAction {
     type
     label
-    prompt
     section
     mode
     value
@@ -89,7 +81,7 @@ classDiagram
   AssistantState "1" --> "*" AnalysisCard : analysisItems
   AnalysisCard "*" --> "0..1" AnalysisCardAction : action
   AnalysisGroup "1" --> "*" AnalysisCard : groups by type
-  ProfileContext "1" --> "*" AnalysisCard : generates / filters
+  ProfileContext "1" --> "*" AnalysisCard : filters
   AnalysisCard "*" --> "0..1" WorkspaceTarget : targetKey / navigation
 ```
 
@@ -106,16 +98,13 @@ src/features/profile-ai-assistant/state/profile-ai-assistant.state.js
 - открыта ли панель;
 - ширина панели;
 - активная вкладка;
-- черновики ввода для генерации и чата;
+- черновик ввода чата;
 - сообщения чата;
-- сообщения генерации;
-- статус генерации;
-- режим генерации первого этапа или компетенций;
 - статус анализа;
 - empty state анализа;
 - список карточек анализа;
 - свернутые группы анализа;
-- источник последней генерации.
+- дата последнего запуска анализа.
 
 ## AnalysisCard
 
@@ -155,7 +144,6 @@ AnalysisCard = {
 Примеры типов действий:
 
 - `focus_target` — перейти к связанному элементу;
-- `switch_generation` — применить генерационный сценарий к рабочей области;
 - `apply_competency_value` — добавить, удалить, заменить или установить значение второго этапа.
 
 Для рекомендаций второго этапа действие должно быть конкретным: например, добавить `Jira`, удалить лишний Hard Skill или установить уровень языка.

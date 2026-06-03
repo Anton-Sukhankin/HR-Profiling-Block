@@ -1,15 +1,7 @@
 (function () {
     const app = window.HRProfileApp || {};
 
-    const TABS = [
-        {
-            id: "generation",
-            label: "Генерация",
-            title: "Создать структуру профиля",
-            badge: "Может изменить профиль после подтверждения",
-            tone: "action"
-        },
-        {
+    const TABS = [        {
             id: "analysis",
             label: "Анализ",
             title: "Проверить качество заполнения",
@@ -74,34 +66,8 @@
 
         return contextApi.getFirstStageStatus();
     };
-
-    const getGenerationContext = () => {
-        const positionSelect = document.getElementById("param-position");
-        const structureValue = document.getElementById("param-structure-value");
-        const structureSelect = document.getElementById("param-structure");
-        const position = getSelectedOptionText(positionSelect);
-        const structureText = structureValue && !structureValue.classList.contains("is-placeholder")
-            ? structureValue.textContent.trim()
-            : getSelectedOptionText(structureSelect);
-
-        return {
-            stageId: getCurrentStageId(),
-            stageLabel: getCurrentStageLabel(),
-            position,
-            structure: structureText,
-            firstStageStatus: getFirstStageStatus()
-        };
-    };
-
     const getActiveTab = (state) => TABS.find((tab) => tab.id === state.activeTab) || TABS[0];
-
-    const getDraft = (state) => {
-        const activeTab = getActiveTab(state).id;
-        if (activeTab === "generation" || activeTab === "chat") {
-            return (state.drafts && state.drafts[activeTab]) || "";
-        }
-        return "";
-    };
+    const getDraft = (state) => (state.drafts && state.drafts.chat) || "";
 
     const parseMarkdown = (text) => {
         let html = escapeHtml(text);
@@ -204,9 +170,7 @@
                         <div class="profile-ai-bubble">
                             ${parseMarkdown(message.text)}
                         </div>
-                        ${message.isWelcome ? renderChatQuestions() : ""}
-                        ${message.isGenerationWelcome ? (options.generationPrompts || "") : ""}
-                        ${renderActions(message.actions)}
+                        ${message.isWelcome ? renderChatQuestions() : ""}                        ${renderActions(message.actions)}
                     </div>
                 </div>
             `;
@@ -243,169 +207,6 @@
         </section>
     `;
 
-    const getGenerationPrompts = (context) => {
-        const isCompetenciesStage = context.stageId === "competencies";
-        const positionText = (context.position || "").toLowerCase();
-
-        if (isCompetenciesStage) {
-            return [
-                "Подобрать компетенции на основе задач и функций первого этапа",
-                "Сформировать требования к Hard Skills и ПО",
-                "Предложить Soft Skills без перегрузки профиля"
-            ];
-        }
-
-        if (context.firstStageStatus && context.firstStageStatus.hasMinimumContext) {
-            return [
-                "Подобрать ключевые компетенции на основе текущей цели, задачи и функции",
-                "Заполнить второй этап, не переходя из текущего экрана",
-                "Сгенерировать альтернативный вариант первого этапа",
-                "Доработать функции первого этапа и сохранить текущий контекст"
-            ];
-        }
-
-        if (positionText.includes("аналитик")) {
-            return [
-                `Сгенерировать стандартный профиль для должности «${context.position}»`,
-                `Сформировать задачи и функции ${context.position} с фокусом на сбор и анализ требований`,
-                `Подготовить профиль ${context.position} для ${context.structure || "целевого подразделения"}`,
-                "Добавить функции по взаимодействию с заказчиками и документацией"
-            ];
-        }
-
-        if (positionText.includes("программист") || positionText.includes("разработчик")) {
-            return [
-                `Сгенерировать профиль для должности «${context.position}»`,
-                "Сформировать задачи разработки, тестирования и поддержки решений",
-                "Добавить функции по code review, CI/CD и технической документации",
-                "Подготовить профиль с учетом командной разработки"
-            ];
-        }
-
-        if (positionText.includes("руководитель") || positionText.includes("менеджер")) {
-            return [
-                `Сгенерировать управленческий профиль для должности «${context.position}»`,
-                "Сформировать цели, задачи и функции управления командой",
-                "Добавить функции контроля сроков, ресурсов и качества результата",
-                `Подготовить профиль для ${context.structure || "проектного или функционального блока"}`
-            ];
-        }
-
-        if (positionText.includes("дизайнер")) {
-            return [
-                `Сгенерировать профиль для должности «${context.position}»`,
-                "Сформировать задачи исследования, проектирования и проверки интерфейсов",
-                "Добавить функции работы с дизайн-системой и прототипами",
-                "Подготовить профиль с фокусом на продуктовую команду"
-            ];
-        }
-
-        if (positionText) {
-            return [
-                `Сгенерировать профиль для должности «${context.position}»`,
-                `Сформировать цели, задачи и функции для ${context.structure || "выбранного подразделения"}`,
-                "Добавить типовые функции и роли участия",
-                "Подготовить структуру профиля для последующего анализа"
-            ];
-        }
-
-        const prompts = isCompetenciesStage
-            ? []
-            : [
-                "Сгенерировать профиль системного аналитика",
-                "Сформировать цели, задачи и функции для HR-бизнес-партнера",
-                "Создать структуру профиля руководителя проектов",
-                "Подготовить функционал для backend-разработчика Java"
-            ];
-
-        return prompts;
-    };
-
-    const renderPromptChips = (context) => {
-        const prompts = getGenerationPrompts(context);
-
-        return `
-            <div class="profile-ai-chat-questions" aria-label="Быстрые сценарии генерации">
-                ${prompts.map((prompt) => `
-                    <button class="profile-ai-chat-question-btn profile-ai-generation-scenario-btn" type="button">
-                        ${escapeHtml(prompt)}
-                    </button>
-                `).join("")}
-            </div>
-        `;
-    };
-
-    const renderAILoaderState = ({ title, description, variant = "generation" }) => `
-        <section class="profile-ai-ai-loader-state is-${escapeHtml(variant)}" role="status" aria-live="polite">
-            <div class="profile-ai-star-loader" aria-hidden="true">
-                <svg viewBox="0 0 120 120" focusable="false">
-                    <path class="profile-ai-star profile-ai-star--main" d="M60 18L68.5 49.5L100 58L68.5 66.5L60 98L51.5 66.5L20 58L51.5 49.5L60 18Z"></path>
-                    <path class="profile-ai-star profile-ai-star--left" d="M29 22L33.2 37.8L49 42L33.2 46.2L29 62L24.8 46.2L9 42L24.8 37.8L29 22Z"></path>
-                    <path class="profile-ai-star profile-ai-star--right" d="M94 12L98 26L112 30L98 34L94 48L90 34L76 30L90 26L94 12Z"></path>
-                    <path class="profile-ai-star profile-ai-star--bottom" d="M92 72L96.8 89.2L114 94L96.8 98.8L92 116L87.2 98.8L70 94L87.2 89.2L92 72Z"></path>
-                </svg>
-            </div>
-            <div class="profile-ai-loader-copy">
-                <b>${escapeHtml(title)}</b>
-                <p>${escapeHtml(description)}</p>
-            </div>
-        </section>
-    `;
-
-    const getGenerationWelcomeMessage = () => ({
-        id: "profile_ai_generation_welcome",
-        sender: "ai",
-        timestamp: new Date().toISOString(),
-        text: "Могу подготовить структуру профиля по быстрому сценарию или по вашему описанию. Выберите сценарий ниже либо напишите запрос в поле сообщения.",
-        actions: [],
-        isGenerationWelcome: true
-    });
-
-    const renderGenerationMessages = (context, messages = []) => {
-        const allMessages = [getGenerationWelcomeMessage(), ...(messages || [])];
-
-        return `
-            <div class="profile-ai-messages profile-ai-generation-messages">
-                ${renderMessages(allMessages, { generationPrompts: renderPromptChips(context) })}
-            </div>
-        `;
-    };
-
-    const renderGenerationContent = (state) => {
-        const tab = TABS.find((item) => item.id === "generation");
-        const context = getGenerationContext();
-        const isCompetenciesStage = context.stageId === "competencies";
-        const isCompetenciesGeneration = isCompetenciesStage || state.generationMode === "competencies";
-        const description = isCompetenciesStage
-            ? "На этом этапе генерация должна опираться на уже заполненные задачи и функции, чтобы подобрать компетенции и требования."
-            : "Опишите должность свободным текстом или выберите готовый сценарий. AI подготовит структуру профиля для формы.";
-        const loadingTitle = isCompetenciesGeneration
-            ? "AI подбирает ключевые компетенции"
-            : "AI формирует структуру профиля";
-        const loadingDescription = isCompetenciesGeneration
-            ? "Сейчас будут заполнены все аккордеоны второго этапа: компетенции, навыки, ПО, языки, образование, опыт и направления."
-            : "Сейчас появятся цель, задачи и функции для первого этапа.";
-
-          return `
-              <div class="profile-ai-panel-body profile-ai-panel-body--generation">
-                  ${renderGenerationMessages(context, state.generationMessages)}
-                  ${state.generationStatus === "loading" ? renderAILoaderState({
-                      title: loadingTitle,
-                      description: loadingDescription,
-                      variant: "generation"
-                  }) : ""}
-              </div>
-          `;
-      };
-
-    const renderAnalysisLoader = () => `
-        ${renderAILoaderState({
-            title: "AI анализирует профиль",
-            description: "Проверяю контекст, обязательные поля, структуру функций и заполнение компетенций.",
-            variant: "analysis"
-        })}
-    `;
-
     const renderAnalysisEmpty = () => `
         <section class="profile-ai-analysis-preview profile-ai-analysis-empty">
             <div class="profile-ai-analysis-state-icon">
@@ -413,9 +214,6 @@
             </div>
             <h4>Пока нечего анализировать</h4>
             <p>Для полезной проверки нужен минимальный контекст: должность, место в структуре, цель, задача и хотя бы одна функция.</p>
-            <button class="profile-ai-analysis-to-generation" type="button" data-analysis-action="switch_generation">
-                Перейти к генерации
-            </button>
         </section>
     `;
 
@@ -425,7 +223,23 @@
                 <i data-lucide="check-circle-2"></i>
             </div>
             <h4>Критичных замечаний не найдено</h4>
-            <p>Профиль выглядит достаточно полным для текущего состояния прототипа. Можно продолжать уточнение вручную или перейти к генерации.</p>
+            <p>Профиль выглядит достаточно полным для текущего состояния прототипа. Можно продолжать уточнение вручную или задать вопрос в чате.</p>
+        </section>
+    `;
+
+    const renderAnalysisLoader = () => `
+        <section class="profile-ai-ai-loader-state" aria-live="polite">
+            <div class="profile-ai-star-loader" aria-hidden="true">
+                <svg viewBox="0 0 64 64" focusable="false">
+                    <path class="profile-ai-star profile-ai-star--main" d="M32 8l4.8 17.2L54 30l-17.2 4.8L32 52l-4.8-17.2L10 30l17.2-4.8L32 8z"></path>
+                    <path class="profile-ai-star profile-ai-star--top" d="M49 7l2.2 7.8L59 17l-7.8 2.2L49 27l-2.2-7.8L39 17l7.8-2.2L49 7z"></path>
+                    <path class="profile-ai-star profile-ai-star--bottom" d="M16 42l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z"></path>
+                </svg>
+            </div>
+            <div class="profile-ai-loader-copy">
+                <b>Проверяю профиль</b>
+                <p>Сверяю заполнение с правилами методологии и готовлю карточки анализа.</p>
+            </div>
         </section>
     `;
 
@@ -707,8 +521,7 @@
     const renderActiveContent = (state) => {
         const activeTab = getActiveTab(state).id;
         if (activeTab === "analysis") return renderAnalysisContent(state);
-        if (activeTab === "chat") return renderChatContent(state);
-        return renderGenerationContent(state);
+        return renderChatContent(state);
     };
 
     const renderFooter = (state) => {
@@ -725,20 +538,15 @@
                 </footer>
             `;
         }
-
-        const isGeneration = activeTab.id === "generation";
-        const isGenerating = state.generationStatus === "loading";
-        const placeholder = isGeneration
-            ? "Опишите профиль"
-            : "Задайте вопрос";
-        const ariaLabel = isGeneration ? "Сгенерировать структуру профиля" : "Отправить сообщение";
+        const placeholder = "??????? ??????";
+        const ariaLabel = "????????? ?????????";
 
         return `
-            <footer class="profile-ai-footer profile-ai-footer--${activeTab.id}">
-                <div class="profile-ai-input-shell ${isGeneration ? "is-generation" : "is-chat"}">
-                    <textarea id="profile-ai-input" rows="1" placeholder="${escapeHtml(placeholder)}" ${isGenerating ? "disabled" : ""}>${escapeHtml(draft)}</textarea>
-                    <button class="profile-ai-submit-btn ${isGeneration ? "is-generation" : "is-chat"}" id="profile-ai-send-btn" type="button" aria-label="${escapeHtml(ariaLabel)}" ${isGenerating ? "disabled" : ""}>
-                        <i data-lucide="${isGeneration ? "wand-sparkles" : "send"}"></i>
+            <footer class="profile-ai-footer profile-ai-footer--chat">
+                <div class="profile-ai-input-shell is-chat">
+                    <textarea id="profile-ai-input" rows="1" placeholder="${escapeHtml(placeholder)}">${escapeHtml(draft)}</textarea>
+                    <button class="profile-ai-submit-btn is-chat" id="profile-ai-send-btn" type="button" aria-label="${escapeHtml(ariaLabel)}">
+                        <i data-lucide="send"></i>
                     </button>
                 </div>
             </footer>

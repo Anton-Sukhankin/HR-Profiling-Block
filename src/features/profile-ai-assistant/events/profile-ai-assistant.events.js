@@ -4,10 +4,11 @@
     const getStateApi = () => (window.HRProfileApp || {}).profileAIAssistantState;
     const getRenderApi = () => (window.HRProfileApp || {}).profileAIAssistantRender;
     let isRenderingAIPanel = false;
-    let generationRefreshTimer = null;
+    let hasPendingAIPanelRender = false;
     let analysisTimer = null;
-    let generationTimer = null;
     let asyncRunToken = 0;
+
+    const normalizeTab = (tab) => (tab === "chat" ? "chat" : "analysis");
 
     const nextAsyncRunToken = () => {
         asyncRunToken += 1;
@@ -19,11 +20,7 @@
     const clearAsyncOperations = () => {
         asyncRunToken += 1;
         window.clearTimeout(analysisTimer);
-        window.clearTimeout(generationTimer);
-        window.clearTimeout(generationRefreshTimer);
         analysisTimer = null;
-        generationTimer = null;
-        generationRefreshTimer = null;
     };
 
     const escapeCssIdent = (value) => {
@@ -152,9 +149,14 @@
 
     const renderAndBind = () => {
         const renderApi = getRenderApi();
-        if (!renderApi || isRenderingAIPanel) return;
+        if (!renderApi) return;
+        if (isRenderingAIPanel) {
+            hasPendingAIPanelRender = true;
+            return;
+        }
 
         isRenderingAIPanel = true;
+        hasPendingAIPanelRender = false;
         try {
             renderApi.render();
             bindDrawerEvents();
@@ -164,13 +166,16 @@
         } finally {
             window.setTimeout(() => {
                 isRenderingAIPanel = false;
+                if (hasPendingAIPanelRender) {
+                    renderAndBind();
+                }
             }, 0);
         }
     };
 
     const getActiveTab = () => {
         const stateApi = getStateApi();
-        return stateApi ? (stateApi.getState().activeTab || "generation") : "generation";
+        return stateApi ? (stateApi.getState().activeTab || "analysis") : "analysis";
     };
 
     const getSelectedOptionText = (select) => {
@@ -446,9 +451,8 @@
                 targetKey: setAnalysisTarget(document.getElementById("add-goal-btn") || document.getElementById("functional-content"), "analysis_goals_missing"),
                 suggestedText: "Минимальный ручной контекст для продолжения: добавленная цель, одна задача внутри цели и хотя бы одна выбранная функция.",
                 action: {
-                    type: "switch_generation",
-                    label: "Сгенерировать цель, задачу и функции",
-                    prompt: "Сформировать цель, задачу и функции первого этапа"
+                    type: "custom",
+                    label: "Добавить цель, задачу и функции"
                 }
             });
         }
@@ -483,9 +487,8 @@
                     targetKey: setAnalysisTarget(goal, `analysis_goal_${goalIndex}_missing_tasks`),
                     suggestedText: `Добавьте задачу, которая раскрывает цель «${goalLabel}» через конкретный операционный результат.`,
                     action: {
-                        type: "switch_generation",
-                        label: "Сгенерировать задачу для этой цели",
-                        prompt: `Сгенерировать задачу для цели «${goalLabel}»`
+                        type: "custom",
+                        label: "Добавить задачу для этой цели"
                     }
                 });
             }
@@ -537,9 +540,8 @@
                         location: `${goalLabel} → ${taskLabel}`,
                         targetKey: setAnalysisTarget(task, `analysis_goal_${goalIndex}_task_${taskIndex}_missing_function`),
                         action: {
-                            type: "switch_generation",
-                            label: "Подобрать функции для задачи",
-                            prompt: `Подобрать функции для задачи «${taskLabel}»`
+                            type: "custom",
+                            label: "Подобрать функции для задачи"
                         }
                     });
                 } else if (selectedFunctionRows.length < 5) {
@@ -552,9 +554,8 @@
                         targetKey: setAnalysisTarget(task, `analysis_goal_${goalIndex}_task_${taskIndex}_few_functions`),
                         suggestedText: `Раскройте задачу «${taskLabel}» до 5+ функций: сбор данных, анализ, подготовка решения, согласование и сопровождение изменений.`,
                         action: {
-                            type: "switch_generation",
-                            label: "Догенерировать функции до 5+",
-                            prompt: `Догенерировать функции для задачи «${taskLabel}» до методологической глубины`
+                            type: "custom",
+                            label: "Добавить функции до 5+"
                         }
                     });
                 }
@@ -580,22 +581,6 @@
                 });
             });
         });
-
-        if (assistantState.demoCriticalAfterQuickGeneration && !items.some((item) => item.type === "critical")) {
-            items.push({
-                id: "analysis_quick_generation_demo_critical",
-                type: "critical",
-                title: "Требуется проверка AI-черновика",
-                description: "Профиль был создан быстрым сценарием. Для демонстрации прототипа AI подсвечивает критическую методологическую проверку перед дальнейшим согласованием.",
-                location: "Первый этап → AI-черновик профиля",
-                targetKey: setAnalysisTarget(
-                    document.querySelector('#goals-container .goal-card[data-ai-generated="profile-ai"]') ||
-                    document.getElementById("functional-content"),
-                    "analysis_quick_generation_demo_critical"
-                ),
-                suggestedText: "Проверьте, что цель, задачи и функции действительно соответствуют должности, а не только формально заполнены AI."
-            });
-        }
 
         if (canAnalyzeCompetencies) {
             const missingCompetencySections = getCompetenciesCompletion().filter((section) => !section.isFilled);
@@ -753,26 +738,30 @@
         return { items: splitMixedAnalysisItems(items), empty: false };
     };
 
-    const startAnalysis = () => {
+    const startAnalysis = ({ activate = true } = {}) => {
         const stateApi = getStateApi();
         if (!stateApi) return;
 
         window.clearTimeout(analysisTimer);
         const runToken = nextAsyncRunToken();
-        stateApi.setState({
-            activeTab: "analysis",
+        const nextState = {
             analysisStatus: "loading",
             analysisItems: [],
             analysisEmpty: false,
             analysisLastRunAt: new Date().toISOString()
-        });
+        };
+
+        if (activate) {
+            nextState.activeTab = "analysis";
+        }
+
+        stateApi.setState(nextState);
         renderAndBind();
 
         analysisTimer = window.setTimeout(() => {
             if (!isAsyncRunCurrent(runToken) || !stateApi.getState().isOpen) return;
             const result = buildAnalysisResult();
             stateApi.setState({
-                activeTab: "analysis",
                 analysisStatus: "done",
                 analysisItems: result.items,
                 analysisEmpty: result.empty,
@@ -786,8 +775,16 @@
         const stateApi = getStateApi();
         if (!stateApi) return;
 
-        if (tab === "analysis") {
+        const nextTab = normalizeTab(tab);
+
+        if (nextTab === "analysis") {
             const state = stateApi.getState();
+            if (state.analysisStatus === "loading") {
+                stateApi.setState({ activeTab: "analysis" });
+                renderAndBind();
+                return;
+            }
+
             if (
                 state.analysisStatus === "done" &&
                 (state.analysisEmpty || (state.analysisItems || []).length > 0)
@@ -800,9 +797,18 @@
             return;
         }
 
-        stateApi.setState({ activeTab: tab });
+        stateApi.setState({ activeTab: nextTab });
         clearAnalysisMarkers();
         renderAndBind();
+    };
+
+    const handleTabClick = (event) => {
+        const button = event.target.closest(".profile-ai-tab");
+        if (!button || !button.closest("#profile-ai-assistant-drawer")) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        setActiveTab(button.dataset.aiTab || "analysis");
     };
 
     const updateDraft = (value) => {
@@ -810,7 +816,7 @@
         if (!stateApi) return;
 
         const state = stateApi.getState();
-        const activeTab = state.activeTab || "generation";
+        const activeTab = state.activeTab || "analysis";
         const drafts = {
             ...(state.drafts || {}),
             [activeTab]: value
@@ -821,11 +827,6 @@
             draft: activeTab === "chat" ? value : state.draft
         };
 
-        if (activeTab === "generation") {
-            patch.generationNotice = null;
-            patch.generationDraftSource = "manual";
-        }
-
         stateApi.setState(patch);
     };
 
@@ -834,7 +835,7 @@
         if (!stateApi) return;
 
         const state = stateApi.getState();
-        const activeTab = state.activeTab || "generation";
+        const activeTab = state.activeTab || "analysis";
         stateApi.setState({
             drafts: {
                 ...(state.drafts || {}),
@@ -926,185 +927,6 @@
         };
     };
 
-    const sendGenerationRequest = (text) => {
-        const stateApi = getStateApi();
-        if (!stateApi) return;
-        const state = stateApi.getState();
-        const isQuickScenarioRequest = state.generationDraftSource === "quick";
-        const nextGenerationMessages = [
-            ...(state.generationMessages || []),
-            {
-                id: `profile_ai_generation_user_${Date.now()}`,
-                sender: "user",
-                timestamp: new Date().toISOString(),
-                text,
-                actions: []
-            }
-        ];
-        const context = getGenerationContextText();
-        const isCompetenciesStage = document.getElementById("stage-competencies")?.classList.contains("active");
-        const contextParts = [
-            context.stage,
-            context.position ? `должность: ${context.position}` : "",
-            context.structure ? `структура: ${context.structure}` : ""
-        ].filter(Boolean).join("; ");
-        const shouldGenerateCompetencies = isCompetenciesStage || isCompetencyGenerationRequest(text);
-        const runToken = nextAsyncRunToken();
-
-        if (shouldGenerateCompetencies) {
-            const firstStageStatus = getFirstStageStatus();
-            if (!firstStageStatus.hasMinimumContext) {
-                clearActiveDraft();
-                stateApi.setState({
-                    generationStatus: "idle",
-                    generationMessages: [
-                        ...nextGenerationMessages,
-                        {
-                            id: `profile_ai_generation_answer_${Date.now()}`,
-                            sender: "ai",
-                            timestamp: new Date().toISOString(),
-                            text: "Недостаточно контекста для подбора компетенций. Укажите должность, место в структуре, одну цель, одну задачу и хотя бы одну функцию. После этого я смогу подобрать ключевые компетенции даже без перехода на второй этап.",
-                            actions: []
-                        }
-                    ],
-                    generationNotice: {
-                        title: "Недостаточно контекста для подбора компетенций",
-                        text: "Для генерации второго этапа укажите должность, место в структуре, одну цель, одну задачу и хотя бы одну функцию. После этого AI сможет подобрать ключевые компетенции даже без перехода на второй этап."
-                    }
-                });
-                renderAndBind();
-                return;
-            }
-
-            clearActiveDraft();
-            stateApi.setState({
-                generationStatus: "loading",
-                generationMode: "competencies",
-                generationMessages: nextGenerationMessages,
-                generationNotice: null,
-                lastGenerationSource: isQuickScenarioRequest ? "quick" : "manual",
-                demoCriticalAfterQuickGeneration: false
-            });
-            renderAndBind();
-
-            generationTimer = window.setTimeout(() => {
-                if (!isAsyncRunCurrent(runToken) || !stateApi.getState().isOpen) return;
-                const generatorApi = (window.HRProfileApp || {}).profileCreateStageGenerator;
-                if (!generatorApi || typeof generatorApi.applyCompetenciesDraft !== "function") {
-                    stateApi.setState({
-                        generationStatus: "idle",
-                        generationMessages: [
-                            ...nextGenerationMessages,
-                            {
-                                id: `profile_ai_generation_answer_${Date.now()}`,
-                                sender: "ai",
-                                timestamp: new Date().toISOString(),
-                                text: "Генерация компетенций пока недоступна. Не удалось найти модуль применения компетенций к форме. Попробуйте обновить страницу прототипа.",
-                                actions: []
-                            }
-                        ],
-                        generationNotice: {
-                            title: "Генерация компетенций пока недоступна",
-                            text: "Не удалось найти модуль применения компетенций к форме. Попробуйте обновить страницу прототипа."
-                        }
-                    });
-                    renderAndBind();
-                    return;
-                }
-
-                const result = generatorApi.applyCompetenciesDraft(text);
-                const responseText = `Профиль сформирован: заполнены разделы второго этапа. Добавлено ${result.softSkillsAdded} soft skills, ${result.hardSkillsAdded} профессиональных навыка, ${result.technologiesAdded} ПО, ${result.languagesAdded} язык, ${result.certificatesAdded} сертификат, ${result.permitsAdded} допуск, образование, опыт и направления деятельности.${isCompetenciesStage ? "" : " Можно перейти на этап «Ключевые компетенции» без закрытия AI-панели."}`;
-                stateApi.setState({
-                    generationStatus: "done",
-                    generationMessages: [
-                        ...nextGenerationMessages,
-                        {
-                            id: `profile_ai_generation_answer_${Date.now()}`,
-                            sender: "ai",
-                            timestamp: new Date().toISOString(),
-                            text: responseText,
-                            actions: []
-                        }
-                    ],
-                    generationDraftSource: "",
-                    lastGenerationSource: isQuickScenarioRequest ? "quick" : "manual",
-                    demoCriticalAfterQuickGeneration: isQuickScenarioRequest,
-                    generationNotice: {
-                        title: isCompetenciesStage ? "Компетенции подобраны" : "Компетенции подготовлены для второго этапа",
-                        text: `Запрос «${text}» обработан в контексте: ${contextParts}. Заполнены все разделы второго этапа: ${result.softSkillsAdded} soft skills, ${result.hardSkillsAdded} профессиональных навыка, ${result.technologiesAdded} ПО, ${result.languagesAdded} язык, ${result.certificatesAdded} сертификат, ${result.permitsAdded} допуск, образование, опыт и направления деятельности.${isCompetenciesStage ? "" : " Можно перейти на этап «Ключевые компетенции» без закрытия AI-панели."}`
-                    }
-                });
-                renderAndBind();
-            }, 2400);
-            return;
-        }
-
-        clearActiveDraft();
-        stateApi.setState({
-            generationStatus: "loading",
-            generationMode: "functional",
-            generationMessages: nextGenerationMessages,
-            generationNotice: null,
-            lastGenerationSource: isQuickScenarioRequest ? "quick" : "manual",
-            demoCriticalAfterQuickGeneration: false
-        });
-        renderAndBind();
-
-        generationTimer = window.setTimeout(() => {
-            if (!isAsyncRunCurrent(runToken) || !stateApi.getState().isOpen) return;
-            const generatorApi = (window.HRProfileApp || {}).profileCreateStageGenerator;
-            if (!generatorApi || typeof generatorApi.applyFirstStageDraft !== "function") {
-                stateApi.setState({
-                    generationStatus: "idle",
-                    generationMessages: [
-                        ...nextGenerationMessages,
-                        {
-                            id: `profile_ai_generation_answer_${Date.now()}`,
-                            sender: "ai",
-                            timestamp: new Date().toISOString(),
-                            text: "Генерация пока недоступна. Не удалось найти модуль применения структуры к форме. Попробуйте обновить страницу прототипа.",
-                            actions: []
-                        }
-                    ],
-                    generationNotice: {
-                        title: "Генерация пока недоступна",
-                        text: "Не удалось найти модуль применения структуры к форме. Попробуйте обновить страницу прототипа."
-                    }
-                });
-                renderAndBind();
-                return;
-            }
-
-            const result = generatorApi.applyFirstStageDraft(text);
-            const baseFieldsText = [
-                result.positionWasSet ? "должность" : "",
-                result.structureWasSet ? "место в структуре" : ""
-            ].filter(Boolean).join(", ");
-
-            stateApi.setState({
-                generationStatus: "done",
-                generationMessages: [
-                    ...nextGenerationMessages,
-                    {
-                        id: `profile_ai_generation_answer_${Date.now()}`,
-                        sender: "ai",
-                        timestamp: new Date().toISOString(),
-                        text: `Профиль сформирован: добавлено ${result.goalsAdded} цель, ${result.tasksAdded} задачи и ${result.functionsAdded} функций.${baseFieldsText ? ` Также заполнены: ${baseFieldsText}.` : ""}`,
-                        actions: []
-                    }
-                ],
-                generationDraftSource: "",
-                lastGenerationSource: isQuickScenarioRequest ? "quick" : "manual",
-                demoCriticalAfterQuickGeneration: isQuickScenarioRequest,
-                generationNotice: {
-                    title: "Структура первого этапа сформирована",
-                    text: `Запрос «${text}» обработан в контексте: ${contextParts}. Добавлено: ${result.goalsAdded} цель, ${result.tasksAdded} задачи, ${result.functionsAdded} функций.${baseFieldsText ? ` Также заполнены: ${baseFieldsText}.` : ""}`
-                }
-            });
-            renderAndBind();
-        }, 2400);
-    };
-
     const sendMessage = () => {
         const input = document.getElementById("profile-ai-input");
         const stateApi = getStateApi();
@@ -1113,12 +935,6 @@
 
         const text = input.value.trim();
         if (!text) return;
-
-        if (getActiveTab() === "generation") {
-            clearActiveDraft();
-            sendGenerationRequest(text);
-            return;
-        }
 
         stateApi.addMessage({
             id: `profile_ai_user_${Date.now()}`,
@@ -1494,30 +1310,7 @@
         return { applied: false };
     };
 
-    const applyGenerationActionToWorkspace = (item) => {
-        const generatorApi = (window.HRProfileApp || {}).profileCreateStageGenerator;
-        if (!generatorApi) return { applied: false };
-
-        const prompt = (item && item.action && item.action.prompt) ||
-            (item && item.action && item.action.label) ||
-            "Заполнить профиль на основе текущего контекста";
-
-        if (isCompetenciesAnalysisItem(item)) {
-            if (!getFirstStageStatus().hasMinimumContext || typeof generatorApi.applyCompetenciesDraft !== "function") {
-                return { applied: false };
-            }
-
-            const result = generatorApi.applyCompetenciesDraft(prompt);
-            return {
-                applied: true,
-                appliedValue: "Заполнены ключевые компетенции",
-                undoAction: {
-                    type: "reset_competencies"
-                },
-                details: result
-            };
-        }
-
+    const applyAnalysisActionToWorkspace = (item) => {
         const taskActionResult = applyTaskActionToWorkspace(item);
         if (taskActionResult.applied) {
             const contextApi = (window.HRProfileApp || {}).profileCreateStageContext;
@@ -1527,21 +1320,7 @@
             return taskActionResult;
         }
 
-        if (typeof generatorApi.applyFirstStageDraft !== "function") {
-            return { applied: false };
-        }
-
-        const result = generatorApi.applyFirstStageDraft(prompt);
-        return {
-            applied: true,
-            appliedValue: "Сформирована структура первого этапа",
-            undoAction: {
-                type: "remove_ai_generated_first_stage",
-                resetPosition: Boolean(result && result.positionWasSet),
-                resetStructure: Boolean(result && result.structureWasSet)
-            },
-            details: result
-        };
+        return { applied: false };
     };
 
     const getCompetencyActionAppliedValue = (action = {}) => {
@@ -1652,8 +1431,8 @@
             return;
         }
 
-        if (item.action.type === "switch_generation") {
-            const result = applyGenerationActionToWorkspace(item);
+        if (item.action.type === "custom") {
+            const result = applyAnalysisActionToWorkspace(item);
             if (result.applied) {
                 markAnalysisActionDone(itemId, result);
                 if (!options.deferRefresh) {
@@ -1681,7 +1460,7 @@
         if (!items.length) return;
 
         const executableItems = items.filter((item) => (
-            item.action.type === "switch_generation" ||
+            item.action.type === "custom" ||
             item.action.type === "apply_competency_value"
         ));
         const firstStageItems = executableItems.filter((item) => !isCompetenciesAnalysisItem(item));
@@ -1950,11 +1729,6 @@
         event.stopPropagation();
 
         const action = button.dataset.analysisAction;
-        if (action === "switch_generation") {
-            setActiveTab("generation");
-            return;
-        }
-
         if (action === "apply_suggestion") {
             applyAnalysisSuggestion(button.dataset.analysisId || "");
             return;
@@ -2034,23 +1808,7 @@
         if (sendBtn) sendBtn.addEventListener("click", sendMessage);
         if (analysisStartBtn) analysisStartBtn.addEventListener("click", startAnalysis);
         document.querySelectorAll(".profile-ai-tab").forEach((button) => {
-            button.addEventListener("click", () => {
-                setActiveTab(button.dataset.aiTab || "generation");
-            });
-        });
-        document.querySelectorAll(".profile-ai-prompt-chip, .profile-ai-generation-scenario-btn").forEach((button) => {
-            button.addEventListener("click", () => {
-                const promptText = (button.dataset.promptText || button.textContent || "").trim();
-                const nextInput = document.getElementById("profile-ai-input");
-                if (!nextInput) return;
-
-                nextInput.value = promptText;
-                updateDraft(promptText);
-                stateApi.setState({ generationDraftSource: "quick" });
-                nextInput.focus();
-                nextInput.scrollTop = 0;
-                nextInput.setSelectionRange(0, 0);
-            });
+            button.addEventListener("click", handleTabClick);
         });
         document.querySelectorAll(".profile-ai-action-btn").forEach((button) => {
             button.addEventListener("click", handleActionClick);
@@ -2088,50 +1846,16 @@
 
         stages.forEach((stage) => {
             const observer = new MutationObserver(() => {
-                if (renderApi) renderApi.updateContext();
-                refreshGenerationIfVisible();
+                if (renderApi) renderApi.updateContext();
             });
             observer.observe(stage, { attributes: true, attributeFilter: ["class"] });
         });
     };
 
-    const refreshGenerationIfVisible = () => {
-        const stateApi = getStateApi();
-        if (!stateApi || isRenderingAIPanel) return;
-
-        window.clearTimeout(generationRefreshTimer);
-        generationRefreshTimer = window.setTimeout(() => {
-            const state = stateApi.getState();
-            if (!state.isOpen || state.activeTab !== "generation" || isRenderingAIPanel) return;
-            renderAndBind();
-        }, 80);
-    };
-
-    const observeGenerationContextChanges = () => {
-        const position = document.getElementById("param-position");
-        const structure = document.getElementById("param-structure");
-        const structureValue = document.getElementById("param-structure-value");
-
-        [position, structure].filter(Boolean).forEach((field) => {
-            field.addEventListener("input", refreshGenerationIfVisible);
-            field.addEventListener("change", refreshGenerationIfVisible);
-        });
-
-        if (structureValue) {
-            const observer = new MutationObserver(refreshGenerationIfVisible);
-            observer.observe(structureValue, { childList: true, characterData: true, subtree: true, attributes: true });
-        }
-
-        const goalsContainer = document.getElementById("goals-container");
-        if (goalsContainer) {
-            const observer = new MutationObserver(refreshGenerationIfVisible);
-            observer.observe(goalsContainer, { childList: true, subtree: true });
-        }
-    };
-
     document.addEventListener("DOMContentLoaded", () => {
         const trigger = document.getElementById("btn-profile-ai-assistant");
         if (trigger) trigger.addEventListener("click", toggle);
+        document.addEventListener("click", handleTabClick, true);
         document.addEventListener("input", () => {
             window.setTimeout(syncManualAnalysisCompletion, 0);
         });
@@ -2144,8 +1868,7 @@
         });
 
         renderAndBind();
-        observeStageChanges();
-        observeGenerationContextChanges();
+        observeStageChanges();
 
         window.openProfileAIAssistant = open;
         window.closeProfileAIAssistant = close;
