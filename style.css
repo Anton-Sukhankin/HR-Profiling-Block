@@ -1538,22 +1538,21 @@ body:has(.sidebar.collapsed) .side-drawer {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    background-color: var(--primary-color);
-    color: #FFFFFF;
-    border: none;
+    gap: 8px;
+    background-color: #FFFFFF;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 12px 48px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .btn-add-goal:not(:disabled):hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+    background-color: #F8F9FA;
+    border-color: #ADB5BD;
 }
 
 .btn-add-goal:disabled {
