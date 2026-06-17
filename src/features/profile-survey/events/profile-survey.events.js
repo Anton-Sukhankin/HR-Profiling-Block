@@ -150,6 +150,18 @@
         goNext();
     };
 
+    const isSurveyReadyToApply = (state) => Boolean(
+        state &&
+        state.answers &&
+        state.answers.selectedFunctionId &&
+        state.answers.selectedArea &&
+        state.answers.leadership &&
+        state.answers.result &&
+        state.answers.goal &&
+        state.answers.approach &&
+        state.answers.time
+    );
+
     const addFunctionValue = (query = "") => {
         const stateApi = getStateApi();
         const state = stateApi.getState();
@@ -496,6 +508,10 @@
     };
 
     const applyResult = () => {
+        const stateApi = getStateApi();
+        const state = stateApi ? stateApi.getState() : null;
+        if (!isSurveyReadyToApply(state)) return;
+
         const integration = window.HRProfileApp && window.HRProfileApp.profileSurveyIntegration;
         const fallback = window.HRProfileApp && window.HRProfileApp.profileCreateStageGenerator;
         const result = buildSurveyResult();

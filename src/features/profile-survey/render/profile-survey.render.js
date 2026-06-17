@@ -133,6 +133,8 @@
         return false;
     };
 
+    const isSurveyReadyToApply = (state) => [1, 2, 3, 4, 5, 6].every(stepNumber => isSurveyStepComplete(state, stepNumber));
+
     const renderStepNavigation = (state) => `
         <aside class="profile-survey-stage-nav" aria-label="Этапы опроса">
             ${surveySteps.map((step, index) => {
@@ -374,27 +376,19 @@
         return renderFinalStep(state, options);
     };
 
-    const renderFooter = (state) => `
-        <footer class="profile-survey-footer">
-            <button class="btn-secondary-sm profile-survey-footer-btn" type="button" data-survey-action="back" ${state.currentStep === 1 ? 'disabled' : ''}>
-                <i data-lucide="arrow-left"></i>
-                Назад
-            </button>
-            <button class="btn-secondary-sm profile-survey-footer-btn" type="button" data-survey-action="skip" ${state.currentStep === 1 || state.currentStep === state.totalSteps ? 'disabled' : ''}>
-                Пропустить вопрос
-            </button>
-            ${state.currentStep === state.totalSteps ? `
-                <button class="btn-primary profile-survey-footer-btn" type="button" data-survey-action="apply">
+    const renderFooter = (state) => {
+        const isReadyToApply = isSurveyReadyToApply(state);
+        return `
+            <footer class="profile-survey-footer">
+                <button class="btn-secondary-sm profile-survey-footer-btn" type="button" data-survey-action="exit">
+                    Отмена
+                </button>
+                <button class="btn-primary profile-survey-footer-btn" type="button" data-survey-action="apply" ${isReadyToApply ? '' : 'disabled'}>
                     Применить и закрыть
                 </button>
-            ` : `
-                <button class="btn-primary profile-survey-footer-btn" type="button" data-survey-action="next">
-                    Далее
-                    <i data-lucide="arrow-right"></i>
-                </button>
-            `}
-        </footer>
-    `;
+            </footer>
+        `;
+    };
 
     const renderWizard = (root, state) => {
         root.innerHTML = `

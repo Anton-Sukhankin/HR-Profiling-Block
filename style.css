@@ -2919,12 +2919,21 @@ td.col-funcs {
 }
 
 .accordion-card.is-open {
-    border-color: var(--primary-color);
+    border-color: var(--border-color);
 }
 
 .accordion-card.is-ai-generated {
-    border-color: rgba(15, 159, 112, 0.45);
+    border-color: var(--border-color);
     box-shadow: 0 12px 30px rgba(15, 159, 112, 0.08);
+}
+
+#competencies-content .accordion-card.is-ai-generated:not(:hover) {
+    box-shadow: none;
+}
+
+#competencies-content .accordion-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 30px rgba(0, 122, 255, 0.08);
 }
 
 .accordion-card.is-ai-generated::after {

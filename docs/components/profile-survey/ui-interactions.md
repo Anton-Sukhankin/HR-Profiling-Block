@@ -19,11 +19,10 @@ The AI assistant trigger is not shown in this mode because survey completion and
 
 ## Wizard Navigation
 
-- `Далее` advances to the next step.
-- `Назад` returns to the previous step.
-- `Пропустить вопрос` advances without selecting a value on optional steps.
+- `Отмена` closes the wizard without applying values and returns the user to the normal profile creation form.
 - The drawer back arrow closes the wizard without applying values and returns the user to the normal profile creation form.
-- `Применить и закрыть` applies values to the normal profile creation form.
+- `Применить и закрыть` is visible from the beginning and applies values to the normal profile creation form.
+- `Применить и закрыть` stays disabled until all survey answer blocks are filled.
 
 ## Selection Fields
 

@@ -180,8 +180,8 @@
 }
 
 .profile-survey-stage-nav {
-    width: 320px;
-    min-width: 320px;
+    width: 470px;
+    min-width: 470px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -542,7 +542,7 @@
 .profile-survey-typical-list,
 .profile-survey-choice-grid {
     display: grid;
-    gap: 10px;
+    gap: 4px;
 }
 
 .profile-survey-choice-grid {
@@ -556,18 +556,25 @@
 .profile-survey-radio-card,
 .profile-survey-choice-card {
     width: 100%;
-    min-height: 72px;
+    min-height: 56px;
+    max-height: 56px;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px;
+    padding: 8px 12px;
     border: 1px solid transparent;
     border-radius: 14px;
     background: #FFFFFF;
     color: #0F172A;
     text-align: left;
     cursor: pointer;
+    overflow: hidden;
     transition: all 0.2s ease;
+}
+
+.profile-survey-radio-card > span:last-child,
+.profile-survey-choice-card > span:last-child {
+    min-width: 0;
 }
 
 
@@ -587,15 +594,21 @@
     display: block;
     font-size: 14px;
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .profile-survey-radio-card small,
 .profile-survey-choice-card small {
     display: block;
-    margin-top: 4px;
+    margin-top: 2px;
     font-size: 12px;
-    line-height: 1.35;
+    line-height: 1.2;
     color: #64748B;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .profile-survey-radio-indicator,
