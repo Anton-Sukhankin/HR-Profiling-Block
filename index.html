@@ -6,6 +6,7 @@
     <title>Samolet HR TECH - Side Navigation</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="src/features/profile-ai-assistant/styles/profile-ai-assistant.css">
+    <link rel="stylesheet" href="src/features/profile-survey/styles/profile-survey.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -662,7 +663,10 @@
                 <button class="drawer-back-btn" id="back-drawer-btn" title="Назад">
                     <i data-lucide="arrow-left"></i>
                 </button>
-                <h2 class="drawer-title">Создание профиля</h2>
+                <div class="drawer-title-stack">
+                    <h2 class="drawer-title">Создание профиля</h2>
+                    <p class="drawer-survey-description">Опросник разработан для руководителей подразделений с целью минимизации ручного ввода при создании должностной инструкции</p>
+                </div>
             </div>
             <div class="drawer-header-actions">
                 <button class="ai-assistant-trigger-btn" id="btn-profile-ai-assistant" type="button" aria-expanded="false">
@@ -709,63 +713,65 @@
 
             <!-- Область для контента -->
             <div class="stage-content-area" id="functional-content">
-                <div class="parameters-block">
-                    
-                    <div class="parameters-grid">
-                        <!-- Должность -->
-                        <div class="form-group">
-                            <label for="param-position">Должность<span class="required-asterisk">*</span></label>
-                            <div class="select-wrapper">
-                                <select id="param-position" class="custom-select">
-                                    <option value="" disabled selected>Выберите должность</option>
-                                    <option value="project-manager">Руководитель проекта</option>
-                                    <option value="lead-dev">Ведущий программист</option>
-                                    <option value="system-analyst">Системный аналитик</option>
-                                    <option value="uiux-designer">UX/UI-дизайнер</option>
-                                    <option value="qa-engineer">Тестировщик</option>
-                                    <option value="devops-engineer">DevOps-инженер</option>
-                                    <option value="sw-architect">Архитектор ПО</option>
-                                    <option value="business-analyst">Бизнес-аналитик</option>
-                                </select>
+                <div class="profile-survey-layout-row">
+                    <div class="parameters-block">
+                        
+                        <div class="parameters-grid">
+                            <!-- Должность -->
+                            <div class="form-group">
+                                <label for="param-position">Должность<span class="required-asterisk">*</span></label>
+                                <div class="select-wrapper">
+                                    <select id="param-position" class="custom-select">
+                                        <option value="" disabled selected>Выберите должность</option>
+                                        <option value="project-manager">Руководитель проекта</option>
+                                        <option value="lead-dev">Ведущий программист</option>
+                                        <option value="system-analyst">Системный аналитик</option>
+                                        <option value="uiux-designer">UX/UI-дизайнер</option>
+                                        <option value="qa-engineer">Тестировщик</option>
+                                        <option value="devops-engineer">DevOps-инженер</option>
+                                        <option value="sw-architect">Архитектор ПО</option>
+                                        <option value="business-analyst">Бизнес-аналитик</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Классификатор -->
-                        <div class="form-group">
-                            <label for="param-classifier">Классификатор</label>
-                            <input type="text" id="param-classifier" placeholder="Введите значение">
-                        </div>
+                            <!-- Классификатор -->
+                            <div class="form-group">
+                                <label for="param-classifier">Классификатор</label>
+                                <input type="text" id="param-classifier" placeholder="Введите значение">
+                            </div>
 
-                        <!-- Место в структуре -->
-                        <div class="form-group">
-                            <label for="param-structure">Место в структуре<span class="required-asterisk">*</span></label>
-                            <div class="select-wrapper">
-                                <!-- Kept hidden in the DOM for full backward compatibility and validation -->
-                                <select id="param-structure" class="custom-select" style="display: none;">
-                                    <option value="" disabled selected>Выберите подразделение</option>
-                                </select>
-                                
-                                <!-- Premium Custom Tree Select Component -->
-                                <div class="tree-select-container">
-                                    <div class="tree-select-trigger" id="param-structure-trigger">
-                                        <span class="tree-select-value is-placeholder" id="param-structure-value">Выберите подразделение</span>
-                                        <i data-lucide="chevron-down" class="tree-select-chevron"></i>
-                                    </div>
-                                    <div class="tree-select-dropdown" id="param-structure-dropdown">
-                                        <!-- Dynamically populated corporate structure tree via javascript -->
+                            <!-- Место в структуре -->
+                            <div class="form-group">
+                                <label for="param-structure">Место в структуре<span class="required-asterisk">*</span></label>
+                                <div class="select-wrapper">
+                                    <!-- Kept hidden in the DOM for full backward compatibility and validation -->
+                                    <select id="param-structure" class="custom-select" style="display: none;">
+                                        <option value="" disabled selected>Выберите подразделение</option>
+                                    </select>
+                                    
+                                    <!-- Premium Custom Tree Select Component -->
+                                    <div class="tree-select-container">
+                                        <div class="tree-select-trigger" id="param-structure-trigger">
+                                            <span class="tree-select-value is-placeholder" id="param-structure-value">Выберите подразделение</span>
+                                            <i data-lucide="chevron-down" class="tree-select-chevron"></i>
+                                        </div>
+                                        <div class="tree-select-dropdown" id="param-structure-dropdown">
+                                            <!-- Dynamically populated corporate structure tree via javascript -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Код ОКЗ -->
-                        <div class="form-group">
-                            <label for="param-okz">Код ОКЗ</label>
-                            <input type="text" id="param-okz" placeholder="Введите код">
+                            <!-- Код ОКЗ -->
+                            <div class="form-group">
+                                <label for="param-okz">Код ОКЗ</label>
+                                <input type="text" id="param-okz" placeholder="Введите код">
+                            </div>
                         </div>
                     </div>
 
-
+                    <div class="profile-survey-banner-slot" id="profile-survey-banner-host"></div>
                 </div>
 
                 <!-- Блок «Задачи и функции» -->
@@ -788,6 +794,8 @@
                 <!-- Контейнер для карточек целей -->
                 <div id="goals-container" class="goals-container"></div>
             </div>
+
+            <div id="profile-survey-host" class="profile-survey-host" aria-live="polite"></div>
 
             <div class="stage-content-area" id="competencies-content" style="display: none;">
                 <!-- Section Label: SOFT SKILLS -->
@@ -1571,6 +1579,10 @@
     <script src="src/features/profile-ai-assistant/state/profile-ai-assistant.state.js"></script>
     <script src="src/features/profile-ai-assistant/render/profile-ai-assistant.render.js"></script>
     <script src="src/features/profile-ai-assistant/events/profile-ai-assistant.events.js"></script>
+    <script src="src/features/profile-survey/data/profile-survey.data.js"></script>
+    <script src="src/features/profile-survey/state/profile-survey.state.js"></script>
+    <script src="src/features/profile-survey/render/profile-survey.render.js"></script>
+    <script src="src/features/profile-survey/events/profile-survey.events.js"></script>
     <script src="src/app.js"></script>
 </body>
 </html>

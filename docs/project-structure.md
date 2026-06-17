@@ -34,6 +34,19 @@ src/
         profile-ai-assistant.state.js
       styles/
         profile-ai-assistant.css
+    profile-survey/
+      data/
+        profile-survey.data.js
+      docs/
+        README.md
+      events/
+        profile-survey.events.js
+      render/
+        profile-survey.render.js
+      state/
+        profile-survey.state.js
+      styles/
+        profile-survey.css
     profile-create/
       profile-create.mapper.js
     profile-card/
@@ -53,6 +66,13 @@ docs/
       ai-logic.md
       integration.md
       doc-sync-map.md
+    profile-survey/
+      overview.md
+      user-flows.md
+      business-rules.md
+      ui-interactions.md
+      data-model.md
+      integration.md
   profile-entity-model.md
   project-structure.md
 ```
@@ -67,9 +87,13 @@ docs/
 
 `src/features/profile-ai-assistant/` содержит самостоятельный модуль AI-помощника создания профиля. Внутри модуль разделён по ролям: `data` хранит мок-данные и JSON-примеры, `model` описывает карточки анализа, `state` хранит состояние панели, `render` отвечает за отрисовку, `events` — за пользовательские действия и синхронизацию с рабочей областью, `styles` — за внешний вид, `docs` — за локальную документацию компонента.
 
+`src/features/profile-survey/` содержит самостоятельный модуль опросника создания профиля. Внутри модуль разделён по ролям: `data` хранит сценарные справочники и зависимости, `state` хранит прогресс и ответы опросника, `render` отвечает за баннер и мастер, `events` — за навигацию и применение результата, `styles` — за внешний вид, `docs` — за локальные примечания компонента.
+
 `docs/components/profile-ai-assistant/product-spec.md` описывает продуктовую и UX-логику AI-помощника: анализ, чат, состояния панели, карточки рекомендаций и правила синхронизации с рабочей областью.
 
 `docs/components/profile-ai-assistant/` декомпозирует документацию AI-помощника по смысловым слоям: обзор, пользовательские сценарии, бизнес-правила, UI-взаимодействия, модель данных, AI-логика, интеграции и карта синхронизации документации с кодом.
+
+`docs/components/profile-survey/` описывает опросник создания профиля как отдельный пользовательский путь: обзор, сценарии, бизнес-правила, UI-взаимодействия, модель данных и интеграцию с `profile-create`.
 
 `docs/components/profile-ai-assistant/analysis-card-model.md` фиксирует атрибутивный состав карточек анализа AI-помощника и связан с `docs/components/profile-ai-assistant/data-model.md`.
 

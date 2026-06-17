@@ -429,6 +429,10 @@
     };
 
     const closeDrawer = () => {
+        const surveyState = window.HRProfileApp && window.HRProfileApp.profileSurveyState;
+        if (surveyState && typeof surveyState.setState === 'function') {
+            surveyState.setState({ isActive: false });
+        }
         resetProfileAIAssistantSession();
         profileDrawer.classList.remove('is-open');
         if (!viewProfileDrawer || !viewProfileDrawer.classList.contains('is-open')) {
@@ -1911,7 +1915,14 @@
     openDrawerBtn.addEventListener('click', openDrawer);
     closeDrawerBtn.addEventListener('click', closeDrawer);
     if (backDrawerBtn) {
-        backDrawerBtn.addEventListener('click', closeDrawer);
+        backDrawerBtn.addEventListener('click', () => {
+            const surveyState = window.HRProfileApp && window.HRProfileApp.profileSurveyState;
+            if (profileDrawer && profileDrawer.classList.contains('is-survey-mode') && surveyState && typeof surveyState.setState === 'function') {
+                surveyState.setState({ isActive: false });
+                return;
+            }
+            closeDrawer();
+        });
     }
     
     // View Profile Drawer Close Events
@@ -4928,6 +4939,49 @@
     window.HRProfileApp = window.HRProfileApp || {};
     window.HRProfileApp.profileCreateStageGenerator = {
         applyFirstStageDraft: applyAIFirstStageDraft
+    };
+
+    const applySurveyResult = (surveyResult = {}) => {
+        if (!surveyResult || !surveyResult.goal || !goalsContainer) return false;
+
+        document
+            .querySelectorAll('.goal-card[data-survey-generated="profile-survey"]')
+            .forEach(card => card.remove());
+
+        setPositionIfEmpty(surveyResult.positionValue || 'system-analyst');
+        setStructureIfEmpty(surveyResult.structureName || 'Департамент разработки');
+
+        const fields = getParamFields();
+        if (fields.classifier && !fields.classifier.value && surveyResult.classifier) {
+            fields.classifier.value = surveyResult.classifier;
+            fields.classifier.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (fields.okz && !fields.okz.value && surveyResult.okzCode) {
+            fields.okz.value = surveyResult.okzCode;
+            fields.okz.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        createGoalCard(surveyResult.goal);
+        const createdCard = goalsContainer.lastElementChild;
+        if (createdCard) {
+            createdCard.dataset.surveyGenerated = 'profile-survey';
+            createdCard.classList.add('is-ai-generated');
+        }
+
+        if (surveyResult.competencies && typeof applyCompetenciesState === 'function') {
+            applyCompetenciesState(surveyResult.competencies, { useDefaults: false });
+        }
+
+        updateIndices();
+        validateFunctionalStage();
+        updateCreateStageCardsInteractivity();
+
+        showToast('Данные опросника применены к профилю');
+        return true;
+    };
+
+    window.HRProfileApp.profileSurveyIntegration = {
+        applySurveyResult
     };
 
     // Event Delegation for Card Actions
@@ -8174,4 +8228,8 @@
     };
 
     prepopulateCompetencies();
+
+    if (window.HRProfileApp.profileSurveyEvents && typeof window.HRProfileApp.profileSurveyEvents.init === 'function') {
+        window.HRProfileApp.profileSurveyEvents.init();
+    }
 });
