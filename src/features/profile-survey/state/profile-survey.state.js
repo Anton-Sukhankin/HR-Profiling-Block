@@ -5,6 +5,8 @@
         isActive: false,
         currentStep: 1,
         totalSteps: 7,
+        openAccordions: {},
+        surveyScenario: "undetermined",
         hasVisitedTypicalRoles: false,
         isTypicalProfile: false,
         appliedAt: null,
@@ -38,6 +40,7 @@
                 ...state.answers,
                 ...(patch.answers || {})
             },
+            openAccordions: patch.openAccordions || state.openAccordions,
             customFunctions: patch.customFunctions || state.customFunctions,
             customAreas: patch.customAreas || state.customAreas
         };

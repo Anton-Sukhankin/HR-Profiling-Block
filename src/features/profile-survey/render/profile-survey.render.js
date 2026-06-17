@@ -23,17 +23,14 @@
         return getAllFunctions().find(item => item.id === state.answers.selectedFunctionId) || null;
     };
 
-    const getAllAreas = () => {
-        const uniqueAreas = new Set();
-        getAllFunctions().forEach(item => {
-            (item.areas || []).forEach(area => {
-                if (area) uniqueAreas.add(area);
-            });
-        });
-        return Array.from(uniqueAreas).sort((a, b) => a.localeCompare(b));
-    };
-
     const getOptionById = (items = [], id = "") => items.find(item => item.id === id) || null;
+
+    const hasTypicalRoleCatalog = (selectedFunction) => Boolean(
+        selectedFunction &&
+        selectedFunction.hasTypicalRoles &&
+        Array.isArray(selectedFunction.typicalRoles) &&
+        selectedFunction.typicalRoles.length
+    );
 
     const refreshSurveyIcons = () => {
         if (window.lucide && typeof window.lucide.createIcons === "function") {
@@ -54,68 +51,56 @@
         route: '<circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7H6.5a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle>',
         "clock-3": '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16.5 12"></polyline>',
         "clipboard-check": '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path>',
+        "chevron-down": '<path d="m6 9 6 6 6-6"></path>',
         check: '<path d="M20 6 9 17l-5-5"></path>'
     };
 
-    const renderSurveyStageIcon = (iconName) => `
-        <svg class="profile-survey-stage-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    const renderSurveyStageIcon = (iconName, className = "") => `
+        <svg class="profile-survey-stage-icon ${escapeHtml(className)}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             ${surveyStageIconPaths[iconName] || surveyStageIconPaths.briefcase}
         </svg>
     `;
 
-    const renderLaunchBanner = () => `
-        <section class="profile-survey-banner" aria-label="Опросник создания профиля">
-            <div class="profile-survey-banner-icon" aria-hidden="true">
-                <i data-lucide="clipboard-list"></i>
-            </div>
-            <div class="profile-survey-banner-copy">
-                <h3>Пройти опрос</h3>
-                <p>Опросник разработан для руководителей подразделений с целью минимизации ручного ввода при создании должностной инструкции</p>
-            </div>
-            <button class="btn-primary profile-survey-start-btn" type="button" id="profile-survey-start-btn">Пройти</button>
-        </section>
-    `;
-
     const surveySteps = [
         {
-            title: "Функция",
-            description: "Основная функция и направление",
+            title: "Выберите основную функцию должности",
+            description: "Это обязательное поле определяет дальнейшие направления, типовые шаблоны и варианты заполнения профиля.",
             icon: "briefcase",
             iconClass: "survey-function"
         },
         {
-            title: "Руководство",
-            description: "Наличие подразделения",
+            title: "Является ли должность руководящей?",
+            description: "Если в подчинении закреплено структурное подразделение, система добавит управленческую задачу с весом 20%.",
             icon: "users",
             iconClass: "survey-leadership"
         },
         {
-            title: "Результат",
-            description: "Ожидаемый вклад роли",
+            title: "Какой ключевой результат должна обеспечивать должность?",
+            description: "Выберите один вариант, который лучше всего отражает ожидаемый вклад роли.",
             icon: "target",
             iconClass: "survey-result"
         },
         {
-            title: "Цель",
-            description: "Миссия должности",
+            title: "Какая глобальная миссия роли ближе всего?",
+            description: "Ответ повлияет на формулировку цели в карточке профиля.",
             icon: "flag",
             iconClass: "survey-goal"
         },
         {
-            title: "Подход",
-            description: "Метод работы",
+            title: "Какой подход к работе характерен для должности?",
+            description: "Ответ поможет подобрать релевантные soft skills.",
             icon: "route",
             iconClass: "survey-approach"
         },
         {
-            title: "Время",
-            description: "Фокус нагрузки",
+            title: "Какой функционал занимает большую часть времени?",
+            description: "Ответ используется для распределения веса задач до 100%.",
             icon: "clock-3",
             iconClass: "survey-time"
         },
         {
-            title: "Финал",
-            description: "Сводка и применение",
+            title: "Проверьте сводку перед применением",
+            description: "Выбранные значения уже отображаются в основной форме. Проверьте результат и закройте опросник.",
             icon: "clipboard-check",
             iconClass: "survey-final"
         }
@@ -124,7 +109,16 @@
     const isSurveyStepComplete = (state, stepNumber) => {
         if (!state || !state.answers) return false;
         const answers = state.answers;
-        if (stepNumber === 1) return Boolean(answers.selectedFunctionId && answers.selectedArea);
+        if (stepNumber === 1) {
+            const selectedFunction = getSelectedFunction();
+            const hasBaseContext = Boolean(answers.selectedFunctionId && answers.selectedArea);
+            if (!hasBaseContext) return false;
+            if (!hasTypicalRoleCatalog(selectedFunction)) return true;
+            if (state.surveyScenario === "typical") {
+                return Boolean(answers.selectedTypicalRole && answers.selectedTypicalRole !== "none");
+            }
+            return state.surveyScenario === "nonTypical" && state.hasVisitedTypicalRoles && answers.selectedTypicalRole === "none";
+        }
         if (stepNumber === 2) return Boolean(answers.leadership);
         if (stepNumber === 3) return Boolean(answers.result);
         if (stepNumber === 4) return Boolean(answers.goal);
@@ -133,28 +127,29 @@
         return false;
     };
 
-    const isSurveyReadyToApply = (state) => [1, 2, 3, 4, 5, 6].every(stepNumber => isSurveyStepComplete(state, stepNumber));
+    const isSurveyReadyToApply = (state) => {
+        if (!state || !state.answers) return false;
+        const answers = state.answers;
+        const hasBaseContext = Boolean(answers.selectedFunctionId && answers.selectedArea);
+        if (!hasBaseContext) return false;
 
-    const renderStepNavigation = (state) => `
-        <aside class="profile-survey-stage-nav" aria-label="Этапы опроса">
-            ${surveySteps.map((step, index) => {
-                const stepNumber = index + 1;
-                const isActive = state.currentStep === stepNumber;
-                const isCompleted = isSurveyStepComplete(state, stepNumber);
-                return `
-                    <div class="stage-card profile-survey-stage-card ${isActive ? 'active' : ''} ${isCompleted ? 'is-completed' : ''}" data-survey-step-nav="${stepNumber}" role="button" tabindex="0">
-                        <div class="stage-icon-wrapper ${escapeHtml(step.iconClass)}">
-                            ${renderSurveyStageIcon(isCompleted ? 'check' : step.icon)}
-                        </div>
-                        <div class="stage-info">
-                            <span class="stage-label">${escapeHtml(step.title)}</span>
-                            <p class="stage-desc">${escapeHtml(step.description)}</p>
-                        </div>
-                    </div>
-                `;
-            }).join('')}
-        </aside>
-    `;
+        if (state.surveyScenario === "typical") {
+            return Boolean(answers.selectedTypicalRole && answers.selectedTypicalRole !== "none");
+        }
+
+        if (state.surveyScenario === "nonTypical") {
+            return [1, 2, 3, 4, 5, 6].every(stepNumber => isSurveyStepComplete(state, stepNumber));
+        }
+
+        return false;
+    };
+
+    const shouldRenderSurveyStep = (state, stepNumber) => {
+        if (stepNumber === 1 || stepNumber === surveySteps.length) return true;
+        return state && state.surveyScenario === "nonTypical";
+    };
+
+    const isSurveyAccordionOpen = (state, stepNumber) => Boolean(state.openAccordions && state.openAccordions[String(stepNumber)]);
 
     const renderSelectField = ({
         label = "",
@@ -173,11 +168,14 @@
 
     const renderTypicalRoles = (state, selectedFunction, disabled = false) => {
         if (!selectedFunction || !selectedFunction.hasTypicalRoles || !selectedFunction.typicalRoles.length) return '';
+        const isManualRoleSelected = state.surveyScenario === "nonTypical" &&
+            state.hasVisitedTypicalRoles &&
+            state.answers.selectedTypicalRole === "none";
         return `
             <section class="profile-survey-typical-block ${disabled ? 'is-disabled' : ''}">
                 <div class="profile-survey-block-title">Доступные готовые шаблоны должностей</div>
                 <div class="profile-survey-typical-list">
-                    <button class="profile-survey-radio-card ${state.answers.selectedTypicalRole === 'none' ? 'is-selected' : ''} has-radio" type="button" data-survey-typical-role="none" ${disabled ? 'disabled' : ''}>
+                    <button class="profile-survey-radio-card ${isManualRoleSelected ? 'is-selected' : ''} has-radio" type="button" data-survey-typical-role="none" ${disabled ? 'disabled' : ''}>
                         <span class="profile-survey-radio-indicator"></span>
                         <span>
                             <strong>Не относится к типовым ролям</strong>
@@ -194,10 +192,10 @@
                         </button>
                     `).join('')}
                 </div>
-                ${state.isTypicalProfile ? `
+                ${state.surveyScenario === "typical" ? `
                     <div class="profile-survey-note profile-survey-note-info">
                         <i data-lucide="info"></i>
-                        <span>Профиль будет сформирован по выбранному типовому шаблону. На следующем шаге откроется финальная сводка.</span>
+                        <span>Профиль будет сформирован по выбранному типовому шаблону. Вы можете проверить сводку или отказаться от шаблона.</span>
                     </div>
                 ` : ''}
             </section>
@@ -218,72 +216,53 @@
         </div>
     `;
 
-    const renderFunctionStep = (state, options = {}) => {
-        const { isActive = false } = options;
+    const renderFunctionStepBody = (state) => {
         const selectedFunction = getSelectedFunction();
         return `
-            <section class="profile-survey-step-card ${isActive ? 'is-current' : ''}" data-survey-step-panel="1">
-                <h3>Выберите основную функцию должности</h3>
-                <p>Это обязательное поле определяет дальнейшие направления, типовые шаблоны и варианты заполнения профиля.</p>
-                ${renderSelectField({
-                    label: "Основная функция должности",
-                    value: selectedFunction ? selectedFunction.name : "",
-                    placeholder: "Выберите функцию",
-                    selectKey: "function",
-                    required: true
-                })}
+            ${renderSelectField({
+                label: "Основная функция должности",
+                value: selectedFunction ? selectedFunction.name : "",
+                placeholder: "Выберите функцию",
+                selectKey: "function",
+                required: true
+            })}
 
-                ${renderTypicalRoles(state, selectedFunction, false)}
+            ${renderTypicalRoles(state, selectedFunction, false)}
 
-                ${renderSelectField({
-                    label: "Укажите конкретное функциональное направление",
-                    value: state.answers.selectedArea,
-                    placeholder: "Выберите направление",
-                    selectKey: "area",
-                    required: true
-                })}
-            </section>
+            ${renderSelectField({
+                label: "Укажите конкретное функциональное направление",
+                value: state.answers.selectedArea,
+                placeholder: "Выберите направление",
+                selectKey: "area",
+                required: true
+            })}
         `;
     };
 
-    const renderLeadershipStep = (state, options = {}) => {
-        const { isActive = false } = options;
-        return `
-        <section class="profile-survey-step-card ${isActive ? 'is-current' : ''}" data-survey-step-panel="2">
-            <h3>Является ли должность руководящей?</h3>
-            <p>Если в подчинении закреплено структурное подразделение, система добавит управленческую задачу с весом 20%.</p>
-            ${renderRadioChoiceCards([
-                { id: 'yes', title: 'Да', description: 'Есть структурное подразделение в подчинении' },
-                { id: 'no', title: 'Нет', description: 'Роль не является руководящей' }
-            ], state.answers.leadership, 'data-survey-leadership')}
-            ${state.answers.leadership === 'yes' ? `
-                <div class="profile-survey-note profile-survey-note-info">
-                    <i data-lucide="sparkles"></i>
-                    <span>Будет добавлена задача «Управление операционной деятельностью» с весом 20%.</span>
-                </div>
-            ` : ''}
-        </section>
+    const renderLeadershipStepBody = (state) => `
+        ${renderRadioChoiceCards([
+            { id: 'yes', title: 'Да', description: 'Есть структурное подразделение в подчинении' },
+            { id: 'no', title: 'Нет', description: 'Роль не является руководящей' }
+        ], state.answers.leadership, 'data-survey-leadership')}
+        ${state.answers.leadership === 'yes' ? `
+            <div class="profile-survey-note profile-survey-note-info">
+                <i data-lucide="sparkles"></i>
+                <span>Будет добавлена задача «Управление операционной деятельностью» с весом 20%.</span>
+            </div>
+        ` : ''}
     `;
-    };
 
-    const renderOptionStep = (state, config, options = {}) => {
-        const { isActive = false, stepNumber = '' } = options;
+    const renderOptionStepBody = (state, config) => {
         const selectedValue = state.answers[config.answerKey];
         const radioAttr = `data-survey-${config.selectKey}`;
-        return `
-        <section class="profile-survey-step-card ${isActive ? 'is-current' : ''}" data-survey-step-panel="${stepNumber}">
-            <h3>${escapeHtml(config.title)}</h3>
-            <p>${escapeHtml(config.description)}</p>
-            ${(config.items || []).length <= 5
-                ? renderRadioChoiceCards(config.items || [], selectedValue, radioAttr)
-                : renderSelectField({
-                    label: config.fieldLabel || config.title,
-                    value: ((config.items || []).find(item => item.id === selectedValue) || {}).title || "",
-                    placeholder: config.placeholder || "Выберите значение",
-                    selectKey: config.selectKey
-                })}
-        </section>
-    `;
+        return (config.items || []).length <= 5
+            ? renderRadioChoiceCards(config.items || [], selectedValue, radioAttr)
+            : renderSelectField({
+                label: config.fieldLabel || config.title,
+                value: ((config.items || []).find(item => item.id === selectedValue) || {}).title || "",
+                placeholder: config.placeholder || "Выберите значение",
+                selectKey: config.selectKey
+            });
     };
 
     const buildSummary = (state) => {
@@ -309,72 +288,104 @@
         `;
     };
 
-    const renderFinalStep = (state, options = {}) => {
-        const { isActive = false } = options;
+    const renderFinalStepBody = (state) => {
         const summary = buildSummary(state);
         return `
-            <section class="profile-survey-step-card ${isActive ? 'is-current' : ''}" data-survey-step-panel="7">
-                <h3>Проверьте сводку перед применением</h3>
-                <p>Данные будут перенесены в основную форму только после нажатия кнопки «Применить и закрыть».</p>
-                <div class="profile-survey-summary">
-                    ${renderSummaryRow('Функция', summary.selectedFunction ? summary.selectedFunction.name : '')}
-                    ${renderSummaryRow('Направление', state.answers.selectedArea)}
-                    ${renderSummaryRow('Типовой шаблон', summary.selectedRole ? summary.selectedRole.title : '')}
-                    ${renderSummaryRow('Цель', summary.goal ? summary.goal.title : '')}
-                    ${renderSummaryRow('Подход', summary.approach ? summary.approach.title : '')}
-                    ${renderSummaryRow('Фокус времени', summary.time ? summary.time.title : '')}
-                </div>
-                ${state.isTypicalProfile ? `
-                    <button class="profile-survey-template-reset" type="button" data-survey-action="reject-template">
-                        Типовой профиль не подходит
-                    </button>
-                ` : ''}
-            </section>
+            <div class="profile-survey-summary">
+                ${renderSummaryRow('Функция', summary.selectedFunction ? summary.selectedFunction.name : '')}
+                ${renderSummaryRow('Направление', state.answers.selectedArea)}
+                ${renderSummaryRow('Типовой шаблон', summary.selectedRole ? summary.selectedRole.title : '')}
+                ${renderSummaryRow('Цель', summary.goal ? summary.goal.title : '')}
+                ${renderSummaryRow('Подход', summary.approach ? summary.approach.title : '')}
+                ${renderSummaryRow('Фокус времени', summary.time ? summary.time.title : '')}
+            </div>
+            ${state.surveyScenario === "typical" ? `
+                <button class="profile-survey-template-reset" type="button" data-survey-action="reject-template">
+                    Типовой профиль не подходит
+                </button>
+            ` : ''}
         `;
     };
 
-    const renderStepBlock = (state, stepNumber) => {
+    const renderStepBody = (state, stepNumber) => {
         const data = app.profileSurveyData || {};
-        const options = {
-            stepNumber,
-            isActive: stepNumber === state.currentStep
-        };
-        if (stepNumber === 1) return renderFunctionStep(state, options);
-        if (stepNumber === 2) return renderLeadershipStep(state, options);
-        if (stepNumber === 3) return renderOptionStep(state, {
-            kicker: 'Ожидаемый результат',
-            title: 'Какой ключевой результат должна обеспечивать должность?',
-            description: 'Выберите один вариант, который лучше всего отражает ожидаемый вклад роли.',
+        if (stepNumber === 1) return renderFunctionStepBody(state);
+        if (stepNumber === 2) return renderLeadershipStepBody(state);
+        if (stepNumber === 3) return renderOptionStepBody(state, {
+            title: surveySteps[2].title,
             items: data.resultOptions || [],
             answerKey: 'result',
             selectKey: 'result'
-        }, options);
-        if (stepNumber === 4) return renderOptionStep(state, {
-            kicker: 'Цель должности',
-            title: 'Какая глобальная миссия роли ближе всего?',
-            description: 'Ответ повлияет на формулировку цели в карточке профиля.',
+        });
+        if (stepNumber === 4) return renderOptionStepBody(state, {
+            title: surveySteps[3].title,
             items: data.goalOptions || [],
             answerKey: 'goal',
             selectKey: 'goal'
-        }, options);
-        if (stepNumber === 5) return renderOptionStep(state, {
-            kicker: 'Подход к работе',
-            title: 'Какой подход к работе характерен для должности?',
-            description: 'Ответ поможет подобрать релевантные soft skills.',
+        });
+        if (stepNumber === 5) return renderOptionStepBody(state, {
+            title: surveySteps[4].title,
             items: data.approachOptions || [],
             answerKey: 'approach',
             selectKey: 'approach'
-        }, options);
-        if (stepNumber === 6) return renderOptionStep(state, {
-            kicker: 'Распределение времени',
-            title: 'Какой функционал занимает большую часть времени?',
-            description: 'Ответ используется для распределения веса задач до 100%.',
+        });
+        if (stepNumber === 6) return renderOptionStepBody(state, {
+            title: surveySteps[5].title,
             items: data.timeOptions || [],
             answerKey: 'time',
             selectKey: 'time'
-        }, options);
-        return renderFinalStep(state, options);
+        });
+        return renderFinalStepBody(state);
     };
+
+    const renderSurveyAccordion = (state, step, stepNumber) => {
+        const isOpen = isSurveyAccordionOpen(state, stepNumber);
+        const isCompleted = isSurveyStepComplete(state, stepNumber);
+        const layer = surveySteps.length - stepNumber + 1;
+        return `
+            <article class="stage-card profile-survey-stage-card profile-survey-accordion-card ${isOpen ? 'is-open' : ''} ${isCompleted ? 'is-completed' : ''}" data-survey-accordion="${stepNumber}" style="--survey-accordion-layer: ${layer};">
+                <button class="profile-survey-accordion-header" type="button" data-survey-accordion-toggle="${stepNumber}" aria-expanded="${isOpen ? 'true' : 'false'}">
+                    <div class="stage-icon-wrapper ${escapeHtml(step.iconClass)}">
+                        ${renderSurveyStageIcon(isCompleted ? 'check' : step.icon, 'profile-survey-stage-icon-main')}
+                        ${renderSurveyStageIcon('chevron-down', 'profile-survey-stage-icon-toggle')}
+                    </div>
+                    <div class="stage-info">
+                        <span class="stage-label">${escapeHtml(step.title)}</span>
+                        <p class="stage-desc">${escapeHtml(step.description)}</p>
+                    </div>
+                </button>
+                <div class="profile-survey-accordion-body" ${isOpen ? '' : 'hidden'}>
+                    ${renderStepBody(state, stepNumber)}
+                </div>
+            </article>
+        `;
+    };
+
+    const renderSurveyFinalBlock = (state, step, stepNumber) => {
+        const layer = surveySteps.length - stepNumber + 1;
+        return `
+            <article class="stage-card profile-survey-stage-card profile-survey-accordion-card profile-survey-final-block is-open is-static" data-survey-summary-block="${stepNumber}" style="--survey-accordion-layer: ${layer};">
+                <div class="profile-survey-accordion-header" aria-expanded="true">
+                    <div class="stage-icon-wrapper ${escapeHtml(step.iconClass)}">
+                        ${renderSurveyStageIcon(step.icon, 'profile-survey-stage-icon-main')}
+                    </div>
+                    <div class="stage-info">
+                        <span class="stage-label">${escapeHtml(step.title)}</span>
+                        <p class="stage-desc">${escapeHtml(step.description)}</p>
+                    </div>
+                </div>
+                <div class="profile-survey-accordion-body">
+                    ${renderStepBody(state, stepNumber)}
+                </div>
+            </article>
+        `;
+    };
+
+    const renderSurveyStepBlock = (state, step, stepNumber) => (
+        stepNumber === surveySteps.length
+            ? renderSurveyFinalBlock(state, step, stepNumber)
+            : renderSurveyAccordion(state, step, stepNumber)
+    );
 
     const renderFooter = (state) => {
         const isReadyToApply = isSurveyReadyToApply(state);
@@ -384,27 +395,40 @@
                     Отмена
                 </button>
                 <button class="btn-primary profile-survey-footer-btn" type="button" data-survey-action="apply" ${isReadyToApply ? '' : 'disabled'}>
-                    Применить и закрыть
+                    Создать профиль
                 </button>
             </footer>
         `;
     };
 
-    const renderWizard = (root, state) => {
+    const renderDrawer = (root, state) => {
         root.innerHTML = `
-            <div class="profile-survey-shell">
-                <main class="profile-survey-content">
-                    <div class="profile-survey-workspace">
-                        ${renderStepNavigation(state)}
-                        <section class="profile-survey-panel">
-                            <div class="profile-survey-step-stack">
-                                ${surveySteps.map((step, index) => renderStepBlock(state, index + 1)).join('')}
-                            </div>
-                        </section>
+            <aside class="profile-survey-drawer" role="complementary" aria-label="Опросник создания профиля">
+                <header class="profile-survey-drawer-header">
+                    <div class="profile-survey-drawer-title-group">
+                        <h2>Ассистент профилирования</h2>
+                        <p>Ответь на несколько вопросов, чтобы быстрее оформить профиль</p>
                     </div>
-                </main>
+                    <button class="profile-survey-drawer-close" type="button" data-survey-action="exit" aria-label="Закрыть опросник">
+                        <i data-lucide="x"></i>
+                    </button>
+                </header>
+                <div class="profile-survey-drawer-scroll-shell">
+                    <main class="profile-survey-drawer-body" data-survey-scroll-area>
+                        <div class="profile-survey-accordion-stack">
+                            ${surveySteps
+                                .map((step, index) => ({ step, stepNumber: index + 1 }))
+                                .filter(item => shouldRenderSurveyStep(state, item.stepNumber))
+                                .map(item => renderSurveyStepBlock(state, item.step, item.stepNumber))
+                                .join('')}
+                        </div>
+                    </main>
+                    <div class="profile-survey-scrollbar" aria-hidden="true">
+                        <div class="profile-survey-scrollbar-thumb" data-survey-scroll-thumb></div>
+                    </div>
+                </div>
                 ${renderFooter(state)}
-            </div>
+            </aside>
         `;
     };
 
@@ -412,56 +436,33 @@
         const activeElementId = document.activeElement ? document.activeElement.id : "";
         const stateApi = app.profileSurveyState;
         const state = stateApi ? stateApi.getState() : null;
-        const bannerHost = document.getElementById("profile-survey-banner-host");
-        const wizardHost = document.getElementById("profile-survey-host");
-        const previousSurveyContent = wizardHost ? wizardHost.querySelector(".profile-survey-content") : null;
-        const preservedScrollTop = previousSurveyContent ? previousSurveyContent.scrollTop : 0;
-        const functionalContent = document.getElementById("functional-content");
-        const stageContainer = document.querySelector("#create-profile-drawer .stages-container");
-        const footer = document.querySelector("#create-profile-drawer .drawer-footer");
+        const surveyHost = document.getElementById("profile-survey-host");
+        const surveyTrigger = document.getElementById("profile-survey-start-btn");
         const drawer = document.getElementById("create-profile-drawer");
-        const drawerTitle = drawer ? drawer.querySelector(".drawer-title") : null;
-        const drawerDescription = drawer ? drawer.querySelector(".drawer-survey-description") : null;
+        const previousScrollArea = surveyHost ? surveyHost.querySelector("[data-survey-scroll-area]") : null;
+        const preservedScrollTop = previousScrollArea ? previousScrollArea.scrollTop : 0;
 
-        if (bannerHost) {
-            bannerHost.innerHTML = renderLaunchBanner();
+        if (surveyTrigger && state) {
+            surveyTrigger.classList.toggle("is-active", state.isActive);
+            surveyTrigger.setAttribute("aria-expanded", state.isActive ? "true" : "false");
         }
 
-        if (!wizardHost || !state) return;
+        if (!surveyHost || !state) return;
 
-        wizardHost.classList.toggle("is-active", state.isActive);
-        if (drawer) drawer.classList.toggle("is-survey-mode", state.isActive);
-        if (drawerTitle) drawerTitle.textContent = state.isActive ? "Ускоренный сценарий" : "Создание профиля";
-        if (drawerDescription) {
-            drawerDescription.textContent = "Ответь на несколько вопросов, чтобы быстрее оформить профиль";
-        }
-        if (functionalContent) functionalContent.classList.toggle("is-survey-hidden", state.isActive);
-        if (stageContainer) stageContainer.classList.toggle("is-survey-hidden", state.isActive);
-        if (footer) footer.classList.toggle("is-survey-hidden", state.isActive);
+        surveyHost.classList.toggle("is-active", state.isActive);
+        if (drawer) drawer.classList.toggle("has-survey-drawer", state.isActive);
 
         if (state.isActive) {
-            renderWizard(wizardHost, state);
-            const nextSurveyContent = wizardHost.querySelector(".profile-survey-content");
-            if (nextSurveyContent) {
-                nextSurveyContent.scrollTop = preservedScrollTop;
-                if (pendingScrollStep) {
-                    const targetPanel = wizardHost.querySelector(`[data-survey-step-panel="${pendingScrollStep}"]`);
-                    if (targetPanel) {
-                        requestAnimationFrame(() => {
-                            const contentRect = nextSurveyContent.getBoundingClientRect();
-                            const targetRect = targetPanel.getBoundingClientRect();
-                            const targetTop = targetRect.top - contentRect.top + nextSurveyContent.scrollTop - 24;
-                            nextSurveyContent.scrollTo({
-                                top: Math.max(0, targetTop),
-                                behavior: "smooth"
-                            });
-                        });
-                    }
-                    pendingScrollStep = null;
-                }
+            renderDrawer(surveyHost, state);
+            const nextScrollArea = surveyHost.querySelector("[data-survey-scroll-area]");
+            if (nextScrollArea && preservedScrollTop > 0) {
+                nextScrollArea.scrollTop = preservedScrollTop;
+                requestAnimationFrame(() => {
+                    nextScrollArea.scrollTop = preservedScrollTop;
+                });
             }
         } else {
-            wizardHost.innerHTML = "";
+            surveyHost.innerHTML = "";
         }
 
         refreshSurveyIcons();
@@ -479,38 +480,15 @@
     };
 
     const updateActiveStep = () => {
-        const stateApi = app.profileSurveyState;
-        const state = stateApi ? stateApi.getState() : null;
-        const wizardHost = document.getElementById("profile-survey-host");
-        if (!wizardHost || !state || !state.isActive) return;
-
-        wizardHost.querySelectorAll("[data-survey-step-nav]").forEach((item) => {
-            item.classList.toggle("active", Number(item.dataset.surveyStepNav) === state.currentStep);
-        });
-
-        wizardHost.querySelectorAll("[data-survey-step-panel]").forEach((item) => {
-            item.classList.toggle("is-current", Number(item.dataset.surveyStepPanel) === state.currentStep);
-        });
-
-        const footer = wizardHost.querySelector(".profile-survey-footer");
-        if (footer) {
-            footer.outerHTML = renderFooter(state);
-            refreshSurveyIcons();
-        }
+        refreshSurveyIcons();
     };
 
     app.profileSurveyRender = {
         render,
         buildSummary,
         updateActiveStep,
-        requestStepScroll(stepNumber) {
-            pendingScrollStep = Number(stepNumber) || null;
-        }
+        requestStepScroll() {}
     };
 
     window.HRProfileApp = app;
 })();
-
-
-
-

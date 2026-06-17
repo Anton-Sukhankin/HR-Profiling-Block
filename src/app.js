@@ -433,8 +433,13 @@
         if (surveyState && typeof surveyState.setState === 'function') {
             surveyState.setState({ isActive: false });
         }
+        const surveyHost = document.getElementById('profile-survey-host');
+        if (surveyHost) {
+            surveyHost.classList.remove('is-active');
+            surveyHost.innerHTML = '';
+        }
         resetProfileAIAssistantSession();
-        profileDrawer.classList.remove('is-open');
+        profileDrawer.classList.remove('is-open', 'has-survey-drawer');
         if (!viewProfileDrawer || !viewProfileDrawer.classList.contains('is-open')) {
             drawerBackdrop.classList.remove('is-visible');
             document.body.style.overflow = '';
@@ -1917,7 +1922,8 @@
     if (backDrawerBtn) {
         backDrawerBtn.addEventListener('click', () => {
             const surveyState = window.HRProfileApp && window.HRProfileApp.profileSurveyState;
-            if (profileDrawer && profileDrawer.classList.contains('is-survey-mode') && surveyState && typeof surveyState.setState === 'function') {
+            const isSurveyActive = surveyState && typeof surveyState.getState === 'function' && surveyState.getState().isActive;
+            if (isSurveyActive && surveyState && typeof surveyState.setState === 'function') {
                 surveyState.setState({ isActive: false });
                 return;
             }
@@ -4941,25 +4947,72 @@
         applyFirstStageDraft: applyAIFirstStageDraft
     };
 
-    const applySurveyResult = (surveyResult = {}) => {
-        if (!surveyResult || !surveyResult.goal || !goalsContainer) return false;
+    const setSurveyManagedTextField = (field, value = '') => {
+        if (!field) return false;
+        const canUpdate = !field.value || field.dataset.surveyManaged === 'profile-survey';
+        if (!canUpdate) return false;
 
+        field.value = value;
+        field.dataset.surveyManaged = 'profile-survey';
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+    };
+
+    const setSurveyManagedPosition = (positionValue = '') => {
+        const fields = getParamFields();
+        if (!fields.position || !positionValue) return false;
+        const canUpdate = !fields.position.value || fields.position.dataset.surveyManaged === 'profile-survey';
+        if (!canUpdate) return false;
+
+        fields.position.value = positionValue;
+        fields.position.dataset.surveyManaged = 'profile-survey';
+        fields.position.dispatchEvent(new Event('input', { bubbles: true }));
+        fields.position.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+    };
+
+    const setSurveyManagedStructure = (structureName = '') => {
+        const fields = getParamFields();
+        if (!fields.structure || !structureName) return false;
+        const canUpdate = !fields.structure.value || fields.structure.dataset.surveyManaged === 'profile-survey';
+        if (!canUpdate) return false;
+
+        selectStructureNodeByName(structureName);
+
+        if (!fields.structure.value || fields.structure.value !== structureName) {
+            const treeValueEl = document.getElementById('param-structure-value');
+            fields.structure.innerHTML = `<option value="${structureName}" selected>${structureName}</option>`;
+            fields.structure.value = structureName;
+            if (treeValueEl) {
+                treeValueEl.textContent = structureName;
+                treeValueEl.classList.remove('is-placeholder');
+            }
+            fields.structure.dispatchEvent(new Event('input', { bubbles: true }));
+            fields.structure.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        fields.structure.dataset.surveyManaged = 'profile-survey';
+        return true;
+    };
+
+    const removeSurveyGeneratedGoals = () => {
         document
             .querySelectorAll('.goal-card[data-survey-generated="profile-survey"]')
             .forEach(card => card.remove());
+    };
 
-        setPositionIfEmpty(surveyResult.positionValue || 'system-analyst');
-        setStructureIfEmpty(surveyResult.structureName || 'Департамент разработки');
+    const applySurveyResult = (surveyResult = {}, options = {}) => {
+        if (!surveyResult || !surveyResult.goal || !goalsContainer) return false;
+
+        removeSurveyGeneratedGoals();
+
+        setSurveyManagedPosition(surveyResult.positionValue || 'system-analyst');
+        setSurveyManagedStructure(surveyResult.structureName || 'Департамент разработки');
 
         const fields = getParamFields();
-        if (fields.classifier && !fields.classifier.value && surveyResult.classifier) {
-            fields.classifier.value = surveyResult.classifier;
-            fields.classifier.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        if (fields.okz && !fields.okz.value && surveyResult.okzCode) {
-            fields.okz.value = surveyResult.okzCode;
-            fields.okz.dispatchEvent(new Event('input', { bubbles: true }));
-        }
+        setSurveyManagedTextField(fields.classifier, surveyResult.classifier);
+        setSurveyManagedTextField(fields.okz, surveyResult.okzCode);
 
         createGoalCard(surveyResult.goal);
         const createdCard = goalsContainer.lastElementChild;
@@ -4976,12 +5029,15 @@
         validateFunctionalStage();
         updateCreateStageCardsInteractivity();
 
-        showToast('Данные опросника применены к профилю');
+        if (!options.silent) {
+            showToast('Данные опросника применены к профилю');
+        }
         return true;
     };
 
     window.HRProfileApp.profileSurveyIntegration = {
-        applySurveyResult
+        applySurveyResult,
+        syncSurveyResult: (surveyResult = {}) => applySurveyResult(surveyResult, { silent: true, live: true })
     };
 
     // Event Delegation for Card Actions
@@ -7826,49 +7882,69 @@
         return goals;
     };
 
-    nextStageBtn.addEventListener('click', () => {
-        if (nextStageBtn.innerText === 'Создать профиль должности' && !nextStageBtn.disabled) {
-            const fields = getParamFields();
-            const nameVal = fields.position ? fields.position.value.trim() : '';
-            const classifierVal = fields.classifier ? fields.classifier.value.trim() : '';
-            const departmentVal = fields.structure ? fields.structure.value.trim() : '';
-            const okzVal = fields.okz ? fields.okz.value.trim() : '';
-            const extractedGoals = extractGoalsFromDOM();
-            const profilePayload = profileCreate
-                ? profileCreate.buildProfilePayload({
-                    name: nameVal,
-                    classifier: classifierVal,
-                    department: departmentVal,
-                    okzCode: okzVal,
-                    goals: extractedGoals,
-                    competencies: extractCompetenciesState()
-                })
-                : {
-                    name: nameVal,
-                    classifier: classifierVal,
-                    department: departmentVal || (profileModel ? profileModel.SYSTEM_DEFAULTS.department : ''),
-                    okzCode: okzVal,
-                    goals: extractedGoals,
-                    competenciesAreUserDefined: true,
-                    competencies: extractCompetenciesState()
-                };
+    const createOrUpdateProfileFromDrawer = (surveyResult = {}) => {
+        const fields = getParamFields();
+        const nameVal = (fields.position ? fields.position.value.trim() : '') || surveyResult.positionValue || '';
+        const classifierVal = (fields.classifier ? fields.classifier.value.trim() : '') || surveyResult.classifier || '';
+        const departmentVal = (fields.structure ? fields.structure.value.trim() : '') || surveyResult.structureName || '';
+        const okzVal = (fields.okz ? fields.okz.value.trim() : '') || surveyResult.okzCode || '';
+        const extractedGoals = extractGoalsFromDOM();
+        const goals = extractedGoals.length
+            ? extractedGoals
+            : (surveyResult.goal ? [surveyResult.goal] : []);
+        const competencies = extractCompetenciesState() || surveyResult.competencies;
+        const profilePayload = profileCreate
+            ? profileCreate.buildProfilePayload({
+                name: nameVal,
+                classifier: classifierVal,
+                department: departmentVal,
+                okzCode: okzVal,
+                goals,
+                competencies
+            })
+            : {
+                name: nameVal,
+                classifier: classifierVal,
+                department: departmentVal || (profileModel ? profileModel.SYSTEM_DEFAULTS.department : ''),
+                okzCode: okzVal,
+                goals,
+                competenciesAreUserDefined: true,
+                competencies
+            };
 
-            if (isEditMode && editingProfileId !== null) {
-                const profile = profileStore ? profileStore.update(editingProfileId, profilePayload) : null;
-                if (profile) {
-                    currentViewProfile = profile;
-                    openViewProfileDrawer(profile.name);
-                    
-                    showToast('Профиль должности успешно обновлен!', true, true);
-                }
-            } else {
-                const newProfile = profileStore ? profileStore.add(profilePayload) : null;
+        let profileWasSaved = false;
+
+        if (isEditMode && editingProfileId !== null) {
+            const profile = profileStore ? profileStore.update(editingProfileId, profilePayload) : null;
+            if (profile) {
+                profileWasSaved = true;
+                currentViewProfile = profile;
+                openViewProfileDrawer(profile.name);
+                showToast('Профиль должности успешно обновлен!', true, true);
+            }
+        } else {
+            const newProfile = profileStore ? profileStore.add(profilePayload) : null;
+            if (newProfile) {
+                profileWasSaved = true;
                 currentViewProfile = newProfile;
-                
                 showToast('Профиль должности успешно создан!', true, true);
             }
+        }
 
+        if (profileWasSaved) {
             closeDrawer();
+        }
+        return profileWasSaved;
+    };
+
+    window.HRProfileApp.profileSurveyIntegration = {
+        ...(window.HRProfileApp.profileSurveyIntegration || {}),
+        createProfileFromSurvey: (surveyResult = {}) => createOrUpdateProfileFromDrawer(surveyResult)
+    };
+
+    nextStageBtn.addEventListener('click', () => {
+        if (nextStageBtn.innerText === 'Создать профиль должности' && !nextStageBtn.disabled) {
+            createOrUpdateProfileFromDrawer();
         }
     });
 

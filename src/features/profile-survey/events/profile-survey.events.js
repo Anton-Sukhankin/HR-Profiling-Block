@@ -5,13 +5,6 @@
     const getData = () => (window.HRProfileApp && window.HRProfileApp.profileSurveyData) || {};
     const getRender = () => window.HRProfileApp && window.HRProfileApp.profileSurveyRender;
 
-    const setAnswers = (answers = {}, extra = {}) => {
-        const stateApi = getStateApi();
-        if (!stateApi) return null;
-        const current = stateApi.getState();
-        return stateApi.setState({ ...extra, answers: { ...current.answers, ...answers } });
-    };
-
     const getAllFunctions = () => {
         const data = getData();
         const state = getStateApi().getState();
@@ -25,10 +18,70 @@
 
     const getOptionById = (items = [], id = "") => items.find(item => item.id === id) || null;
 
+    function getAllFunctionsForState(state = {}) {
+        const data = getData();
+        return [
+            ...((state && state.customFunctions) || []),
+            ...((data.functions || []))
+        ];
+    }
+
+    function hasTypicalRoleCatalog(selectedFunction) {
+        return Boolean(
+            selectedFunction &&
+            selectedFunction.hasTypicalRoles &&
+            Array.isArray(selectedFunction.typicalRoles) &&
+            selectedFunction.typicalRoles.length
+        );
+    }
+
+    function resolveSurveyScenario(state = {}) {
+        const answers = state.answers || {};
+        if (!answers.selectedFunctionId) {
+            return "undetermined";
+        }
+
+        const selectedFunction = getAllFunctionsForState(state)
+            .find(item => item.id === answers.selectedFunctionId) || null;
+
+        if (!hasTypicalRoleCatalog(selectedFunction)) {
+            return answers.selectedArea ? "nonTypical" : "undetermined";
+        }
+
+        if (answers.selectedTypicalRole && answers.selectedTypicalRole !== "none") {
+            return "typical";
+        }
+
+        if (state.hasVisitedTypicalRoles && answers.selectedTypicalRole === "none") {
+            return "nonTypical";
+        }
+
+        return "undetermined";
+    }
+
+    const setAnswers = (answers = {}, extra = {}) => {
+        const stateApi = getStateApi();
+        if (!stateApi) return null;
+        const current = stateApi.getState();
+        const nextDraft = {
+            ...current,
+            ...extra,
+            answers: { ...current.answers, ...answers }
+        };
+        const nextScenario = resolveSurveyScenario(nextDraft);
+        const nextState = stateApi.setState({
+            ...extra,
+            surveyScenario: nextScenario,
+            isTypicalProfile: nextScenario === "typical",
+            answers: nextDraft.answers
+        });
+        syncSurveyToProfile();
+        return nextState;
+    };
+
     let activeSurveyDropdown = null;
     let activeSurveyDropdownWrapper = null;
-    let scrollSyncFrame = null;
-    let suppressScrollSync = false;
+    let surveyScrollbarFrame = null;
 
     const renderSearchIcon = () => `
         <svg class="search-icon profile-survey-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -46,6 +99,36 @@
             activeSurveyDropdownWrapper.classList.remove("is-active");
             activeSurveyDropdownWrapper = null;
         }
+    };
+
+    const updateSurveyScrollbar = () => {
+        surveyScrollbarFrame = null;
+        const scrollArea = document.querySelector("[data-survey-scroll-area]");
+        const shell = scrollArea ? scrollArea.closest(".profile-survey-drawer-scroll-shell") : null;
+        const track = shell ? shell.querySelector(".profile-survey-scrollbar") : null;
+        const thumb = shell ? shell.querySelector("[data-survey-scroll-thumb]") : null;
+        if (!scrollArea || !shell || !track || !thumb) return;
+
+        const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+        const isScrollable = maxScroll > 1;
+        shell.classList.toggle("is-scrollable", isScrollable);
+        if (!isScrollable) {
+            thumb.style.height = "0px";
+            thumb.style.transform = "translateY(0)";
+            return;
+        }
+
+        const trackHeight = track.clientHeight;
+        const thumbHeight = Math.max(32, Math.round((scrollArea.clientHeight / scrollArea.scrollHeight) * trackHeight));
+        const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
+        const thumbTop = Math.round((scrollArea.scrollTop / maxScroll) * maxThumbTop);
+        thumb.style.height = `${thumbHeight}px`;
+        thumb.style.transform = `translateY(${thumbTop}px)`;
+    };
+
+    const scheduleSurveyScrollbarUpdate = () => {
+        if (surveyScrollbarFrame) return;
+        surveyScrollbarFrame = requestAnimationFrame(updateSurveyScrollbar);
     };
 
     const getSelectedTypicalRole = () => {
@@ -97,6 +180,7 @@
 
         return {
             source: "profile-survey",
+            scenario: state.surveyScenario,
             positionValue: selectedRole ? "project-manager" : "system-analyst",
             structureName: "Департамент разработки",
             classifier: selectedFunction ? selectedFunction.name : "",
@@ -116,9 +200,89 @@
                 functionName: selectedFunction ? selectedFunction.name : "",
                 area: state.answers.selectedArea,
                 typicalRole: selectedRole ? selectedRole.title : "",
-                isTypicalProfile: Boolean(selectedRole)
+                isTypicalProfile: state.surveyScenario === "typical"
             }
         };
+    };
+
+    const syncSurveyToProfile = () => {
+        const stateApi = getStateApi();
+        const state = stateApi ? stateApi.getState() : null;
+        if (!state || !state.isActive) return false;
+        const answers = state.answers || {};
+        const hasAnySurveyAnswer = Object.entries(answers)
+            .some(([key, value]) => key !== "selectedTypicalRole" && Boolean(String(value || "").trim()));
+        if (!hasAnySurveyAnswer) return false;
+
+        const integration = window.HRProfileApp && window.HRProfileApp.profileSurveyIntegration;
+        const result = buildSurveyResult();
+
+        if (integration && typeof integration.syncSurveyResult === "function") {
+            return Boolean(integration.syncSurveyResult(result));
+        }
+        if (integration && typeof integration.applySurveyResult === "function") {
+            return Boolean(integration.applySurveyResult(result, { silent: true, live: true }));
+        }
+        return false;
+    };
+
+    const closeProfileCreationDrawer = () => {
+        const surveyState = getStateApi();
+        if (surveyState && typeof surveyState.setState === "function") {
+            surveyState.setState({ isActive: false, appliedAt: new Date().toISOString() });
+        }
+
+        const drawer = document.getElementById("create-profile-drawer");
+        const backdrop = document.getElementById("drawer-backdrop");
+        const surveyHost = document.getElementById("profile-survey-host");
+        const surveyTrigger = document.getElementById("profile-survey-start-btn");
+        if (drawer) drawer.classList.remove("is-open", "has-survey-drawer");
+        if (backdrop) backdrop.classList.remove("is-visible");
+        if (surveyHost) {
+            surveyHost.classList.remove("is-active");
+            surveyHost.innerHTML = "";
+        }
+        if (surveyTrigger) {
+            surveyTrigger.classList.remove("is-active");
+            surveyTrigger.setAttribute("aria-expanded", "false");
+        }
+        document.body.style.overflow = "";
+    };
+
+    const createProfileDirectlyFromSurveyResult = (surveyResult = {}) => {
+        const appApi = window.HRProfileApp || {};
+        const profileStore = appApi.profileStore;
+        const profileCreate = appApi.profileCreate;
+        const profileModel = appApi.profileModel;
+        if (!profileStore || typeof profileStore.add !== "function") return false;
+
+        const payload = profileCreate && typeof profileCreate.buildProfilePayload === "function"
+            ? profileCreate.buildProfilePayload({
+                name: surveyResult.positionValue || "",
+                classifier: surveyResult.classifier || "",
+                department: surveyResult.structureName || "",
+                okzCode: surveyResult.okzCode || "",
+                goals: surveyResult.goal ? [surveyResult.goal] : [],
+                competencies: surveyResult.competencies
+            })
+            : {
+                name: surveyResult.positionValue || "",
+                classifier: surveyResult.classifier || "",
+                department: surveyResult.structureName || (profileModel ? profileModel.SYSTEM_DEFAULTS.department : ""),
+                okzCode: surveyResult.okzCode || "",
+                goals: surveyResult.goal ? [surveyResult.goal] : [],
+                competenciesAreUserDefined: true,
+                competencies: surveyResult.competencies
+            };
+
+        const createdProfile = profileStore.add(payload);
+        if (!createdProfile) return false;
+
+        if (typeof window.showToast === "function") {
+            window.showToast("Профиль должности успешно создан!", true, true);
+        }
+        closeProfileCreationDrawer();
+        return true;
     };
 
     const canGoNext = (state) => {
@@ -150,17 +314,28 @@
         goNext();
     };
 
-    const isSurveyReadyToApply = (state) => Boolean(
-        state &&
-        state.answers &&
-        state.answers.selectedFunctionId &&
-        state.answers.selectedArea &&
-        state.answers.leadership &&
-        state.answers.result &&
-        state.answers.goal &&
-        state.answers.approach &&
-        state.answers.time
-    );
+    const isSurveyReadyToApply = (state) => {
+        if (!state || !state.answers) return false;
+        const answers = state.answers;
+        const hasBaseContext = Boolean(answers.selectedFunctionId && answers.selectedArea);
+        if (!hasBaseContext) return false;
+
+        if (state.surveyScenario === "typical") {
+            return Boolean(answers.selectedTypicalRole && answers.selectedTypicalRole !== "none");
+        }
+
+        if (state.surveyScenario === "nonTypical") {
+            return Boolean(
+                answers.leadership &&
+                answers.result &&
+                answers.goal &&
+                answers.approach &&
+                answers.time
+            );
+        }
+
+        return false;
+    };
 
     const addFunctionValue = (query = "") => {
         const stateApi = getStateApi();
@@ -178,6 +353,9 @@
         };
         stateApi.setState({
             customFunctions: [customFunction, ...state.customFunctions],
+            surveyScenario: "nonTypical",
+            isTypicalProfile: false,
+            hasVisitedTypicalRoles: false,
             answers: {
                 ...state.answers,
                 selectedFunctionId: id,
@@ -186,6 +364,7 @@
                 selectedTypicalRole: "none"
             }
         });
+        syncSurveyToProfile();
     };
 
     const addAreaValue = (query = "") => {
@@ -199,18 +378,27 @@
             ? state.customAreas[areaKey]
             : [];
         const nextAreas = currentAreas.includes(name) ? currentAreas : [name, ...currentAreas];
-
-        stateApi.setState({
-            customAreas: {
-                ...(state.customAreas || {}),
-                [areaKey]: nextAreas
-            },
+        const nextDraft = {
+            ...state,
             answers: {
                 ...state.answers,
                 selectedArea: name,
                 areaSearchQuery: name
+            },
+            customAreas: {
+                ...(state.customAreas || {}),
+                [areaKey]: nextAreas
             }
+        };
+        const nextScenario = resolveSurveyScenario(nextDraft);
+
+        stateApi.setState({
+            customAreas: nextDraft.customAreas,
+            surveyScenario: nextScenario,
+            isTypicalProfile: nextScenario === "typical",
+            answers: nextDraft.answers
         });
+        syncSurveyToProfile();
     };
 
     const removeFunctionValue = (functionId) => {
@@ -233,8 +421,11 @@
                 areaSearchQuery: isSelected ? "" : state.answers.areaSearchQuery,
                 selectedTypicalRole: isSelected ? "none" : state.answers.selectedTypicalRole
             },
-            isTypicalProfile: isSelected ? false : state.isTypicalProfile
+            surveyScenario: isSelected ? "undetermined" : state.surveyScenario,
+            isTypicalProfile: isSelected ? false : state.isTypicalProfile,
+            hasVisitedTypicalRoles: isSelected ? false : state.hasVisitedTypicalRoles
         });
+        syncSurveyToProfile();
     };
 
     const removeAreaValue = (areaName) => {
@@ -256,9 +447,14 @@
             answers: {
                 ...state.answers,
                 selectedArea: isSelected ? "" : state.answers.selectedArea,
-                areaSearchQuery: isSelected ? "" : state.answers.areaSearchQuery
-            }
+                areaSearchQuery: isSelected ? "" : state.answers.areaSearchQuery,
+                selectedTypicalRole: isSelected ? "none" : state.answers.selectedTypicalRole
+            },
+            surveyScenario: isSelected ? "undetermined" : state.surveyScenario,
+            isTypicalProfile: isSelected ? false : state.isTypicalProfile,
+            hasVisitedTypicalRoles: isSelected ? false : state.hasVisitedTypicalRoles
         });
+        syncSurveyToProfile();
     };
 
     const getDropdownConfig = (selectKey, filter = "") => {
@@ -390,6 +586,11 @@
         const selectKey = wrapper.dataset.surveySelect;
         if (!selectKey) return;
 
+        if (activeSurveyDropdown && activeSurveyDropdownWrapper === wrapper) {
+            closeSurveyDropdown();
+            return;
+        }
+
         closeSurveyDropdown();
         activeSurveyDropdownWrapper = wrapper;
         activeSurveyDropdownWrapper.classList.add("is-active");
@@ -507,6 +708,19 @@
         activeSurveyDropdown.style.visibility = "visible";
     };
 
+    const updateAccordionDomState = (toggle, isOpen) => {
+        const card = toggle ? toggle.closest("[data-survey-accordion]") : null;
+        if (!card) return;
+
+        const body = card.querySelector(".profile-survey-accordion-body");
+        card.classList.toggle("is-open", isOpen);
+        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        if (body) {
+            body.hidden = !isOpen;
+        }
+        scheduleSurveyScrollbarUpdate();
+    };
+
     const applyResult = () => {
         const stateApi = getStateApi();
         const state = stateApi ? stateApi.getState() : null;
@@ -518,62 +732,23 @@
         let applied = false;
 
         if (integration && typeof integration.applySurveyResult === "function") {
-            applied = Boolean(integration.applySurveyResult(result));
+            applied = Boolean(integration.applySurveyResult(result, { silent: true, live: false }));
         } else if (fallback && typeof fallback.applyFirstStageDraft === "function") {
             fallback.applyFirstStageDraft(result.summary.functionName || "опросник");
             applied = true;
         }
 
-        if (applied) {
-            closeSurveyDropdown();
-            getStateApi().setState({ isActive: false, appliedAt: new Date().toISOString() });
+        let created = integration && typeof integration.createProfileFromSurvey === "function"
+            ? Boolean(integration.createProfileFromSurvey(result))
+            : false;
+        if (!created) {
+            created = createProfileDirectlyFromSurveyResult(result);
         }
-    };
-
-    const syncStepWithScroll = () => {
-        scrollSyncFrame = null;
-        if (suppressScrollSync) return;
-
-        const stateApi = getStateApi();
-        if (!stateApi) return;
-
-        const state = stateApi.getState();
-        if (!state || !state.isActive) return;
-
-        const content = document.querySelector(".profile-survey-content");
-        if (!content) return;
-
-        const panels = Array.from(content.querySelectorAll("[data-survey-step-panel]"));
-        if (!panels.length) return;
-
-        const contentTop = content.getBoundingClientRect().top;
-        let activeStep = 1;
-
-        panels.forEach((panel, index) => {
-            const rect = panel.getBoundingClientRect();
-            const hiddenTop = contentTop - rect.top;
-            if (hiddenTop >= rect.height * 0.2) {
-                activeStep = Math.min(index + 2, state.totalSteps);
+        if (!created) {
+            if (typeof window.showToast === "function") {
+                window.showToast("Не удалось создать профиль из опросника");
             }
-        });
-
-        const finalPanel = panels[panels.length - 1];
-        const finalRect = finalPanel ? finalPanel.getBoundingClientRect() : null;
-        const finalActivationLine = contentTop + content.clientHeight / 2;
-        const isAtBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 2;
-        if ((finalRect && finalRect.top <= finalActivationLine) || isAtBottom) {
-            activeStep = state.totalSteps;
         }
-
-        if (activeStep !== state.currentStep) {
-            stateApi.setState({ currentStep: activeStep }, { skipRender: true });
-        }
-    };
-
-    const handleSurveyScroll = (event) => {
-        if (!event.target || !event.target.classList || !event.target.classList.contains("profile-survey-content")) return;
-        if (scrollSyncFrame) return;
-        scrollSyncFrame = requestAnimationFrame(syncStepWithScroll);
     };
 
     const handleClick = (event) => {
@@ -586,7 +761,8 @@
                 window.closeProfileAIAssistant();
             }
             closeSurveyDropdown();
-            stateApi.setState({ isActive: true, currentStep: 1 });
+            stateApi.setState({ isActive: true, currentStep: 1, openAccordions: {} });
+            syncSurveyToProfile();
             const renderApi = getRender();
             if (renderApi && typeof renderApi.render === "function") {
                 requestAnimationFrame(() => {
@@ -598,19 +774,21 @@
             return;
         }
 
-        const stepNavEl = target.closest("[data-survey-step-nav]");
-        if (stepNavEl) {
-            const stepNumber = Number(stepNavEl.dataset.surveyStepNav);
-            const renderApi = getRender();
-            if (renderApi && typeof renderApi.requestStepScroll === "function") {
-                renderApi.requestStepScroll(stepNumber);
-            }
+        const accordionToggle = target.closest("[data-survey-accordion-toggle]");
+        if (accordionToggle) {
+            const stepNumber = Number(accordionToggle.dataset.surveyAccordionToggle);
+            const current = stateApi.getState();
+            const key = String(stepNumber);
+            const nextIsOpen = !Boolean(current.openAccordions && current.openAccordions[key]);
             closeSurveyDropdown();
-            suppressScrollSync = true;
-            stateApi.setState({ currentStep: stepNumber });
-            window.setTimeout(() => {
-                suppressScrollSync = false;
-            }, 500);
+            stateApi.setState({
+                currentStep: stepNumber,
+                openAccordions: {
+                    ...(current.openAccordions || {}),
+                    [key]: nextIsOpen
+                }
+            }, { skipRender: true });
+            updateAccordionDomState(accordionToggle, nextIsOpen);
             return;
         }
 
@@ -628,11 +806,12 @@
             if (action === "add-function-value") addFunctionValue();
             if (action === "reject-template") {
                 stateApi.setState({
-                    currentStep: 2,
                     isTypicalProfile: false,
                     hasVisitedTypicalRoles: true,
+                    surveyScenario: "nonTypical",
                     answers: { ...stateApi.getState().answers, selectedTypicalRole: "none" }
                 });
+                syncSurveyToProfile();
             }
             return;
         }
@@ -652,7 +831,11 @@
                 selectedArea: "",
                 areaSearchQuery: "",
                 selectedTypicalRole: "none"
-            }, { isTypicalProfile: false, hasVisitedTypicalRoles: false });
+            }, {
+                isTypicalProfile: false,
+                hasVisitedTypicalRoles: false,
+                surveyScenario: "undetermined"
+            });
             return;
         }
 
@@ -661,7 +844,8 @@
             const roleId = roleEl.dataset.surveyTypicalRole;
             setAnswers({ selectedTypicalRole: roleId }, {
                 hasVisitedTypicalRoles: true,
-                isTypicalProfile: roleId !== "none"
+                isTypicalProfile: roleId !== "none",
+                surveyScenario: roleId === "none" ? "nonTypical" : "typical"
             });
             return;
         }
@@ -697,18 +881,27 @@
         const render = getRender();
         if (!getStateApi() || !render) return;
         render.render();
+        scheduleSurveyScrollbarUpdate();
         document.addEventListener("profile-survey-state-change", (event) => {
             closeSurveyDropdown();
             if (event.detail && event.detail.skipRender) {
                 if (typeof render.updateActiveStep === "function") {
                     render.updateActiveStep();
                 }
+                scheduleSurveyScrollbarUpdate();
                 return;
             }
             render.render();
+            scheduleSurveyScrollbarUpdate();
         });
         document.addEventListener("click", handleClick);
-        document.addEventListener("scroll", handleSurveyScroll, true);
+        document.addEventListener("scroll", (event) => {
+            const target = event.target;
+            if (target && target.nodeType === 1 && target.matches("[data-survey-scroll-area]")) {
+                scheduleSurveyScrollbarUpdate();
+            }
+        }, true);
+        window.addEventListener("resize", scheduleSurveyScrollbarUpdate);
     };
 
     app.profileSurveyEvents = { init, buildSurveyResult, closeSurveyDropdown };

@@ -1,14 +1,26 @@
 ﻿# Profile Survey Business Rules
 
 - The survey is optional and must not block manual profile creation.
-- The survey does not change profile form values until `Применить и закрыть`.
-- If the user exits before applying, the manual form returns unchanged while survey answers remain in memory.
-- `Основная функция должности` and `Укажите конкретное функциональное направление` are required for moving past the first survey step.
+- The survey opens as a side drawer and does not hide the normal profile creation form.
+- The survey does not show a dimming overlay; the main profile creation interface remains available for interaction.
+- Survey answers are synchronized to the normal profile creation form in real time after user selection.
+- If the user closes the survey before completion, already synchronized values remain in the form and are not rolled back.
+- Opening the survey with no answers must not create default profile data by itself.
+- The footer action `Создать профиль` is disabled until the required values for the active survey scenario are completed.
+- Clicking `Создать профиль` creates the profile through the normal profile-store flow, closes the survey drawer and the profile creation drawer, and shows a success notification in the upper-right area of the main interface.
+- `Основная функция должности` and `Укажите конкретное функциональное направление` are required for the first survey stage to be considered completed.
 - If no function or functional direction matches the typed query, the dropdown shows only `Новое значение`.
 - A newly added function immediately becomes selected and is shown as a custom value with status `на верификации`.
 - A newly added functional direction immediately becomes selected and is stored in the local survey state.
 - Custom functions and custom functional directions can be deleted from their dropdown lists. If the deleted value was selected, the corresponding survey answer is cleared.
+- The survey scenario is stored explicitly as `undetermined`, `typical`, or `nonTypical`.
+- Default `selectedTypicalRole: "none"` is only an empty technical value. It must not be treated as a user refusal until the user explicitly chooses `Не относится к типовым ролям` or clicks `Типовой профиль не подходит`.
 - If a selected function has typical roles, the block `Доступные готовые шаблоны должностей` appears below the function field.
-- Choosing a typical role enables the shortcut scenario to the final step.
-- If the user rejects a typical profile, the selected template is reset and the user returns to the manual survey path.
-- Stage 2 values may be filled by the survey only after the first-stage draft is formed and applied.
+- For functions with typical roles, the scenario stays `undetermined` until the user selects a concrete role or explicitly rejects the template path. This scenario choice can be made immediately after the main function is selected; functional direction is still required later for profile creation readiness.
+- Choosing a concrete typical role enables the `typical` shortcut scenario. Manual question accordions are hidden and are not required for profile creation.
+- If the user chooses `Не относится к типовым ролям` or rejects a typical profile through `Типовой профиль не подходит`, the selected template is reset, the scenario becomes `nonTypical`, and the manual survey path is shown.
+- If the selected function has no typical roles, the scenario becomes `nonTypical` automatically after the main function and functional direction are selected.
+- In the `typical` scenario, `Создать профиль` requires only main function, functional direction, and a concrete typical role.
+- In the `nonTypical` scenario, `Создать профиль` requires main function, functional direction, and all manual answers: leadership, expected result, goal, approach, and time focus.
+- If leadership is answered as `Да` in the `nonTypical` path, the generated profile includes the management task `Управление операционной деятельностью` with weight `20%`.
+- Stage 2 values may be synchronized by the survey only as part of the survey-generated profile draft.

@@ -1,45 +1,84 @@
 ﻿# Profile Survey User Flows
 
-## Flow 1. Start Survey
+## Flow 1. Start Survey Drawer
 
 ```mermaid
 flowchart TD
-  A["Stage 1: Общие положения и функционал"] --> B["Banner: Пройти опрос"]
-  B --> C["Click Пройти"]
-  C --> D["Survey wizard opens"]
-  D --> E["Step 1 of 7"]
+  A["Open profile creation drawer"] --> B["Header button: Ассистент профилирования"]
+  B --> C["Click Ассистент профилирования"]
+  C --> D["650px survey drawer opens"]
+  D --> E["Main profile creation form stays visible"]
 ```
 
-## Flow 2. Manual Exit
+## Flow 2. Fill Values With Live Sync
 
 ```mermaid
 flowchart TD
-  A["Survey is active"] --> B["Click drawer back arrow"]
-  B --> C["Wizard hides"]
-  C --> D["Manual profile creation form returns"]
-  D --> E["Survey answers stay in memory"]
+  A["Open survey accordion"] --> B["Select or add value"]
+  B --> C["Survey state updates"]
+  C --> D["Survey result is rebuilt"]
+  D --> E["Main profile form updates immediately"]
 ```
 
 ## Flow 3. Function And Template Selection
 
 ```mermaid
 flowchart TD
-  A["Step 1: Основная функция должности"] --> B["User types in combobox"]
+  A["Accordion: Основная функция должности"] --> B["User types in dropdown"]
   B --> C{"Matches exist?"}
   C -->|Yes| D["Show filtered function list"]
   C -->|No| E["Show only Новое значение"]
-  D --> F{"Function has typical roles?"}
-  F -->|Yes| G["Show available role templates"]
-  F -->|No| H["Continue manual survey"]
-  G --> I["Select template or Не относится"]
+  D --> F["Select function and functional direction"]
+  F --> G{"Function has typical roles?"}
+  G -->|No| H["Scenario becomes nonTypical"]
+  H --> I["Show manual question accordions"]
+  G -->|Yes| J["Show available role templates"]
+  J --> K{"User choice"}
+  K -->|Concrete role| L["Scenario becomes typical"]
+  L --> M["Manual questions are hidden; final summary stays visible"]
+  K -->|Не относится / template rejected| H
+  I --> N["Main form updates in real time"]
+  M --> N
 ```
 
-## Flow 4. Apply Result
+## Flow 4. Typical Scenario
 
 ```mermaid
 flowchart TD
-  A["Step 7: Summary"] --> B["Click Применить и закрыть"]
-  B --> C["Create goal/tasks/functions in normal form"]
-  C --> D["Apply competency draft"]
-  D --> E["Return to profile creation form"]
+  A["Function with typical roles is selected"] --> B["Functional direction is selected"]
+  B --> C["User selects concrete typical role"]
+  C --> D["Scenario: typical"]
+  D --> E["Manual questions are not required"]
+  E --> F["Создать профиль becomes enabled"]
+```
+
+## Flow 5. Non-Typical Scenario
+
+```mermaid
+flowchart TD
+  A["Function has no typical roles or user rejects template"] --> B["Scenario: nonTypical"]
+  B --> C["Show manual question accordions"]
+  C --> D["Fill leadership, result, goal, approach and time focus"]
+  D --> E["Создать профиль becomes enabled"]
+```
+
+## Flow 6. Create Profile From Survey
+
+```mermaid
+flowchart TD
+  A["Required values for active scenario are filled"] --> B["Button Создать профиль becomes enabled"]
+  B --> C["Click Создать профиль"]
+  C --> D["Survey result is applied to the form"]
+  D --> E["New profile is added to profiles table"]
+  E --> F["Survey and profile creation drawers close"]
+  F --> G["Success notification appears in the upper-right area"]
+```
+
+## Flow 7. Close Survey Drawer Without Creating
+
+```mermaid
+flowchart TD
+  A["Survey drawer is open"] --> B["Click Отмена or close icon"]
+  B --> C["Survey drawer closes"]
+  C --> D["Already synchronized values remain in form"]
 ```

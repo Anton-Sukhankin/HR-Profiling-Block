@@ -1,20 +1,31 @@
 ﻿# Profile Survey Overview
 
-`profile-survey` is a separate guided survey inside the profile creation drawer. It helps a manager create a draft profile by answering structured questions, then applies the result to the normal profile creation form only after explicit confirmation.
+`profile-survey` is a separate guided survey inside the profile creation drawer. It helps a manager fill the normal profile creation form by answering structured questions in a compact side drawer.
 
-The survey is not part of the AI assistant. The AI assistant remains `Анализ | Чат`; the survey is an alternative profile creation path.
+The survey is not part of the AI assistant. The AI assistant remains `Анализ | Чат`; the survey is an alternative profile creation aid inside profile creation.
 
 ## Entry Point
 
-The entry point is a light banner on stage `Общие положения и функционал`, next to the base parameters block. The banner contains:
+The entry point is the `Ассистент профилирования` button in the profile creation drawer header, placed to the left of `ИИ-Помощник`. The button uses the same visual style as the AI assistant trigger and has its own profiling metaphor icon.
 
-- illustration/metaphor on a round background;
-- title `Пройти опрос`;
-- explanatory text about minimizing manual input;
-- action button `Пройти`.
+The former `Пройти опрос` banner is not displayed in the profile creation workspace.
 
 ## Main Behavior
 
-When launched, the survey replaces the profile creation working area with a 7-step wizard. The manual form is hidden but not destroyed. The first survey step is `Основная функция должности`; there is no separate introductory banner step inside the wizard. Survey navigation is displayed as a vertical stack of step cards on the left, while the active step content is rendered on the right. Fields with predefined choices use the same compact select pattern as task-name selection in profile creation. The user may exit the survey and return to the normal form with survey progress preserved in local in-memory state.
+When launched, the survey opens as a right-side drawer inside the profile creation interface. The profile creation form remains visible and interactive; no dimming overlay is shown.
 
-The final action `Применить и закрыть` transfers survey output into the existing profile creation form.
+The survey drawer is 650px wide and contains:
+
+- header title `Ассистент профилирования`;
+- description `Ответь на несколько вопросов, чтобы быстрее оформить профиль`;
+- a vertical list of accordion stages;
+- footer actions `Отмена` and `Создать профиль`.
+
+Each stage is an accordion. The closed header keeps the same visual language as the previous survey stage cards: icon block, title, description, stage colors, and completed check state. The expanded body contains the existing survey controls for that stage.
+
+Survey answers are applied to the normal profile creation form in real time. The survey branches into two scenarios:
+
+- `typical`: available when the selected function has typical role templates and the user chooses a concrete template.
+- `nonTypical`: used when the selected function has no typical templates or the user explicitly rejects the typical path.
+
+The footer action `Создать профиль` stays disabled until the required values for the active scenario are filled. After the user clicks it, the survey result is applied to the current form, the profile is created in the profiles table, the profile creation drawer closes, and a success notification appears in the upper-right area of the main interface.
