@@ -1061,7 +1061,7 @@ body:has(.sidebar.collapsed) .side-drawer {
 .drawer-body {
     flex: 1;
     overflow-y: auto;
-    padding: 16px 48px 16px 24px;
+    padding: 16px 32px 16px 24px;
 }
 
 .stages-container {
@@ -1535,7 +1535,7 @@ body:has(.sidebar.collapsed) .side-drawer {
 }
 
 .btn-add-goal {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -1543,11 +1543,13 @@ body:has(.sidebar.collapsed) .side-drawer {
     color: var(--text-main);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 12px 48px;
+    padding: 12px 24px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
+    line-height: 1.2;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .btn-add-goal:not(:disabled):hover {
@@ -1563,9 +1565,12 @@ body:has(.sidebar.collapsed) .side-drawer {
     box-shadow: none !important;
 }
 
-.btn-add-goal i {
-    width: 18px;
-    height: 18px;
+.btn-add-goal i,
+.btn-add-goal svg {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
     stroke-width: 2.5;
 }
 

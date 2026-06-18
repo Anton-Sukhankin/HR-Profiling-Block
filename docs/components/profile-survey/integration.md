@@ -4,7 +4,7 @@
 
 ## Connected Areas
 
-- `index.html`: header launch button, survey drawer host, stylesheet and script links.
+- `index.html`: survey alert launch action, survey drawer host, stylesheet and script links.
 - `src/app.js`: integration API that synchronizes survey output with the existing form and creates the final profile.
 - `src/features/profile-survey/`: survey data, state, rendering, events, and styles.
 - `docs/components/profile-survey/`: component documentation.
@@ -15,7 +15,7 @@ The survey uses `window.HRProfileApp.profileSurveyIntegration.syncSurveyResult(r
 
 The synchronized result includes the active `scenario` so integration consumers can distinguish a template-based typical draft from a manually answered non-typical draft.
 
-The final footer action calls `window.HRProfileApp.profileSurveyIntegration.applySurveyResult(result, options)` to ensure the latest survey result is reflected in the form, then calls `window.HRProfileApp.profileSurveyIntegration.createProfileFromSurvey()` to reuse the normal profile creation flow.
+The final footer action calls `window.HRProfileApp.profileSurveyIntegration.applySurveyResult(result, options)` to ensure the latest survey result is reflected in the form, then closes only the survey drawer.
 
 The integration uses existing profile creation behavior where possible:
 
@@ -24,9 +24,9 @@ The integration uses existing profile creation behavior where possible:
 - refreshes validation and stage availability;
 - applies competency state as part of the survey-generated draft;
 - avoids accumulating duplicate survey-generated goal cards on repeated answer changes;
-- creates the profile through the shared profile-store flow;
-- closes the survey drawer and profile creation drawer after successful creation;
-- shows the same success toast pattern as manual profile creation.
+- keeps the profile creation drawer open so the user can review or continue editing;
+- does not create a profile-store record from the survey drawer;
+- does not navigate back to the profiles table.
 
 Manual values outside the survey-managed area are preserved. Survey-generated values can be updated by later survey answers.
 

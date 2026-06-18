@@ -226,18 +226,16 @@
         return false;
     };
 
-    const closeProfileCreationDrawer = () => {
+    const closeSurveyDrawer = () => {
         const surveyState = getStateApi();
         if (surveyState && typeof surveyState.setState === "function") {
             surveyState.setState({ isActive: false, appliedAt: new Date().toISOString() });
         }
 
         const drawer = document.getElementById("create-profile-drawer");
-        const backdrop = document.getElementById("drawer-backdrop");
         const surveyHost = document.getElementById("profile-survey-host");
         const surveyTrigger = document.getElementById("profile-survey-start-btn");
-        if (drawer) drawer.classList.remove("is-open", "has-survey-drawer");
-        if (backdrop) backdrop.classList.remove("is-visible");
+        if (drawer) drawer.classList.remove("has-survey-drawer");
         if (surveyHost) {
             surveyHost.classList.remove("is-active");
             surveyHost.innerHTML = "";
@@ -246,43 +244,6 @@
             surveyTrigger.classList.remove("is-active");
             surveyTrigger.setAttribute("aria-expanded", "false");
         }
-        document.body.style.overflow = "";
-    };
-
-    const createProfileDirectlyFromSurveyResult = (surveyResult = {}) => {
-        const appApi = window.HRProfileApp || {};
-        const profileStore = appApi.profileStore;
-        const profileCreate = appApi.profileCreate;
-        const profileModel = appApi.profileModel;
-        if (!profileStore || typeof profileStore.add !== "function") return false;
-
-        const payload = profileCreate && typeof profileCreate.buildProfilePayload === "function"
-            ? profileCreate.buildProfilePayload({
-                name: surveyResult.positionValue || "",
-                classifier: surveyResult.classifier || "",
-                department: surveyResult.structureName || "",
-                okzCode: surveyResult.okzCode || "",
-                goals: surveyResult.goal ? [surveyResult.goal] : [],
-                competencies: surveyResult.competencies
-            })
-            : {
-                name: surveyResult.positionValue || "",
-                classifier: surveyResult.classifier || "",
-                department: surveyResult.structureName || (profileModel ? profileModel.SYSTEM_DEFAULTS.department : ""),
-                okzCode: surveyResult.okzCode || "",
-                goals: surveyResult.goal ? [surveyResult.goal] : [],
-                competenciesAreUserDefined: true,
-                competencies: surveyResult.competencies
-            };
-
-        const createdProfile = profileStore.add(payload);
-        if (!createdProfile) return false;
-
-        if (typeof window.showToast === "function") {
-            window.showToast("Профиль должности успешно создан!", true, true);
-        }
-        closeProfileCreationDrawer();
-        return true;
     };
 
     const canGoNext = (state) => {
@@ -738,15 +699,15 @@
             applied = true;
         }
 
-        let created = integration && typeof integration.createProfileFromSurvey === "function"
-            ? Boolean(integration.createProfileFromSurvey(result))
-            : false;
-        if (!created) {
-            created = createProfileDirectlyFromSurveyResult(result);
-        }
-        if (!created) {
+        if (applied) {
+            closeSurveyDropdown();
+            closeSurveyDrawer();
             if (typeof window.showToast === "function") {
-                window.showToast("Не удалось создать профиль из опросника");
+                window.showToast("Данные опросника применены к профилю", true, true);
+            }
+        } else {
+            if (typeof window.showToast === "function") {
+                window.showToast("Не удалось применить данные опросника");
             }
         }
     };

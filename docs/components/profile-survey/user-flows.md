@@ -4,8 +4,8 @@
 
 ```mermaid
 flowchart TD
-  A["Open profile creation drawer"] --> B["Header button: Ассистент профилирования"]
-  B --> C["Click Ассистент профилирования"]
+  A["Open profile creation drawer"] --> B["Survey alert between header and stage cards"]
+  B --> C["Click Пройти"]
   C --> D["650px survey drawer opens"]
   D --> E["Main profile creation form stays visible"]
 ```
@@ -49,7 +49,7 @@ flowchart TD
   B --> C["User selects concrete typical role"]
   C --> D["Scenario: typical"]
   D --> E["Manual questions are not required"]
-  E --> F["Создать профиль becomes enabled"]
+  E --> F["Заполнить профиль becomes enabled"]
 ```
 
 ## Flow 5. Non-Typical Scenario
@@ -59,19 +59,19 @@ flowchart TD
   A["Function has no typical roles or user rejects template"] --> B["Scenario: nonTypical"]
   B --> C["Show manual question accordions"]
   C --> D["Fill leadership, result, goal, approach and time focus"]
-  D --> E["Создать профиль becomes enabled"]
+  D --> E["Заполнить профиль becomes enabled"]
 ```
 
-## Flow 6. Create Profile From Survey
+## Flow 6. Fill Profile From Survey
 
 ```mermaid
 flowchart TD
-  A["Required values for active scenario are filled"] --> B["Button Создать профиль becomes enabled"]
-  B --> C["Click Создать профиль"]
+  A["Required values for active scenario are filled"] --> B["Button Заполнить профиль becomes enabled"]
+  B --> C["Click Заполнить профиль"]
   C --> D["Survey result is applied to the form"]
-  D --> E["New profile is added to profiles table"]
-  E --> F["Survey and profile creation drawers close"]
-  F --> G["Success notification appears in the upper-right area"]
+  D --> E["Survey drawer closes"]
+  E --> F["Profile creation drawer remains open"]
+  F --> G["User reviews or continues editing before final profile creation"]
 ```
 
 ## Flow 7. Close Survey Drawer Without Creating

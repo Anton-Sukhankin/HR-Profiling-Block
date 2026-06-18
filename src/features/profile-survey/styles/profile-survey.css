@@ -8,6 +8,62 @@
     flex: 1 1 auto;
     min-width: 0;
 }
+
+.profile-survey-alert {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-height: 148px;
+    padding: 22px 28px;
+    margin: 0 0 16px;
+    background: #FFFFFF;
+    border: 1px solid #D8E4FF;
+    border-radius: 18px;
+}
+
+.profile-survey-alert-illustration {
+    flex: 0 0 176px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-survey-alert-illustration img {
+    display: block;
+    width: 176px;
+    height: 116px;
+    object-fit: contain;
+}
+
+.profile-survey-alert-content {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.profile-survey-alert-content h3 {
+    margin: 0 0 12px;
+    color: #0F172A;
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 500;
+}
+
+.profile-survey-alert-content p {
+    max-width: 840px;
+    margin: 0;
+    color: #475569;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.profile-survey-alert-action {
+    flex: 0 0 auto;
+    min-width: 180px;
+    min-height: 56px;
+    padding-inline: 32px;
+}
+
 .profile-survey-trigger-icon svg {
     fill: none;
     stroke: currentColor;
@@ -644,11 +700,21 @@
     .profile-survey-content {
         padding: 20px;
     }
+
+    .profile-survey-alert {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .profile-survey-alert-action {
+        width: 100%;
+    }
 }
 
 /* --- Profile Survey Drawer Mode --- */
 #create-profile-drawer.has-survey-drawer .drawer-body {
-    padding-right: 666px;
+    padding-right: 24px;
 }
 
 .profile-survey-host {

@@ -2,9 +2,9 @@
 
 ## Layout
 
-The survey is launched from the profile creation drawer header by the `Ассистент профилирования` button. The button is placed to the left of `ИИ-Помощник`, uses the same trigger-button style, and has a separate profiling metaphor icon.
+The survey is launched from a white alert placed in the profile creation drawer body between the drawer header and the stage cards. The alert uses the questionnaire illustration, title `Пройди опрос — сократи ручной ввод и ускорь согласование!`, the express-approval description, and the primary button `Пройти`.
 
-Clicking `Ассистент профилирования` opens a 650px right-side survey drawer inside the profile creation drawer. The normal profile creation form remains visible and interactive. The survey drawer does not use an overlay and does not switch the whole profile creation drawer into a separate survey mode.
+Clicking `Пройти` opens a 650px right-side survey drawer inside the profile creation drawer. The normal profile creation form remains visible and interactive. The survey drawer does not use an overlay and does not switch the whole profile creation drawer into a separate survey mode.
 
 The survey drawer header shows:
 
@@ -27,16 +27,18 @@ When an accordion is open, its body appears below a grey divider and contains th
 
 The final block `Проверьте сводку перед применением` is not an accordion. It stays permanently expanded, has no collapse or expand affordance, has no hover effect, and uses the same visual structure as an opened accordion so the summary remains visible before profile creation.
 
+The summary row `Типовой шаблон` is shown only for the `typical` scenario with a concrete selected template. If the user chooses `Не относится к типовым ролям`, this row is hidden instead of showing an empty value.
+
 Selecting values inside lower accordions must preserve the current scroll position of the survey drawer, so the user does not lose visual context after the drawer content rerenders.
 
 ## Drawer Actions
 
 - `Отмена` closes the survey drawer. Already synchronized values remain in the main form.
 - The drawer close icon also closes the survey drawer without rollback.
-- `Создать профиль` is disabled by default and becomes active only when all required values for the current scenario are filled.
+- `Заполнить профиль` is disabled by default and becomes active only when all required values for the current scenario are filled.
 - In the `typical` scenario, the button requires main function, functional direction, and a concrete typical role.
 - In the `nonTypical` scenario, the button requires main function, functional direction, and all manual answers.
-- Clicking `Создать профиль` applies the current survey result, creates a new profile in the profiles table, closes the survey drawer and the profile creation drawer, and shows a success notification in the upper-right area of the main interface.
+- Clicking `Заполнить профиль` applies the current survey result to the visible profile creation form and closes only the survey drawer. The profile creation drawer remains open, and the user creates the final profile through the normal profile creation footer.
 
 ## Selection Fields
 
@@ -70,10 +72,12 @@ For the functional direction field:
 
 Role templates are displayed as card-style radio choices without a permanent border. Radio indicators are visible immediately when the block appears.
 
+The block is placed below `Укажите конкретное функциональное направление`, but its visibility is still triggered by selecting a main function that has typical roles.
+
 The default technical value `selectedTypicalRole: "none"` is not shown as an active refusal. `Не относится к типовым ролям` becomes selected only after the user explicitly clicks it.
 
 Choosing a concrete role switches the drawer to the `typical` scenario: manual question accordions are hidden, the final summary remains visible, and `Типовой профиль не подходит` is available in the summary.
 
 Choosing `Не относится к типовым ролям` or clicking `Типовой профиль не подходит` switches the drawer to the `nonTypical` scenario: the typical role is cleared, manual question accordions appear, and the user continues through the manual path.
 
-The user can choose a concrete role or `Не относится к типовым ролям` before selecting the functional direction. The choice must be visually reflected immediately, while `Создать профиль` remains disabled until the direction and all scenario-specific required values are filled.
+The user can choose a concrete role or `Не относится к типовым ролям` before selecting the functional direction. The choice must be visually reflected immediately, while `Заполнить профиль` remains disabled until the direction and all scenario-specific required values are filled.

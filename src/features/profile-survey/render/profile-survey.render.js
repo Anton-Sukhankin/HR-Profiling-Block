@@ -227,8 +227,6 @@
                 required: true
             })}
 
-            ${renderTypicalRoles(state, selectedFunction, false)}
-
             ${renderSelectField({
                 label: "Укажите конкретное функциональное направление",
                 value: state.answers.selectedArea,
@@ -236,6 +234,8 @@
                 selectKey: "area",
                 required: true
             })}
+
+            ${renderTypicalRoles(state, selectedFunction, false)}
         `;
     };
 
@@ -290,11 +290,12 @@
 
     const renderFinalStepBody = (state) => {
         const summary = buildSummary(state);
+        const shouldShowTypicalTemplate = state.surveyScenario === "typical" && summary.selectedRole;
         return `
             <div class="profile-survey-summary">
                 ${renderSummaryRow('Функция', summary.selectedFunction ? summary.selectedFunction.name : '')}
                 ${renderSummaryRow('Направление', state.answers.selectedArea)}
-                ${renderSummaryRow('Типовой шаблон', summary.selectedRole ? summary.selectedRole.title : '')}
+                ${shouldShowTypicalTemplate ? renderSummaryRow('Типовой шаблон', summary.selectedRole.title) : ''}
                 ${renderSummaryRow('Цель', summary.goal ? summary.goal.title : '')}
                 ${renderSummaryRow('Подход', summary.approach ? summary.approach.title : '')}
                 ${renderSummaryRow('Фокус времени', summary.time ? summary.time.title : '')}
@@ -395,7 +396,7 @@
                     Отмена
                 </button>
                 <button class="btn-primary profile-survey-footer-btn" type="button" data-survey-action="apply" ${isReadyToApply ? '' : 'disabled'}>
-                    Создать профиль
+                    Заполнить профиль
                 </button>
             </footer>
         `;
