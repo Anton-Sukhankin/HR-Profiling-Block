@@ -6,7 +6,7 @@ The survey keeps local in-memory state in `profileSurveyState`.
 {
   isActive: false,
   currentStep: 1,
-  totalSteps: 7,
+  totalSteps: 9,
   openAccordions: {},
   surveyScenario: "undetermined",
   hasVisitedTypicalRoles: false,

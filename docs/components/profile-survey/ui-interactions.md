@@ -8,13 +8,15 @@ Clicking `Пройти` opens a 650px right-side survey drawer inside the profil
 
 The survey drawer header shows:
 
-- title `Ассистент профилирования`;
+- title `Опрос`;
 - description `Ответь на несколько вопросов, чтобы быстрее оформить профиль`;
 - close action.
 
 ## Accordion Stages
 
 The survey content is a vertical list of accordions. All accordions are closed by default when the drawer opens.
+
+The visible question order is: main function, functional direction, typical-role catalog check when available, leadership, expected result, company purpose, work approach, and time/value focus. The final summary block stays after the questions and is not an accordion question.
 
 Each accordion header is visually based on the previous survey stage card pattern:
 
@@ -72,7 +74,7 @@ For the functional direction field:
 
 Role templates are displayed as card-style radio choices without a permanent border. Radio indicators are visible immediately when the block appears.
 
-The block is placed below `Укажите конкретное функциональное направление`, but its visibility is still triggered by selecting a main function that has typical roles.
+The block is shown as a separate third question after `Функциональное направление должности`, but its visibility is still triggered by selecting a main function that has typical roles.
 
 The default technical value `selectedTypicalRole: "none"` is not shown as an active refusal. `Не относится к типовым ролям` becomes selected only after the user explicitly clicks it.
 

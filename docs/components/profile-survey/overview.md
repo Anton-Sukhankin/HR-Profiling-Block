@@ -23,12 +23,25 @@ When launched, the survey opens as a right-side drawer inside the profile creati
 
 The survey drawer is 650px wide and contains:
 
-- header title `Ассистент профилирования`;
+- header title `Опрос`;
 - description `Ответь на несколько вопросов, чтобы быстрее оформить профиль`;
 - a vertical list of accordion stages;
 - footer actions `Отмена` and `Применить`.
 
 Each stage is an accordion. The closed header keeps the same visual language as the previous survey stage cards: icon block, title, description, stage colors, and completed check state. The expanded body contains the existing survey controls for that stage.
+
+The survey question sequence is:
+
+1. `Основная функция должности`.
+2. `Функциональное направление должности`.
+3. `Проверь, есть ли подходящие профили из каталога типовых ролей для выбранного функционального направления` — hidden by default and shown only when the selected function has typical-role templates.
+4. `Должность является руководящей (в подчинении закреплено структурное подразделение)?`.
+5. `Выбери ожидаемый результат деятельности по должности?`.
+6. `Опиши цель существования должности в Компании одним утверждением?`.
+7. `Как можно охарактеризовать ожидаемый подход к работе для данной должности?`.
+8. `Какой функционал занимает большую часть рабочего времени по должности и определяет ценность его должности для Компании?`.
+
+The final summary block is not counted as a question.
 
 Survey answers are applied to the normal profile creation form in real time only for a concrete typical-role template. The survey branches into two scenarios:
 

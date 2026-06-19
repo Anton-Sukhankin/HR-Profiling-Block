@@ -4,7 +4,7 @@
     const createInitialState = () => ({
         isActive: false,
         currentStep: 1,
-        totalSteps: 7,
+        totalSteps: 9,
         openAccordions: {},
         surveyScenario: "undetermined",
         hasVisitedTypicalRoles: false,

@@ -45,6 +45,8 @@
 
     const surveyStageIconPaths = {
         briefcase: '<rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>',
+        layers: '<path d="m12 2 9 5-9 5-9-5 9-5Z"></path><path d="m3 12 9 5 9-5"></path><path d="m3 17 9 5 9-5"></path>',
+        library: '<path d="m16 6 4 14"></path><path d="M12 6v14"></path><path d="M8 8v12"></path><path d="M4 4v16"></path>',
         users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>',
         target: '<circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>',
         flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" x2="4" y1="22" y2="15"></line>',
@@ -63,44 +65,56 @@
 
     const surveySteps = [
         {
-            title: "Выберите основную функцию должности",
-            description: "Это обязательное поле определяет дальнейшие направления, типовые шаблоны и варианты заполнения профиля.",
+            title: "Основная функция должности",
+            description: "Выберите основную функцию, к которой относится должность.",
             icon: "briefcase",
             iconClass: "survey-function"
         },
         {
-            title: "Является ли должность руководящей?",
-            description: "Если в подчинении закреплено структурное подразделение, система добавит управленческую задачу с весом 20%.",
+            title: "Функциональное направление должности",
+            description: "Уточните направление внутри выбранной основной функции.",
+            icon: "layers",
+            iconClass: "survey-function"
+        },
+        {
+            title: "Проверь, есть ли подходящие профили из каталога типовых ролей для выбранного функционального направления",
+            description: "Этот вопрос появляется только для функций, у которых есть каталог типовых ролей.",
+            icon: "library",
+            iconClass: "survey-final"
+        },
+        {
+            title: "Должность является руководящей (в подчинении закреплено структурное подразделение)?",
+            description: "Выберите, закреплено ли за должностью структурное подразделение.",
             icon: "users",
             iconClass: "survey-leadership"
         },
         {
-            title: "Какой ключевой результат должна обеспечивать должность?",
+            title: "Выбери ожидаемый результат деятельности по должности?",
             description: "Выберите один вариант, который лучше всего отражает ожидаемый вклад роли.",
             icon: "target",
             iconClass: "survey-result"
         },
         {
-            title: "Какая глобальная миссия роли ближе всего?",
-            description: "Ответ повлияет на формулировку цели в карточке профиля.",
+            title: "Опиши цель существования должности в Компании одним утверждением?",
+            description: "Выберите формулировку, которая ближе всего описывает смысл должности.",
             icon: "flag",
             iconClass: "survey-goal"
         },
         {
-            title: "Какой подход к работе характерен для должности?",
+            title: "Как можно охарактеризовать ожидаемый подход к работе для данной должности?",
             description: "Ответ поможет подобрать релевантные soft skills.",
             icon: "route",
             iconClass: "survey-approach"
         },
         {
-            title: "Какой функционал занимает большую часть времени?",
-            description: "Ответ используется для распределения веса задач до 100%.",
+            title: "Какой функционал занимает большую часть рабочего времени по должности и определяет ценность его должности для Компании?",
+            description: "Ответ используется для определения основного фокуса должности.",
             icon: "clock-3",
             iconClass: "survey-time"
         },
         {
             title: "Проверьте сводку перед применением",
-            description: "Выбранные значения уже отображаются в основной форме. Проверьте результат и закройте опросник.",
+            description: "Проверьте выбранные значения и примените результат опроса.",
             icon: "clipboard-check",
             iconClass: "survey-final"
         }
@@ -109,21 +123,21 @@
     const isSurveyStepComplete = (state, stepNumber) => {
         if (!state || !state.answers) return false;
         const answers = state.answers;
-        if (stepNumber === 1) {
+        if (stepNumber === 1) return Boolean(answers.selectedFunctionId);
+        if (stepNumber === 2) return Boolean(answers.selectedArea);
+        if (stepNumber === 3) {
             const selectedFunction = getSelectedFunction();
-            const hasBaseContext = Boolean(answers.selectedFunctionId && answers.selectedArea);
-            if (!hasBaseContext) return false;
-            if (!hasTypicalRoleCatalog(selectedFunction)) return true;
+            if (!hasTypicalRoleCatalog(selectedFunction)) return false;
             if (state.surveyScenario === "typical") {
                 return Boolean(answers.selectedTypicalRole && answers.selectedTypicalRole !== "none");
             }
             return state.surveyScenario === "nonTypical" && state.hasVisitedTypicalRoles && answers.selectedTypicalRole === "none";
         }
-        if (stepNumber === 2) return Boolean(answers.leadership);
-        if (stepNumber === 3) return Boolean(answers.result);
-        if (stepNumber === 4) return Boolean(answers.goal);
-        if (stepNumber === 5) return Boolean(answers.approach);
-        if (stepNumber === 6) return Boolean(answers.time);
+        if (stepNumber === 4) return Boolean(answers.leadership);
+        if (stepNumber === 5) return Boolean(answers.result);
+        if (stepNumber === 6) return Boolean(answers.goal);
+        if (stepNumber === 7) return Boolean(answers.approach);
+        if (stepNumber === 8) return Boolean(answers.time);
         return false;
     };
 
@@ -138,15 +152,17 @@
         }
 
         if (state.surveyScenario === "nonTypical") {
-            return [1, 2, 3, 4, 5, 6].every(stepNumber => isSurveyStepComplete(state, stepNumber));
+            return [1, 2, 4, 5, 6, 7, 8].every(stepNumber => isSurveyStepComplete(state, stepNumber));
         }
 
         return false;
     };
 
     const shouldRenderSurveyStep = (state, stepNumber) => {
-        if (stepNumber === 1 || stepNumber === surveySteps.length) return true;
-        return state && state.surveyScenario === "nonTypical";
+        if (stepNumber === 1 || stepNumber === 2 || stepNumber === surveySteps.length) return true;
+        if (stepNumber === 3) return hasTypicalRoleCatalog(getSelectedFunction());
+        if (stepNumber >= 4 && stepNumber <= 8) return state && state.surveyScenario === "nonTypical";
+        return false;
     };
 
     const isSurveyAccordionOpen = (state, stepNumber) => Boolean(state.openAccordions && state.openAccordions[String(stepNumber)]);
@@ -216,7 +232,7 @@
         </div>
     `;
 
-    const renderFunctionStepBody = (state) => {
+    const renderFunctionStepBody = () => {
         const selectedFunction = getSelectedFunction();
         return `
             ${renderSelectField({
@@ -226,15 +242,22 @@
                 selectKey: "function",
                 required: true
             })}
+        `;
+    };
 
+    const renderAreaStepBody = (state) => `
             ${renderSelectField({
-                label: "Укажите конкретное функциональное направление",
+                label: "Функциональное направление должности",
                 value: state.answers.selectedArea,
                 placeholder: "Выберите направление",
                 selectKey: "area",
                 required: true
             })}
+    `;
 
+    const renderTypicalRoleStepBody = (state) => {
+        const selectedFunction = getSelectedFunction();
+        return `
             ${renderTypicalRoles(state, selectedFunction, false)}
         `;
     };
@@ -310,28 +333,30 @@
 
     const renderStepBody = (state, stepNumber) => {
         const data = app.profileSurveyData || {};
-        if (stepNumber === 1) return renderFunctionStepBody(state);
-        if (stepNumber === 2) return renderLeadershipStepBody(state);
-        if (stepNumber === 3) return renderOptionStepBody(state, {
-            title: surveySteps[2].title,
+        if (stepNumber === 1) return renderFunctionStepBody();
+        if (stepNumber === 2) return renderAreaStepBody(state);
+        if (stepNumber === 3) return renderTypicalRoleStepBody(state);
+        if (stepNumber === 4) return renderLeadershipStepBody(state);
+        if (stepNumber === 5) return renderOptionStepBody(state, {
+            title: surveySteps[4].title,
             items: data.resultOptions || [],
             answerKey: 'result',
             selectKey: 'result'
         });
-        if (stepNumber === 4) return renderOptionStepBody(state, {
-            title: surveySteps[3].title,
+        if (stepNumber === 6) return renderOptionStepBody(state, {
+            title: surveySteps[5].title,
             items: data.goalOptions || [],
             answerKey: 'goal',
             selectKey: 'goal'
         });
-        if (stepNumber === 5) return renderOptionStepBody(state, {
-            title: surveySteps[4].title,
+        if (stepNumber === 7) return renderOptionStepBody(state, {
+            title: surveySteps[6].title,
             items: data.approachOptions || [],
             answerKey: 'approach',
             selectKey: 'approach'
         });
-        if (stepNumber === 6) return renderOptionStepBody(state, {
-            title: surveySteps[5].title,
+        if (stepNumber === 8) return renderOptionStepBody(state, {
+            title: surveySteps[7].title,
             items: data.timeOptions || [],
             answerKey: 'time',
             selectKey: 'time'
@@ -407,7 +432,7 @@
             <aside class="profile-survey-drawer" role="complementary" aria-label="Опросник создания профиля">
                 <header class="profile-survey-drawer-header">
                     <div class="profile-survey-drawer-title-group">
-                        <h2>Ассистент профилирования</h2>
+                        <h2>Опрос</h2>
                         <p>Ответь на несколько вопросов, чтобы быстрее оформить профиль</p>
                     </div>
                     <button class="profile-survey-drawer-close" type="button" data-survey-action="exit" aria-label="Закрыть опросник">

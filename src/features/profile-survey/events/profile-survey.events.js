@@ -248,7 +248,8 @@
     };
 
     const canGoNext = (state) => {
-        if (state.currentStep === 1) return Boolean(state.answers.selectedFunctionId && state.answers.selectedArea);
+        if (state.currentStep === 1) return Boolean(state.answers.selectedFunctionId);
+        if (state.currentStep === 2) return Boolean(state.answers.selectedArea);
         return true;
     };
 
@@ -256,7 +257,7 @@
         const stateApi = getStateApi();
         const state = stateApi.getState();
         if (!canGoNext(state)) return;
-        if (state.currentStep === 1 && state.isTypicalProfile) {
+        if (state.currentStep === 3 && state.isTypicalProfile) {
             stateApi.setState({ currentStep: state.totalSteps });
             return;
         }

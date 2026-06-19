@@ -22,25 +22,23 @@ flowchart TD
   E -->|No| G["Main profile form remains unchanged"]
 ```
 
-## Flow 3. Function And Template Selection
+## Flow 3. Function, Direction And Template Selection
 
 ```mermaid
 flowchart TD
-  A["Accordion: Основная функция должности"] --> B["User types in dropdown"]
-  B --> C{"Matches exist?"}
-  C -->|Yes| D["Show filtered function list"]
-  C -->|No| E["Show only Новое значение"]
-  D --> F["Select function and functional direction"]
-  F --> G{"Function has typical roles?"}
-  G -->|No| H["Scenario becomes nonTypical"]
-  H --> I["Show manual question accordions"]
-  G -->|Yes| J["Show available role templates"]
-  J --> K{"User choice"}
-  K -->|Concrete role| L["Scenario becomes typical"]
-  L --> M["Manual questions are hidden; final summary stays visible"]
-  K -->|Не относится / template rejected| H
-  I --> N["Main form remains empty or manually filled by user"]
-  M --> O["Typical template synchronizes into main form"]
+  A["Question 1: Основная функция должности"] --> B["Select or add main function"]
+  B --> C["Question 2: Функциональное направление должности"]
+  C --> D["Select or add functional direction"]
+  D --> E{"Function has typical roles?"}
+  E -->|No| F["Scenario becomes nonTypical"]
+  F --> G["Show manual question accordions"]
+  E -->|Yes| H["Question 3: Check typical-role catalog"]
+  H --> I{"User choice"}
+  I -->|Concrete role| J["Scenario becomes typical"]
+  J --> K["Manual questions are hidden; final summary stays visible"]
+  I -->|Не относится / template rejected| F
+  G --> L["Main form remains empty or manually filled by user"]
+  K --> M["Typical template synchronizes into main form"]
 ```
 
 ## Flow 4. Typical Scenario

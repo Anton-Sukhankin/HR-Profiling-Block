@@ -8,7 +8,7 @@
 - Opening the survey with no answers must not create default profile data by itself.
 - The footer action `Применить` is disabled until the required values for the active survey scenario are completed.
 - Clicking `Применить` closes only the survey drawer. In the `typical` scenario, the synchronized template draft remains in the profile creation form. In the `nonTypical` scenario, no survey answers are written to the profile creation form.
-- `Основная функция должности` and `Укажите конкретное функциональное направление` are required for the first survey stage to be considered completed.
+- `Основная функция должности` and `Функциональное направление должности` are required base questions before the survey scenario can be completed.
 - If no function or functional direction matches the typed query, the dropdown shows only `Новое значение`.
 - A newly added function immediately becomes selected and is shown as a custom value with status `на верификации`.
 - A newly added functional direction immediately becomes selected and is stored in the local survey state.
