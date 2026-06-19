@@ -9,21 +9,25 @@
 - The footer action `Применить` is disabled until the required values for the active survey scenario are completed.
 - Clicking `Применить` closes only the survey drawer. In the `typical` scenario, the synchronized template draft remains in the profile creation form. In the `nonTypical` scenario, no survey answers are written to the profile creation form.
 - `Основная функция должности` and `Функциональное направление должности` are required base questions before the survey scenario can be completed.
+- `Основная функция должности` is a Code 4 classifier dropdown. It is designed for the full 39-function classifier and supports manual addition through `Новое значение`.
+- `Функциональное направление должности` is a dependent Code 5 dropdown. Its values are formed from the selected Code 4 function and also support manual addition through `Новое значение`.
 - If no function or functional direction matches the typed query, the dropdown shows only `Новое значение`.
 - A newly added function immediately becomes selected and is shown as a custom value with status `на верификации`.
 - A newly added functional direction immediately becomes selected and is stored in the local survey state.
 - Custom functions and custom functional directions can be deleted from their dropdown lists. If the deleted value was selected, the corresponding survey answer is cleared.
 - The survey scenario is stored explicitly as `undetermined`, `typical`, or `nonTypical`.
 - Default `selectedTypicalRole: "none"` is only an empty technical value. It must not be treated as a user refusal until the user explicitly chooses `Не относится к типовым ролям` or clicks `Типовой профиль не подходит`.
-- If a selected function has typical roles, the block `Доступные готовые шаблоны должностей` appears below the functional direction field while still being triggered immediately by the main function selection.
+- The typical-role question appears only for the selected Code 4 functions `Девелопмент`, `Sales (продажи)`, `Проектный институт`, `УК`, or `Клиентский сервис`.
+- If a selected function has typical roles, the block `Доступные готовые шаблоны должностей` appears as the third question. The first option is always `Не относится к типовым ролям`; concrete typical-role templates follow it.
 - For functions with typical roles, the scenario stays `undetermined` until the user selects a concrete role or explicitly rejects the template path. This scenario choice can be made immediately after the main function is selected.
-- Choosing a concrete typical role enables the `typical` shortcut scenario. Manual question accordions are hidden and are not required for profile creation.
+- Choosing a concrete typical role enables the `typical` shortcut scenario. Manual question accordions 4-8 are hidden and are not required for profile creation.
 - When a concrete typical role is selected, survey-generated values in the profile creation form are treated as a template draft and become read-only in both stage 1 and stage 2. This lock applies only to fields and sections managed by the survey-generated draft.
 - In stage 2, template-generated competency values are view-only: accordion open/close remains available, but delete, reset, remove, and similar internal actions are not available.
 - If the user chooses `Не относится к типовым ролям` or rejects a typical profile through `Типовой профиль не подходит`, the selected template is reset, the scenario becomes `nonTypical`, and the manual survey path is shown. If a typical template had already synchronized data into the form, those survey-generated values are cleared.
 - In the `nonTypical` scenario, the survey functions as a language/helper interface only. It must not prefill stage 1 or stage 2 values in the profile creation form.
 - If the selected function has no typical roles, the scenario becomes `nonTypical` automatically after the main function and functional direction are selected.
 - In the `typical` scenario, `Применить` requires only main function, functional direction, and a concrete typical role.
-- In the `nonTypical` scenario, `Применить` requires main function, functional direction, and all manual answers: leadership, expected result, goal, approach, and time focus.
+- In the `nonTypical` scenario, `Применить` requires main function, functional direction, and all manual answers: leadership, expected result, company purpose, work approach, and time/value focus.
+- All survey questions are strict single-choice questions.
 - If leadership is answered as `Да` in the `nonTypical` path, the internal survey summary may show the management task `Управление операционной деятельностью` with weight `20%`, but this value is not written into the profile creation form.
 - Stage 2 values may be synchronized by the survey only as part of the concrete typical-role template draft.

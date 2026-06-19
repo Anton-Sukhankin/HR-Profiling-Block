@@ -29,7 +29,7 @@ flowchart TD
   A["Question 1: Основная функция должности"] --> B["Select or add main function"]
   B --> C["Question 2: Функциональное направление должности"]
   C --> D["Select or add functional direction"]
-  D --> E{"Function has typical roles?"}
+  D --> E{"Function is Девелопмент, Sales, Проектный институт, УК, or Клиентский сервис?"}
   E -->|No| F["Scenario becomes nonTypical"]
   F --> G["Show manual question accordions"]
   E -->|Yes| H["Question 3: Check typical-role catalog"]

@@ -16,7 +16,18 @@ The survey drawer header shows:
 
 The survey content is a vertical list of accordions. All accordions are closed by default when the drawer opens.
 
-The visible question order is: main function, functional direction, typical-role catalog check when available, leadership, expected result, company purpose, work approach, and time/value focus. The final summary block stays after the questions and is not an accordion question.
+The visible question order is:
+
+1. `Основная функция должности`.
+2. `Функциональное направление должности`.
+3. `Проверь, есть ли подходящие профили из каталога типовых ролей для выбранного функционального направления` when the selected function supports typical roles.
+4. `Должность является руководящей (в подчинении закреплено структурное подразделение)?`.
+5. `Выбери ожидаемый результат деятельности по должности?`.
+6. `Опиши цель сущестования должности в Компании одним утверждением?`.
+7. `Как можно охарактеризовать ожидаемый подход к работе для данной должности?`.
+8. `Какой функционал занимает большую часть рабочего времени по должности и определяет ценность его должности для Компании?`.
+
+The final summary block stays after the questions and is not an accordion question.
 
 Each accordion header is visually based on the previous survey stage card pattern:
 
@@ -53,7 +64,7 @@ All survey selection fields use the same interaction pattern as task-name select
 - active item marked inside the list;
 - custom values show a delete icon on hover in the right side of the dropdown row.
 
-For short answer sets with five options or fewer, the survey uses card-style radio choices directly inside the accordion body. Radio indicators are visible immediately, but none of them is active by default until the user clicks a card.
+For short answer sets with five options or fewer, the survey uses card-style radio choices directly inside the accordion body. Longer answer sets use the same searchable dropdown component. In both cases the user can select only one answer.
 
 For the main function field:
 
@@ -74,7 +85,9 @@ For the functional direction field:
 
 Role templates are displayed as card-style radio choices without a permanent border. Radio indicators are visible immediately when the block appears.
 
-The block is shown as a separate third question after `Функциональное направление должности`, but its visibility is still triggered by selecting a main function that has typical roles.
+The block is shown as a separate third question after `Функциональное направление должности`, but only for `Девелопмент`, `Sales (продажи)`, `Проектный институт`, `УК`, or `Клиентский сервис`.
+
+The first card in this block is `Не относится к типовым ролям`. Concrete typical-role templates are listed after it.
 
 The default technical value `selectedTypicalRole: "none"` is not shown as an active refusal. `Не относится к типовым ролям` becomes selected only after the user explicitly clicks it.
 

@@ -30,18 +30,20 @@ The survey drawer is 650px wide and contains:
 
 Each stage is an accordion. The closed header keeps the same visual language as the previous survey stage cards: icon block, title, description, stage colors, and completed check state. The expanded body contains the existing survey controls for that stage.
 
-The survey question sequence is:
+The survey question sequence and answer sources are:
 
-1. `Основная функция должности`.
-2. `Функциональное направление должности`.
-3. `Проверь, есть ли подходящие профили из каталога типовых ролей для выбранного функционального направления` — hidden by default and shown only when the selected function has typical-role templates.
+1. `Основная функция должности` — single choice from the Code 4 function dropdown. The prototype data structure supports the 39-function classifier; the current demo dictionary includes the functions needed for the branch demonstration and can be extended without changing the UI.
+2. `Функциональное направление должности` — dependent single-choice Code 5 dropdown built from the function selected in question 1.
+3. `Проверь, есть ли подходящие профили из каталога типовых ролей для выбранного функционального направления` — hidden by default and shown only for `Девелопмент`, `Sales (продажи)`, `Проектный институт`, `УК`, or `Клиентский сервис`. The first answer is always `Не относится к типовым ролям`, followed by available typical-role templates.
 4. `Должность является руководящей (в подчинении закреплено структурное подразделение)?`.
 5. `Выбери ожидаемый результат деятельности по должности?`.
-6. `Опиши цель существования должности в Компании одним утверждением?`.
+6. `Опиши цель сущестования должности в Компании одним утверждением?`.
 7. `Как можно охарактеризовать ожидаемый подход к работе для данной должности?`.
 8. `Какой функционал занимает большую часть рабочего времени по должности и определяет ценность его должности для Компании?`.
 
 The final summary block is not counted as a question.
+
+Questions 4-8 are shown only when the user does not select a concrete profile from the typical-role catalog. Every question uses single selection only.
 
 Survey answers are applied to the normal profile creation form in real time only for a concrete typical-role template. The survey branches into two scenarios:
 
