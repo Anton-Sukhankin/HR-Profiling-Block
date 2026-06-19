@@ -145,7 +145,8 @@
         const selectedRole = getSelectedTypicalRole();
         const selectedGoal = getOptionById(data.goalOptions || [], state.answers.goal) || (data.goalOptions || [])[0];
         const selectedTime = getOptionById(data.timeOptions || [], state.answers.time) || (data.timeOptions || [])[0];
-        const selectedApproach = getOptionById(data.approachOptions || [], state.answers.approach);
+        const selectedApproach = getOptionById(data.approachOptions || [], state.answers.approach) || (data.approachOptions || [])[0];
+        const selectedArea = state.answers.selectedArea || (selectedFunction && selectedFunction.areas && selectedFunction.areas[0]) || "";
         const mainTaskName = selectedTime ? selectedTime.taskName : "Анализ требований заказчика";
         const mainFunctions = (data.taskFunctions && data.taskFunctions[mainTaskName]) || [];
         const leadershipEnabled = state.answers.leadership === "yes" || Boolean(selectedRole);
@@ -198,7 +199,7 @@
             },
             summary: {
                 functionName: selectedFunction ? selectedFunction.name : "",
-                area: state.answers.selectedArea,
+                area: selectedArea,
                 typicalRole: selectedRole ? selectedRole.title : "",
                 isTypicalProfile: state.surveyScenario === "typical"
             }
@@ -703,7 +704,10 @@
             closeSurveyDropdown();
             closeSurveyDrawer();
             if (typeof window.showToast === "function") {
-                window.showToast("Данные опросника применены к профилю", true, true);
+                const message = result.summary && result.summary.isTypicalProfile
+                    ? "Данные опросника применены к профилю"
+                    : "Опросник завершён. Заполните профиль вручную";
+                window.showToast(message, true, true);
             }
         } else {
             if (typeof window.showToast === "function") {
@@ -803,7 +807,15 @@
         const roleEl = target.closest("[data-survey-typical-role]");
         if (roleEl) {
             const roleId = roleEl.dataset.surveyTypicalRole;
-            setAnswers({ selectedTypicalRole: roleId }, {
+            const selectedFunction = getSelectedFunction();
+            const fallbackArea = selectedFunction && Array.isArray(selectedFunction.areas)
+                ? selectedFunction.areas[0]
+                : "";
+            const shouldUseFallbackArea = roleId === "none" && !stateApi.getState().answers.selectedArea && fallbackArea;
+            setAnswers({
+                selectedTypicalRole: roleId,
+                ...(shouldUseFallbackArea ? { selectedArea: fallbackArea, areaSearchQuery: fallbackArea } : {})
+            }, {
                 hasVisitedTypicalRoles: true,
                 isTypicalProfile: roleId !== "none",
                 surveyScenario: roleId === "none" ? "nonTypical" : "typical"

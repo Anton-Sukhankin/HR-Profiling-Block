@@ -396,7 +396,7 @@
                     Отмена
                 </button>
                 <button class="btn-primary profile-survey-footer-btn" type="button" data-survey-action="apply" ${isReadyToApply ? '' : 'disabled'}>
-                    Заполнить профиль
+                    Применить
                 </button>
             </footer>
         `;

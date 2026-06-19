@@ -3,11 +3,11 @@
 - The survey is optional and must not block manual profile creation.
 - The survey opens as a side drawer and does not hide the normal profile creation form.
 - The survey does not show a dimming overlay; the main profile creation interface remains available for interaction.
-- Survey answers are synchronized to the normal profile creation form in real time after user selection.
-- If the user closes the survey before completion, already synchronized values remain in the form and are not rolled back.
+- Survey answers are synchronized to the normal profile creation form in real time only when the user selects a concrete typical-role template.
+- If the user closes the survey before completion, only typical-template synchronized values remain in the form and are not rolled back.
 - Opening the survey with no answers must not create default profile data by itself.
-- The footer action `Заполнить профиль` is disabled until the required values for the active survey scenario are completed.
-- Clicking `Заполнить профиль` applies the survey result to the profile creation form and closes only the survey drawer. It must not create a profile record, close the profile creation drawer, navigate to the profiles table, or show the final profile-created notification.
+- The footer action `Применить` is disabled until the required values for the active survey scenario are completed.
+- Clicking `Применить` closes only the survey drawer. In the `typical` scenario, the synchronized template draft remains in the profile creation form. In the `nonTypical` scenario, no survey answers are written to the profile creation form.
 - `Основная функция должности` and `Укажите конкретное функциональное направление` are required for the first survey stage to be considered completed.
 - If no function or functional direction matches the typed query, the dropdown shows only `Новое значение`.
 - A newly added function immediately becomes selected and is shown as a custom value with status `на верификации`.
@@ -16,11 +16,14 @@
 - The survey scenario is stored explicitly as `undetermined`, `typical`, or `nonTypical`.
 - Default `selectedTypicalRole: "none"` is only an empty technical value. It must not be treated as a user refusal until the user explicitly chooses `Не относится к типовым ролям` or clicks `Типовой профиль не подходит`.
 - If a selected function has typical roles, the block `Доступные готовые шаблоны должностей` appears below the functional direction field while still being triggered immediately by the main function selection.
-- For functions with typical roles, the scenario stays `undetermined` until the user selects a concrete role or explicitly rejects the template path. This scenario choice can be made immediately after the main function is selected; functional direction is still required later for profile creation readiness.
+- For functions with typical roles, the scenario stays `undetermined` until the user selects a concrete role or explicitly rejects the template path. This scenario choice can be made immediately after the main function is selected.
 - Choosing a concrete typical role enables the `typical` shortcut scenario. Manual question accordions are hidden and are not required for profile creation.
-- If the user chooses `Не относится к типовым ролям` or rejects a typical profile through `Типовой профиль не подходит`, the selected template is reset, the scenario becomes `nonTypical`, and the manual survey path is shown.
+- When a concrete typical role is selected, survey-generated values in the profile creation form are treated as a template draft and become read-only in both stage 1 and stage 2. This lock applies only to fields and sections managed by the survey-generated draft.
+- In stage 2, template-generated competency values are view-only: accordion open/close remains available, but delete, reset, remove, and similar internal actions are not available.
+- If the user chooses `Не относится к типовым ролям` or rejects a typical profile through `Типовой профиль не подходит`, the selected template is reset, the scenario becomes `nonTypical`, and the manual survey path is shown. If a typical template had already synchronized data into the form, those survey-generated values are cleared.
+- In the `nonTypical` scenario, the survey functions as a language/helper interface only. It must not prefill stage 1 or stage 2 values in the profile creation form.
 - If the selected function has no typical roles, the scenario becomes `nonTypical` automatically after the main function and functional direction are selected.
-- In the `typical` scenario, `Заполнить профиль` requires only main function, functional direction, and a concrete typical role.
-- In the `nonTypical` scenario, `Заполнить профиль` requires main function, functional direction, and all manual answers: leadership, expected result, goal, approach, and time focus.
-- If leadership is answered as `Да` in the `nonTypical` path, the generated profile includes the management task `Управление операционной деятельностью` with weight `20%`.
-- Stage 2 values may be synchronized by the survey only as part of the survey-generated profile draft.
+- In the `typical` scenario, `Применить` requires only main function, functional direction, and a concrete typical role.
+- In the `nonTypical` scenario, `Применить` requires main function, functional direction, and all manual answers: leadership, expected result, goal, approach, and time focus.
+- If leadership is answered as `Да` in the `nonTypical` path, the internal survey summary may show the management task `Управление операционной деятельностью` with weight `20%`, but this value is not written into the profile creation form.
+- Stage 2 values may be synchronized by the survey only as part of the concrete typical-role template draft.

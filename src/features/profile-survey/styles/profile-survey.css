@@ -15,10 +15,18 @@
     gap: 24px;
     min-height: 148px;
     padding: 22px 28px;
-    margin: 0 0 16px;
+    margin: 24px 0 0;
     background: #FFFFFF;
     border: 1px solid #D8E4FF;
     border-radius: 18px;
+}
+
+.profile-survey-alert[hidden] {
+    display: none;
+}
+
+.profile-survey-alert + .tasks-functions-header {
+    margin-top: 16px;
 }
 
 .profile-survey-alert-illustration {
@@ -59,9 +67,6 @@
 
 .profile-survey-alert-action {
     flex: 0 0 auto;
-    min-width: 180px;
-    min-height: 56px;
-    padding-inline: 32px;
 }
 
 .profile-survey-trigger-icon svg {

@@ -3100,12 +3100,16 @@ td.col-funcs {
 .accordion-body {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+        max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        padding-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 0 20px;
+    box-sizing: border-box;
+    will-change: max-height, padding-bottom;
 }
 
 .accordion-card.is-open .accordion-body {
-    max-height: 2000px; /* Large enough */
+    max-height: var(--accordion-body-height, 2000px);
     padding-bottom: 24px;
     overflow: visible !important;
 }
@@ -4775,6 +4779,118 @@ input:checked + .slider:before {
 
 .goal-name-wrapper.is-disabled .goal-name-text {
     color: #0F172A !important;
+}
+
+/* --- Survey template lock --- */
+#create-profile-drawer.has-survey-template-lock .is-survey-template-locked,
+#create-profile-drawer.has-survey-template-lock .is-survey-template-locked:hover,
+#create-profile-drawer.has-survey-template-lock .is-survey-template-locked * {
+    cursor: not-allowed !important;
+}
+
+#create-profile-drawer.has-survey-template-lock input.is-survey-template-locked,
+#create-profile-drawer.has-survey-template-lock select.is-survey-template-locked,
+#create-profile-drawer.has-survey-template-lock textarea.is-survey-template-locked,
+#create-profile-drawer.has-survey-template-lock .tree-select-trigger.is-survey-template-locked,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .goal-name-wrapper,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .custom-select-wrapper,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .col-task-name-wrapper,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .task-participation-container,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .ai-influence-input {
+    background-color: #F8FAFC !important;
+    border-color: #D8E4FF !important;
+    color: #64748B !important;
+}
+
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked {
+    border-color: #D8E4FF !important;
+    background: #FFFFFF;
+}
+
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked:hover {
+    box-shadow: none;
+    transform: none;
+}
+
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-add-task,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-delete-goal,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-delete-task,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-add-function-row,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-paste-function-row,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-copy-function-row,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-delete-function-row,
+#create-profile-drawer.has-survey-template-lock .goal-card.is-survey-template-locked .btn-clear-select,
+#create-profile-drawer.has-survey-template-lock #add-goal-btn.is-survey-template-locked,
+#create-profile-drawer.has-survey-template-lock #reset-competencies-btn.is-survey-template-locked,
+#competencies-content.is-survey-template-locked button {
+    opacity: 0.55;
+    cursor: not-allowed !important;
+}
+
+#competencies-content.is-survey-template-locked input,
+#competencies-content.is-survey-template-locked textarea,
+#competencies-content.is-survey-template-locked select {
+    background-color: #F8FAFC !important;
+    border-color: #D8E4FF !important;
+    color: #64748B !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+}
+
+#competencies-content.is-survey-template-locked .skill-card,
+#competencies-content.is-survey-template-locked .skill-tag,
+#competencies-content.is-survey-template-locked .edu-card,
+#competencies-content.is-survey-template-locked .mgmt-card {
+    cursor: not-allowed !important;
+}
+
+#competencies-content.is-survey-template-locked .accordion-body {
+    pointer-events: none;
+}
+
+#competencies-content.is-survey-template-locked .accordion-header {
+    pointer-events: auto;
+    cursor: pointer !important;
+}
+
+#competencies-content.is-survey-template-locked .btn-add-skill,
+#competencies-content.is-survey-template-locked .btn-add-direction,
+#competencies-content.is-survey-template-locked .btn-add-mgmt-experience,
+#competencies-content.is-survey-template-locked .btn-add-func-area,
+#competencies-content.is-survey-template-locked .btn-delete-skill,
+#competencies-content.is-survey-template-locked .btn-delete-custom-skill,
+#competencies-content.is-survey-template-locked .btn-delete-edu,
+#competencies-content.is-survey-template-locked .btn-remove-mgmt,
+#competencies-content.is-survey-template-locked .btn-reset-accordion,
+#competencies-content.is-survey-template-locked .btn-reset-card,
+#competencies-content.is-survey-template-locked .btn-remove-tag {
+    display: none !important;
+}
+
+#competencies-content.is-survey-template-locked .skill-card:hover,
+#competencies-content.is-survey-template-locked .edu-card:hover,
+#competencies-content.is-survey-template-locked .mgmt-card:hover {
+    border-color: var(--border-color) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+#competencies-content.is-survey-template-locked .skill-card:hover .btn-delete-skill,
+#competencies-content.is-survey-template-locked .skill-card:hover .btn-add-mgmt-experience,
+#competencies-content.is-survey-template-locked .edu-card:hover .edu-header-actions {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: none !important;
+}
+
+#competencies-content.is-survey-template-locked .skill-tag:hover {
+    background: #F1F5F9 !important;
+    border-color: transparent !important;
+    transform: none !important;
+}
+
+#competencies-content.is-survey-template-locked .smart-dropdown {
+    display: none !important;
 }
 
 /* --- VIEW MODE COMPETENCIES LOCK --- */

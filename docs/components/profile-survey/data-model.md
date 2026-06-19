@@ -56,7 +56,7 @@ Custom functional directions are stored in `customAreas` by selected main functi
 
 ## Synchronized Result
 
-The synchronized result contains:
+The survey result contains:
 
 - `scenario`: the active survey scenario;
 - base context draft;
@@ -65,4 +65,6 @@ The synchronized result contains:
 - competency draft;
 - summary metadata for the final survey accordion.
 
-The integration replaces previous survey-generated goal data on every live sync to avoid duplicates. Values marked as survey-managed may be updated by later survey answers; manual values outside the survey-managed area are preserved.
+Only `typical` results are synchronized to the profile creation form. The integration replaces previous survey-generated goal data on every typical live sync to avoid duplicates. Values marked as survey-managed may be updated by later typical survey answers; manual values outside the survey-managed area are preserved.
+
+`nonTypical` results remain local to the survey drawer. They do not prefill stage 1 or stage 2. If a previous typical result had synchronized survey-generated data, switching to `nonTypical` clears those survey-generated values.

@@ -137,12 +137,17 @@
     const validateFunctionalStage = () => {
         const fields = getParamFields();
         const addGoalBtn = document.getElementById('add-goal-btn');
+        const surveyAlert = document.querySelector('.profile-survey-alert');
         
         const paramsValid = !!(fields.position.value && fields.structure.value);
         const aiContextStatus = getFirstStageAIContextStatus();
         
         if (addGoalBtn) {
             addGoalBtn.disabled = !paramsValid;
+        }
+
+        if (surveyAlert) {
+            surveyAlert.hidden = !fields.structure.value;
         }
 
         updateAllGoalCardsTaskAvailability();
@@ -359,6 +364,10 @@
             fields.classifier.value = "";
             fields.structure.value = "";
             fields.okz.value = "";
+            delete fields.position.dataset.surveyManaged;
+            delete fields.classifier.dataset.surveyManaged;
+            delete fields.structure.dataset.surveyManaged;
+            delete fields.okz.dataset.surveyManaged;
             resetTreeSelect();
         }
 
@@ -423,6 +432,9 @@
         competenciesContent.style.display = 'none';
         if (typeof updateCreateStageCardsInteractivity === 'function') {
             updateCreateStageCardsInteractivity();
+        }
+        if (typeof applySurveyTemplateLock === 'function') {
+            applySurveyTemplateLock(false);
         }
 
         createLucideIcons(); // Refresh icons inside drawer
@@ -1852,6 +1864,9 @@
         // Toggle open/close state of the dropdown list
         treeTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
+            if (treeTrigger.classList.contains('is-survey-template-locked') || treeTrigger.classList.contains('is-disabled')) {
+                return;
+            }
             const isOpen = treeContainer.classList.toggle('is-open');
             treeTrigger.classList.toggle('is-active', isOpen);
         });
@@ -2740,6 +2755,7 @@
 
     // --- Goal Role Dropdown Logic ---
     const openGoalRoleDropdown = (selectWrapper) => {
+        if (!selectWrapper || selectWrapper.classList.contains('is-disabled') || selectWrapper.classList.contains('is-survey-template-locked')) return;
         closeAllGoalTaskDropdowns();
         selectWrapper.classList.add('is-active');
 
@@ -2802,7 +2818,7 @@
 
     // --- Task Role Dropdown Logic ---
     const openTaskRoleDropdown = (selectWrapper) => {
-        if (!selectWrapper || selectWrapper.classList.contains('is-disabled')) return;
+        if (!selectWrapper || selectWrapper.classList.contains('is-disabled') || selectWrapper.classList.contains('is-survey-template-locked')) return;
         closeAllGoalTaskDropdowns();
         selectWrapper.classList.add('is-active');
 
@@ -3222,6 +3238,9 @@
     };
 
     const openGoalNameDropdown = (wrapper) => {
+        if (!wrapper || wrapper.classList.contains('is-disabled') || wrapper.classList.contains('is-survey-template-locked')) {
+            return;
+        }
         closeAllGoalTaskDropdowns();
         wrapper.classList.add('is-active');
 
@@ -3388,7 +3407,7 @@
 
     // --- Task Name Dropdown Logic ---
     const openTaskNameDropdown = (wrapper) => {
-        if (!wrapper || wrapper.classList.contains('is-disabled')) return;
+        if (!wrapper || wrapper.classList.contains('is-disabled') || wrapper.classList.contains('is-survey-template-locked')) return;
         closeAllGoalTaskDropdowns();
         wrapper.classList.add('is-active');
 
@@ -3743,12 +3762,23 @@
     const updateDragAndDropState = (listCont) => {
         const rows = Array.from(listCont.querySelectorAll('.function-row-item'));
         const isDraggable = rows.length > 1;
+        const isSurveyTemplateLocked = Boolean(listCont.closest('.goal-card.is-survey-template-locked'));
 
         rows.forEach(row => {
             const handle = row.querySelector('.function-drag-handle');
             const deleteBtn = row.querySelector('.btn-delete-function-row');
 
-            if (isDraggable) {
+            if (isSurveyTemplateLocked) {
+                row.setAttribute('draggable', 'false');
+                if (handle) {
+                    handle.classList.add('is-disabled', 'is-survey-template-locked');
+                    handle.setAttribute('title', 'Значение заполнено типовым шаблоном');
+                }
+                if (deleteBtn) {
+                    deleteBtn.disabled = true;
+                    deleteBtn.classList.add('is-disabled', 'is-survey-template-locked');
+                }
+            } else if (isDraggable) {
                 if (handle) {
                     handle.classList.remove('is-disabled');
                     handle.setAttribute('title', 'Перетащить для изменения порядка');
@@ -3832,6 +3862,82 @@
         }
     };
 
+    const setSurveyTemplateLockedControl = (control, isLocked) => {
+        if (!control) return;
+
+        if (isLocked) {
+            if (!control.dataset.surveyTemplateLockApplied) {
+                control.dataset.surveyTemplateOriginalDisabled = String(Boolean(control.disabled));
+            }
+            control.dataset.surveyTemplateLockApplied = 'true';
+            control.disabled = true;
+            control.classList.add('is-survey-template-locked');
+            control.setAttribute('aria-disabled', 'true');
+            return;
+        }
+
+        if (control.dataset.surveyTemplateLockApplied === 'true') {
+            control.disabled = control.dataset.surveyTemplateOriginalDisabled === 'true';
+            delete control.dataset.surveyTemplateLockApplied;
+            delete control.dataset.surveyTemplateOriginalDisabled;
+        }
+        control.classList.remove('is-survey-template-locked');
+        control.removeAttribute('aria-disabled');
+    };
+
+    const setSurveyTemplateLockedWrapper = (wrapper, isLocked) => {
+        if (!wrapper) return;
+
+        if (isLocked) {
+            if (!wrapper.dataset.surveyTemplateLockApplied) {
+                wrapper.dataset.surveyTemplateOriginalDisabled = String(wrapper.classList.contains('is-disabled'));
+            }
+            wrapper.dataset.surveyTemplateLockApplied = 'true';
+            wrapper.classList.add('is-disabled', 'is-survey-template-locked');
+            wrapper.setAttribute('aria-disabled', 'true');
+            wrapper.setAttribute('tabindex', '-1');
+            return;
+        }
+
+        if (wrapper.dataset.surveyTemplateLockApplied === 'true') {
+            wrapper.classList.toggle('is-disabled', wrapper.dataset.surveyTemplateOriginalDisabled === 'true');
+            delete wrapper.dataset.surveyTemplateLockApplied;
+            delete wrapper.dataset.surveyTemplateOriginalDisabled;
+        }
+        wrapper.classList.remove('is-survey-template-locked');
+        wrapper.removeAttribute('aria-disabled');
+        wrapper.setAttribute('tabindex', wrapper.classList.contains('is-disabled') ? '-1' : '0');
+    };
+
+    const setSurveyGeneratedGoalLock = (goalCard, isLocked) => {
+        if (!goalCard) return;
+
+        goalCard.classList.toggle('is-survey-template-locked', isLocked);
+        goalCard.querySelectorAll(
+            '.goal-name-wrapper, .custom-select-wrapper, .col-task-name-wrapper, .task-participation-container, .ai-influence-container'
+        ).forEach((wrapper) => setSurveyTemplateLockedWrapper(wrapper, isLocked));
+
+        goalCard.querySelectorAll(
+            '.task-participation-input, .ai-influence-input'
+        ).forEach((input) => setSurveyTemplateLockedControl(input, isLocked));
+
+        goalCard.querySelectorAll(
+            '.btn-add-task, .btn-delete-goal, .btn-delete-task, .btn-add-function-row, .btn-paste-function-row, .btn-copy-function-row, .btn-delete-function-row, .btn-clear-select'
+        ).forEach((button) => setSurveyTemplateLockedControl(button, isLocked));
+
+        goalCard.querySelectorAll('.function-drag-handle').forEach((handle) => {
+            handle.classList.toggle('is-disabled', isLocked);
+            handle.classList.toggle('is-survey-template-locked', isLocked);
+            handle.setAttribute('aria-disabled', String(isLocked));
+        });
+
+        goalCard.querySelectorAll('.function-row-item').forEach((row) => {
+            if (isLocked) {
+                row.setAttribute('draggable', 'false');
+            }
+        });
+    };
+
     const updateTaskRowAvailability = (row) => {
         if (!row) return;
 
@@ -3912,6 +4018,10 @@
 
     const updateGoalCardTaskAvailability = (goalCard) => {
         if (!goalCard) return;
+        if (goalCard.classList.contains('is-survey-template-locked')) {
+            setSurveyGeneratedGoalLock(goalCard, true);
+            return;
+        }
         const goalNameTrigger = goalCard.querySelector('.goal-name-text');
         const goalSelected = isFilledTrigger(goalNameTrigger);
         setButtonDisabledState(goalCard.querySelector('.btn-add-task'), !goalSelected);
@@ -3955,7 +4065,7 @@
         };
 
         const openCustomSelectDropdown = (selectWrapper) => {
-            if (!selectWrapper || selectWrapper.classList.contains('is-disabled')) return;
+            if (!selectWrapper || selectWrapper.classList.contains('is-disabled') || selectWrapper.classList.contains('is-survey-template-locked')) return;
             closeAllGoalTaskDropdowns();
             selectWrapper.classList.add('is-active');
 
@@ -4289,6 +4399,10 @@
             const handle = rowItem.querySelector('.function-drag-handle');
             if (handle) {
                 handle.addEventListener('mousedown', () => {
+                    if (handle.classList.contains('is-disabled') || handle.classList.contains('is-survey-template-locked')) {
+                        rowItem.setAttribute('draggable', 'false');
+                        return;
+                    }
                     const rowCount = listContainer.querySelectorAll('.function-row-item').length;
                     if (rowCount > 1) {
                         rowItem.setAttribute('draggable', 'true');
@@ -4392,6 +4506,9 @@
             rowItem.querySelectorAll('.custom-select-wrapper').forEach(selectWrapper => {
                 selectWrapper.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    if (selectWrapper.classList.contains('is-disabled') || selectWrapper.classList.contains('is-survey-template-locked')) {
+                        return;
+                    }
                     openCustomSelectDropdown(selectWrapper);
                 });
 
@@ -4400,6 +4517,9 @@
                 if (clearBtn) {
                     clearBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
+                        if (selectWrapper.classList.contains('is-disabled') || selectWrapper.classList.contains('is-survey-template-locked')) {
+                            return;
+                        }
                         const trigger = selectWrapper.querySelector('.custom-select-trigger');
                         trigger.textContent = trigger.dataset.placeholder || "";
                         trigger.dataset.value = "";
@@ -4687,6 +4807,9 @@
         if (taskNameWrapper) {
             taskNameWrapper.addEventListener('click', (e) => {
                 e.stopPropagation();
+                if (taskNameWrapper.classList.contains('is-disabled') || taskNameWrapper.classList.contains('is-survey-template-locked')) {
+                    return;
+                }
                 openTaskNameDropdown(taskNameWrapper);
             });
         }
@@ -4698,6 +4821,9 @@
         if (participationInput) {
             participationInput.addEventListener('click', (e) => {
                 e.stopPropagation();
+                if (participationInput.disabled) {
+                    return;
+                }
                 openTaskParticipationDropdown(participationInput);
             });
             participationInput.addEventListener('input', () => {
@@ -4705,6 +4831,9 @@
                 validateFunctionalStage();
             });
             participationInput.addEventListener('focus', () => {
+                if (participationInput.disabled) {
+                    return;
+                }
                 openTaskParticipationDropdown(participationInput);
             });
             participationInput.addEventListener('keydown', (e) => {
@@ -5002,9 +5131,99 @@
             .forEach(card => card.remove());
     };
 
+    const clearSurveyManagedTextField = (field) => {
+        if (!field || field.dataset.surveyManaged !== 'profile-survey') return false;
+        field.value = '';
+        delete field.dataset.surveyManaged;
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+    };
+
+    const clearSurveyResult = () => {
+        applySurveyTemplateLock(false);
+
+        const fields = getParamFields();
+        clearSurveyManagedTextField(fields.position);
+        clearSurveyManagedTextField(fields.classifier);
+        clearSurveyManagedTextField(fields.okz);
+
+        if (fields.structure && fields.structure.dataset.surveyManaged === 'profile-survey') {
+            fields.structure.value = '';
+            fields.structure.innerHTML = '<option value="" selected>Выберите подразделение</option>';
+            delete fields.structure.dataset.surveyManaged;
+            resetTreeSelect();
+            fields.structure.dispatchEvent(new Event('input', { bubbles: true }));
+            fields.structure.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        removeSurveyGeneratedGoals();
+
+        const competenciesContent = document.getElementById('competencies-content');
+        if (
+            competenciesContent &&
+            competenciesContent.dataset.surveyManaged === 'profile-survey' &&
+            typeof applyCompetenciesState === 'function'
+        ) {
+            applyCompetenciesState(null, { useDefaults: false });
+            delete competenciesContent.dataset.surveyManaged;
+        }
+
+        updateIndices();
+        validateFunctionalStage();
+        updateCreateStageCardsInteractivity();
+        return true;
+    };
+
+    const applySurveyTemplateLock = (isLocked) => {
+        if (profileDrawer) {
+            profileDrawer.classList.toggle('has-survey-template-lock', isLocked);
+        }
+
+        const fields = getParamFields();
+        ['position', 'classifier', 'okz'].forEach((fieldKey) => {
+            const field = fields[fieldKey];
+            const shouldLock = isLocked && field && field.dataset.surveyManaged === 'profile-survey';
+            setSurveyTemplateLockedControl(field, shouldLock);
+        });
+
+        const structureField = fields.structure;
+        const structureTrigger = document.getElementById('param-structure-trigger');
+        const shouldLockStructure = isLocked && structureField && structureField.dataset.surveyManaged === 'profile-survey';
+        setSurveyTemplateLockedControl(structureField, shouldLockStructure);
+        if (structureTrigger) {
+            setSurveyTemplateLockedWrapper(structureTrigger, shouldLockStructure);
+        }
+
+        setSurveyTemplateLockedControl(document.getElementById('add-goal-btn'), isLocked);
+        setSurveyTemplateLockedControl(document.getElementById('reset-competencies-btn'), isLocked);
+
+        document
+            .querySelectorAll('#goals-container .goal-card[data-survey-generated="profile-survey"]')
+            .forEach((goalCard) => setSurveyGeneratedGoalLock(goalCard, isLocked));
+
+        const competenciesContent = document.getElementById('competencies-content');
+        if (competenciesContent) {
+            competenciesContent.classList.toggle('is-survey-template-locked', isLocked);
+            competenciesContent
+                .querySelectorAll('button, input, textarea, select')
+                .forEach((control) => setSurveyTemplateLockedControl(control, isLocked));
+        }
+    };
+
     const applySurveyResult = (surveyResult = {}, options = {}) => {
         if (!surveyResult || !surveyResult.goal || !goalsContainer) return false;
+        const isTypicalSurveyResult = Boolean(surveyResult.summary && surveyResult.summary.isTypicalProfile);
 
+        if (!isTypicalSurveyResult) {
+            clearSurveyResult();
+            if (!options.silent) {
+                showToast('Опросник завершён. Заполните профиль вручную', true, true);
+            }
+            return true;
+        }
+
+        applySurveyTemplateLock(false);
         removeSurveyGeneratedGoals();
 
         setSurveyManagedPosition(surveyResult.positionValue || 'system-analyst');
@@ -5023,11 +5242,16 @@
 
         if (surveyResult.competencies && typeof applyCompetenciesState === 'function') {
             applyCompetenciesState(surveyResult.competencies, { useDefaults: false });
+            const competenciesContent = document.getElementById('competencies-content');
+            if (competenciesContent) {
+                competenciesContent.dataset.surveyManaged = 'profile-survey';
+            }
         }
 
         updateIndices();
         validateFunctionalStage();
         updateCreateStageCardsInteractivity();
+        applySurveyTemplateLock(true);
 
         if (!options.silent) {
             showToast('Данные опросника применены к профилю');
@@ -5037,7 +5261,13 @@
 
     window.HRProfileApp.profileSurveyIntegration = {
         applySurveyResult,
-        syncSurveyResult: (surveyResult = {}) => applySurveyResult(surveyResult, { silent: true, live: true })
+        clearSurveyResult,
+        syncSurveyResult: (surveyResult = {}) => {
+            if (!(surveyResult.summary && surveyResult.summary.isTypicalProfile)) {
+                return clearSurveyResult();
+            }
+            return applySurveyResult(surveyResult, { silent: true, live: true });
+        }
     };
 
     // Event Delegation for Card Actions
@@ -5050,6 +5280,9 @@
             const goalNameWrapper = e.target.closest('.col-goal-name');
             if (goalNameWrapper) {
                 e.stopPropagation();
+                if (goalNameWrapper.classList.contains('is-disabled') || goalNameWrapper.classList.contains('is-survey-template-locked')) {
+                    return;
+                }
                 openGoalNameDropdown(goalNameWrapper);
             }
 
@@ -5057,6 +5290,9 @@
             const goalRoleWrapper = e.target.closest('.col-goal-role');
             if (goalRoleWrapper) {
                 e.stopPropagation();
+                if (goalRoleWrapper.classList.contains('is-disabled') || goalRoleWrapper.classList.contains('is-survey-template-locked')) {
+                    return;
+                }
                 openGoalRoleDropdown(goalRoleWrapper);
             }
 
@@ -5074,6 +5310,7 @@
             // Delete goal
             if (e.target.closest('.btn-delete-goal')) {
                 e.stopPropagation();
+                if (e.target.closest('.btn-delete-goal').disabled) return;
                 const tbody = card.querySelector('.task-body');
                 if (!tbody || tbody.children.length === 0) {
                     card.remove();
@@ -5417,6 +5654,33 @@
             }
         });
     };
+
+    const syncCompetencyAccordionBodyHeight = (accordion) => {
+        const body = accordion ? accordion.querySelector('.accordion-body') : null;
+        if (!body) return;
+        body.style.setProperty('--accordion-body-height', `${body.scrollHeight}px`);
+    };
+
+    const syncOpenCompetencyAccordionHeights = () => {
+        document
+            .querySelectorAll('#competencies-content .accordion-card.is-open')
+            .forEach(syncCompetencyAccordionBodyHeight);
+    };
+
+    document.addEventListener('click', (e) => {
+        const header = e.target.closest('#competencies-content .accordion-header');
+        if (!header) return;
+        syncCompetencyAccordionBodyHeight(header.closest('.accordion-card'));
+    }, true);
+
+    const competenciesContentForHeight = document.getElementById('competencies-content');
+    if (competenciesContentForHeight && window.MutationObserver) {
+        const competencyHeightObserver = new MutationObserver(() => {
+            requestAnimationFrame(syncOpenCompetencyAccordionHeights);
+        });
+        competencyHeightObserver.observe(competenciesContentForHeight, { childList: true, subtree: true });
+    }
+    window.addEventListener('resize', syncOpenCompetencyAccordionHeights);
 
     // Toggle Dropdown
     addSkillBtn.addEventListener('click', (e) => {

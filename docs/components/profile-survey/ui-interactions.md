@@ -2,7 +2,7 @@
 
 ## Layout
 
-The survey is launched from a white alert placed in the profile creation drawer body between the drawer header and the stage cards. The alert uses the questionnaire illustration, title `Пройди опрос — сократи ручной ввод и ускорь согласование!`, the express-approval description, and the primary button `Пройти`.
+The survey is launched from a white alert placed inside the first profile creation stage below the base attributes block and above `Задачи и функции`. The alert is hidden until the user selects `Место в структуре`. It uses the questionnaire illustration, title `Пройди опрос — сократи ручной ввод и ускорь согласование!`, the express-approval description, and the primary button `Пройти`.
 
 Clicking `Пройти` opens a 650px right-side survey drawer inside the profile creation drawer. The normal profile creation form remains visible and interactive. The survey drawer does not use an overlay and does not switch the whole profile creation drawer into a separate survey mode.
 
@@ -33,12 +33,12 @@ Selecting values inside lower accordions must preserve the current scroll positi
 
 ## Drawer Actions
 
-- `Отмена` closes the survey drawer. Already synchronized values remain in the main form.
+- `Отмена` closes the survey drawer. Only values synchronized by a concrete typical-role template remain in the main form.
 - The drawer close icon also closes the survey drawer without rollback.
-- `Заполнить профиль` is disabled by default and becomes active only when all required values for the current scenario are filled.
+- `Применить` is disabled by default and becomes active only when all required values for the current scenario are filled.
 - In the `typical` scenario, the button requires main function, functional direction, and a concrete typical role.
 - In the `nonTypical` scenario, the button requires main function, functional direction, and all manual answers.
-- Clicking `Заполнить профиль` applies the current survey result to the visible profile creation form and closes only the survey drawer. The profile creation drawer remains open, and the user creates the final profile through the normal profile creation footer.
+- Clicking `Применить` closes only the survey drawer. For `typical`, the synchronized template draft remains visible in the form. For `nonTypical`, the profile creation form remains empty or unchanged and the user fills it manually.
 
 ## Selection Fields
 
@@ -78,6 +78,16 @@ The default technical value `selectedTypicalRole: "none"` is not shown as an act
 
 Choosing a concrete role switches the drawer to the `typical` scenario: manual question accordions are hidden, the final summary remains visible, and `Типовой профиль не подходит` is available in the summary.
 
-Choosing `Не относится к типовым ролям` or clicking `Типовой профиль не подходит` switches the drawer to the `nonTypical` scenario: the typical role is cleared, manual question accordions appear, and the user continues through the manual path.
+Choosing `Не относится к типовым ролям` or clicking `Типовой профиль не подходит` switches the drawer to the `nonTypical` scenario: the typical role is cleared, manual question accordions appear, and the user continues through the manual path. If the functional direction was not selected before this choice, the first available direction for the selected main function is selected automatically.
 
-The user can choose a concrete role or `Не относится к типовым ролям` before selecting the functional direction. The choice must be visually reflected immediately, while `Заполнить профиль` remains disabled until the direction and all scenario-specific required values are filled.
+The user can choose a concrete role or `Не относится к типовым ролям` before selecting the functional direction. The choice must be visually reflected immediately, while `Применить` remains disabled until the direction and all scenario-specific required values are filled.
+
+## Template-Based Read-Only State
+
+When the user selects a concrete typical role, the values synchronized into the profile creation form become template-managed. Template-managed fields in stage 1 and stage 2 are shown as unavailable for manual editing: the controls keep their values visible, use a muted locked visual state, and show a `not-allowed` cursor on hover.
+
+In stage 2, template-managed competency accordions remain expandable and collapsible. Internal action controls such as delete, reset, and remove are hidden, and hover effects inside accordion bodies are suppressed so the content reads as view-only.
+
+This read-only state must not apply when the user selects `Не относится к типовым ролям` or continues through the non-typical manual path.
+
+In the non-typical path, survey selections do not fill either profile creation stage. The controls in the survey may be completed for business guidance, but the visible profile creation fields remain available for manual input by the user.
